@@ -1,8 +1,15 @@
 package uk.ac.soton.comp1206.game;
 
+import java.util.Random;
+import java.util.stream.IntStream;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import uk.ac.soton.comp1206.component.GameBlock;
+
 
 /**
  * The Game class handles the main logic, state and properties of the TetrECS game. Methods to manipulate the game state
@@ -10,8 +17,14 @@ import uk.ac.soton.comp1206.component.GameBlock;
  */
 public class Game {
 
+    GamePiece currentPiece;
+    
     private static final Logger logger = LogManager.getLogger(Game.class);
 
+    private SimpleIntegerProperty score = new SimpleIntegerProperty(0);
+    private SimpleIntegerProperty level = new SimpleIntegerProperty(0);
+    private SimpleIntegerProperty lives = new SimpleIntegerProperty(3);
+    private SimpleIntegerProperty multiplier = new SimpleIntegerProperty(1);
     /**
      * Number of rows
      */
@@ -32,6 +45,34 @@ public class Game {
      * @param cols number of columns
      * @param rows number of rows
      */
+
+    public int getScore(){
+        return score.get();
+    }
+
+    public int getLevel(){
+        return level.get();
+    }
+    public int getLives(){
+        return lives.get();
+    }
+    public int getMultiplier(){
+        return multiplier.get();
+    }
+    // Define a getter for the property itself
+    public IntegerProperty getScoreProperty() {
+        return score;
+    }
+
+    public IntegerProperty getLivesProperty() {
+        return lives;
+    }
+    public IntegerProperty getLevelProperty() {
+        return level;
+    }
+    public IntegerProperty getMultiplierProperty() {
+        return multiplier;
+    }
     public Game(int cols, int rows) {
         this.cols = cols;
         this.rows = rows;
@@ -46,8 +87,21 @@ public class Game {
     public void start() {
         logger.info("Starting game");
         initialiseGame();
+        currentPiece = spawnPiece();
     }
 
+    public void nextPiece(){
+        currentPiece = spawnPiece();
+    }
+
+    public GamePiece spawnPiece(){
+        Random rn = new Random();
+        int number = rn.nextInt(15);
+        GamePiece piece = GamePiece.createPiece(number);
+
+        return piece;
+
+    }
     /**
      * Initialise a new game and set up anything that needs to be done at the start
      */
@@ -73,8 +127,58 @@ public class Game {
 
         //Update the grid with the new value
         grid.set(x,y,newValue);
+        afterPiece();
+        nextPiece();
     }
 
+    public void afterPiece(){
+    
+        for(int i=0;i<grid.getRows();i++){
+            if(fullRow(i)){
+                setRowZero(i);
+            }
+        }
+
+        for(int i=0;i<grid.getCols();i++){
+            if(fullColumn(i)){
+                setColZero(i);
+            }
+        }
+
+        
+    }
+
+    public void setRowZero(int row){
+        for(int i=0;i<grid.getCols();i++){
+            grid.set(row, i, 0);
+        } 
+    }
+
+    public void setColZero(int col){
+        for(int i=0;i<grid.getRows();i++){
+            grid.set(i, col, 0);
+        } 
+    }
+
+    public boolean fullColumn(int col){
+
+        for(int i =0;i < grid.getCols();i++){
+            if(grid.get(i,col) == 0){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean fullRow(int row){
+
+        for(int i =0;i < grid.getRows();i++){
+            if(grid.get(row,i) == 0){
+                return false;
+            }
+        }
+        return true;
+    }
     /**
      * Get the grid model inside this game representing the game state of the board
      * @return game grid model

@@ -1,5 +1,7 @@
 package uk.ac.soton.comp1206.scene;
 
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,12 +43,39 @@ public class ChallengeScene extends BaseScene {
         challengePane.setMaxWidth(gameWindow.getWidth());
         challengePane.setMaxHeight(gameWindow.getHeight());
         challengePane.getStyleClass().add("menu-background");
-        root.getChildren().add(challengePane);
+        
 
+        Label scoreTitle = new Label("Score");
+        Label score = new Label("a label");
+
+        Label levelTitle = new Label("Level");
+        Label level = new Label("a label");
+        
+        Label livesTitle = new Label("Lives");
+        Label lives = new Label("a label");
+
+        Label multiplierTitle = new Label("Multiplier");
+        Label multiplier = new Label("a label");
+
+        
+        VBox v = new VBox();
+        v.setSpacing(5);
+        v.setAlignment(Pos.CENTER_RIGHT);
+
+        v.getChildren().addAll(scoreTitle,score,levelTitle,level,livesTitle,lives,multiplierTitle,multiplier);
+
+        root.getChildren().addAll(challengePane);
         var mainPane = new BorderPane();
-        challengePane.getChildren().add(mainPane);
+        challengePane.getChildren().addAll(mainPane,v);
+
 
         var board = new GameBoard(game.getGrid(),gameWindow.getWidth()/2,gameWindow.getWidth()/2);
+
+
+        score.textProperty().bind(game.getScoreProperty().asString());
+        level.textProperty().bind(game.getLevelProperty().asString());
+        lives.textProperty().bind(game.getLivesProperty().asString());
+        multiplier.textProperty().bind(game.getMultiplierProperty().asString());
         mainPane.setCenter(board);
 
         //Handle block on gameboard grid being clicked
@@ -62,8 +91,8 @@ public class ChallengeScene extends BaseScene {
     }
 
     /**
-     * Setup the game object and model
-     */
+    * Setup the game object and model
+    */
     public void setupGame() {
         logger.info("Starting a new challenge");
 

@@ -36,6 +36,36 @@ public class Grid {
      * @param cols number of columns
      * @param rows number of rows
      */
+
+    public boolean canPlayPiece(GamePiece z, int x, int y){
+
+        int[][] blocks = z.getBlocks();
+
+        for(int i=-1;i<2;i++){
+            for(int j=-1;j<2;j++){
+                if(get(x+i,y+j)!=0 && blocks[i+1][j+1]>0){
+                    return false;
+                }
+            }
+        }
+        return true;
+
+    }
+
+    public void playPiece(GamePiece z, int x, int y){
+
+        int[][] blocks = z.getBlocks();
+
+        if(canPlayPiece(z, x, y)){
+            for(int i=-1;i<2;i++){
+                for(int j=-1;j<2;j++){
+                    if(blocks[i+1][j+1]>0){
+                        set(x+i,y+j,z.getValue());
+                    }
+                }
+            }
+        }
+    }
     public Grid(int cols, int rows) {
         this.cols = cols;
         this.rows = rows;
@@ -49,6 +79,7 @@ public class Grid {
                 grid[x][y] = new SimpleIntegerProperty(0);
             }
         }
+
     }
 
     /**
@@ -101,6 +132,10 @@ public class Grid {
      */
     public int getRows() {
         return rows;
+    }
+    
+    public SimpleIntegerProperty[][] getGrid(){
+        return grid;
     }
 
 }
