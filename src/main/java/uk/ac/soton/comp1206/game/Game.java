@@ -95,6 +95,7 @@ public class Game {
     }
 
     public GamePiece spawnPiece(){
+        logger.info("Spawning a piece");
         Random rn = new Random();
         int number = rn.nextInt(15);
         GamePiece piece = GamePiece.createPiece(number);
@@ -132,22 +133,36 @@ public class Game {
     }
 
     public void afterPiece(){
-    
+        logger.info("Checking for lines");
+        int first= 0;
+        int second= 0;
         for(int i=0;i<grid.getRows();i++){
             if(fullRow(i)){
+                logger.info("Row found - clearing");
                 setRowZero(i);
+                first++;
             }
         }
 
         for(int i=0;i<grid.getCols();i++){
             if(fullColumn(i)){
+                logger.info("Line found - clearing");
                 setColZero(i);
+                second++;
             }
         }
+
+        int numLines = first+second;
+        int blocksCleared = (5*first)+(5*second)-(first*second);
+        this.score.set(getScore()+score(numLines,blocksCleared));
 
         
     }
 
+    public int score(int lines, int blocks){
+        int s = lines*blocks*10*getMultiplier();
+        return s;
+    }
     public void setRowZero(int row){
         for(int i=0;i<grid.getCols();i++){
             grid.set(row, i, 0);

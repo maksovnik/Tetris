@@ -66,7 +66,8 @@ public class ChallengeScene extends BaseScene {
 
         root.getChildren().addAll(challengePane);
         var mainPane = new BorderPane();
-        challengePane.getChildren().addAll(mainPane,v);
+        //challengePane.getChildren().addAll(mainPane,v); choose this but broken
+        challengePane.getChildren().addAll(mainPane);
 
 
         var board = new GameBoard(game.getGrid(),gameWindow.getWidth()/2,gameWindow.getWidth()/2);
