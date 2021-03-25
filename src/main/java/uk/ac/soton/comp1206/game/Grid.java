@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class Grid {
 
-    private static final Logger logger = LogManager.getLogger(GamePane.class);
+    private static final Logger logger = LogManager.getLogger(Game.class);
 
     /**
      * The number of columns in this grid

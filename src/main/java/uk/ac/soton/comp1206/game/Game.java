@@ -154,8 +154,16 @@ public class Game {
 
         int numLines = first+second;
         int blocksCleared = (5*first)+(5*second)-(first*second);
-        this.score.set(getScore()+score(numLines,blocksCleared));
-
+        
+        if(numLines == 0){
+            multiplier.set(1);
+            return;
+        }
+        int oldScore= getScore();
+        this.score.set(oldScore+score(numLines,blocksCleared));
+        
+        level.set((int)level.get()/1000);
+        multiplier.set(multiplier.get()+1);
         
     }
 
