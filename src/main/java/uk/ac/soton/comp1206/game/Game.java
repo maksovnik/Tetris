@@ -134,12 +134,13 @@ public class Game {
 
     public void afterPiece(){
         logger.info("Checking for lines");
-        int first= 0;
-        int second= 0;
-        for(int i=0;i<grid.getRows();i++){
-            if(fullRow(i)){
+        int first= 0; //Sets the number of cleared rows to 0
+        int second= 0; //Sets the number of cleared lines to 0
+
+        for(int i=0;i<grid.getRows();i++){ //Loops through each row
+            if(fullRow(i)){ //Checks if specific row is clear
                 logger.info("Row found - clearing");
-                setRowZero(i);
+                setRowZero(i); //Clears that row
                 first++;
             }
         }
@@ -153,38 +154,38 @@ public class Game {
         }
 
         int numLines = first+second;
-        int blocksCleared = (5*first)+(5*second)-(first*second);
+        int blocksCleared = (5*first)+(5*second)-(first*second); //Calculates number of blocks cleared
         
         if(numLines == 0){
             multiplier.set(1);
             return;
         }
-        int oldScore= getScore();
-        this.score.set(oldScore+score(numLines,blocksCleared));
+        this.score.set(getScore()+score(numLines,blocksCleared)); //Increases score
         
-        level.set((int)level.get()/1000);
-        multiplier.set(multiplier.get()+1);
+        level.set((int)this.score.get()/1000); //Sets level
+        multiplier.set(multiplier.get()+1); //Increases multiplier
         
     }
 
     public int score(int lines, int blocks){
-        int s = lines*blocks*10*getMultiplier();
-        return s;
+        return lines*blocks*10*getMultiplier();
     }
     public void setRowZero(int row){
+        // Set's each item in a row to 0
         for(int i=0;i<grid.getCols();i++){
             grid.set(row, i, 0);
         } 
     }
 
     public void setColZero(int col){
+        // Set's each item in a column to 0
         for(int i=0;i<grid.getRows();i++){
             grid.set(i, col, 0);
         } 
     }
 
     public boolean fullColumn(int col){
-
+        //Checks if a specific column is full
         for(int i =0;i < grid.getCols();i++){
             if(grid.get(i,col) == 0){
                 return false;
@@ -194,7 +195,7 @@ public class Game {
     }
 
     public boolean fullRow(int row){
-
+        //Checks if a specific row is full
         for(int i =0;i < grid.getRows();i++){
             if(grid.get(row,i) == 0){
                 return false;
