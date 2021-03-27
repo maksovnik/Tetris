@@ -2,6 +2,8 @@ package uk.ac.soton.comp1206.scene;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,6 +22,12 @@ public class Multimedia{
             Media play = new Media(toPlay);
             musicPlayer = new MediaPlayer(play);
             musicPlayer.play();
+
+            musicPlayer.setOnEndOfMedia(new Runnable() {
+                public void run() {
+                  musicPlayer.seek(Duration.ZERO);
+                }
+            });
         } catch (Exception e) {
             audioEnabled = false;
             e.printStackTrace();

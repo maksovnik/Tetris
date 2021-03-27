@@ -1,8 +1,10 @@
 package uk.ac.soton.comp1206.scene;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.soton.comp1206.component.GameBlock;
@@ -45,20 +47,29 @@ public class ChallengeScene extends BaseScene {
         challengePane.getStyleClass().add("menu-background");
         
 
-        Label scoreTitle = new Label("Score");
-        Label score = new Label("a label");
+        Text scoreTitle = new Text("Score");
+        Text score = new Text("a Text");
 
-        Label levelTitle = new Label("Level");
-        Label level = new Label("a label");
+        Text levelTitle = new Text("Level");
+        Text level = new Text("a Text");
         
-        Label livesTitle = new Label("Lives");
-        Label lives = new Label("a label");
+        Text livesTitle = new Text("Lives");
+        Text lives = new Text("a Text");
 
-        Label multiplierTitle = new Label("Multiplier");
-        Label multiplier = new Label("a label");
+        Text multiplierTitle = new Text("Multiplier");
+        Text multiplier = new Text("a Text");
 
+        scoreTitle.getStyleClass().add("heading");
+        score.getStyleClass().add("score");
+        levelTitle.getStyleClass().add("heading");
+        level.getStyleClass().add("level");
+        livesTitle.getStyleClass().add("heading");
+        lives.getStyleClass().add("lives");
+        multiplierTitle.getStyleClass().add("heading");
+        multiplier.getStyleClass().add("level");
         
         VBox v = new VBox();
+        v.setStyle("-fx-padding: 5;");
         v.setSpacing(5);
         v.setAlignment(Pos.CENTER_RIGHT);
 
@@ -66,8 +77,8 @@ public class ChallengeScene extends BaseScene {
 
         root.getChildren().addAll(challengePane);
         var mainPane = new BorderPane();
-        //challengePane.getChildren().addAll(mainPane,v); choose this but broken
-        challengePane.getChildren().addAll(mainPane);
+        challengePane.getChildren().addAll(mainPane); //choose this but broken
+        //challengePane.getChildren().addAll(mainPane);
 
 
         var board = new GameBoard(game.getGrid(),gameWindow.getWidth()/2,gameWindow.getWidth()/2);
@@ -80,7 +91,7 @@ public class ChallengeScene extends BaseScene {
         mainPane.setCenter(board);
 
         //Handle block on gameboard grid being clicked
-        board.setOnBlockClick(this::blockClicked);
+        //board.setOnBlockClick(this::blockClicked);
     }
 
     /**
