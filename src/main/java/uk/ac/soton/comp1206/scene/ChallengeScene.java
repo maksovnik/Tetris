@@ -77,8 +77,8 @@ public class ChallengeScene extends BaseScene {
 
         root.getChildren().addAll(challengePane);
         var mainPane = new BorderPane();
-        challengePane.getChildren().addAll(mainPane); //choose this but broken
-        //challengePane.getChildren().addAll(mainPane);
+        mainPane.setRight(v);
+        challengePane.getChildren().add(mainPane); //choose this but broken
 
 
         var board = new GameBoard(game.getGrid(),gameWindow.getWidth()/2,gameWindow.getWidth()/2);
@@ -91,7 +91,7 @@ public class ChallengeScene extends BaseScene {
         mainPane.setCenter(board);
 
         //Handle block on gameboard grid being clicked
-        //board.setOnBlockClick(this::blockClicked);
+        board.setOnBlockClick(this::blockClicked);
     }
 
     /**
