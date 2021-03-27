@@ -1,5 +1,6 @@
 package uk.ac.soton.comp1206.game;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -102,7 +103,7 @@ public class Game {
         Random rn = new Random();
         int number = rn.nextInt(15);
         GamePiece piece = GamePiece.createPiece(number);
-
+        logger.info(Arrays.deepToString(piece.getBlocks()));
         return piece;
 
     }
@@ -130,9 +131,13 @@ public class Game {
         }
 
         //Update the grid with the new value
-        grid.set(x,y,newValue);
-        afterPiece();
-        nextPiece();
+        if(grid.canPlayPiece(currentPiece, x, y)){
+            grid.playPiece(currentPiece, x, y);
+            afterPiece();
+            nextPiece();
+        }
+        //grid.set(x,y,newValue);
+
     }
 
     public void afterPiece(){

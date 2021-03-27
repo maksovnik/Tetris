@@ -2,6 +2,9 @@ package uk.ac.soton.comp1206.game;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+
+import java.util.Arrays;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -61,6 +64,9 @@ public class Grid {
         
         logger.info("Playing a piece");
         int[][] blocks = z.getBlocks();
+
+        logger.info(Arrays.deepToString(blocks));
+
 
         if(canPlayPiece(z, x, y)){
             for(int i=-1;i<2;i++){
