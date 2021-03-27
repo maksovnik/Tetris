@@ -33,7 +33,7 @@ public class MenuScene extends BaseScene {
         logger.info("Building " + this.getClass().getName());
 
         root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
-
+        Multimedia.playSound("music/menu.mp3");
         var menuPane = new StackPane();
         menuPane.setMaxWidth(gameWindow.getWidth());
         menuPane.setMaxHeight(gameWindow.getHeight());

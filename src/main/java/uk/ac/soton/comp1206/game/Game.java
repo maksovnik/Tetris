@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import uk.ac.soton.comp1206.component.GameBlock;
+import uk.ac.soton.comp1206.scene.Multimedia;
 
 
 /**
@@ -79,6 +80,8 @@ public class Game {
 
         //Create a new grid model to represent the game state
         this.grid = new Grid(cols,rows);
+
+        Multimedia.playSound("music/game.wav");
     }
 
     /**
