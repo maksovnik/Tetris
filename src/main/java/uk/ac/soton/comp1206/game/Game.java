@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import uk.ac.soton.comp1206.component.GameBlock;
+import uk.ac.soton.comp1206.event.NextPieceListener;
 import uk.ac.soton.comp1206.scene.Multimedia;
 
 
@@ -20,6 +21,7 @@ import uk.ac.soton.comp1206.scene.Multimedia;
 public class Game {
 
     GamePiece currentPiece;
+    NextPieceListener npl;
     
     private static final Logger logger = LogManager.getLogger(Game.class);
 
@@ -47,6 +49,10 @@ public class Game {
      * @param cols number of columns
      * @param rows number of rows
      */
+
+    public void setNextPieceListener(NextPieceListener npl){
+        this.npl = npl;
+    }
 
     public int getScore(){
         return score.get();
@@ -96,6 +102,7 @@ public class Game {
 
     public void nextPiece(){
         currentPiece = spawnPiece();
+        
     }
 
     public GamePiece spawnPiece(){
@@ -104,6 +111,7 @@ public class Game {
         int number = rn.nextInt(15);
         GamePiece piece = GamePiece.createPiece(number);
         logger.info(Arrays.deepToString(piece.getBlocks()));
+        npl.nextPiece(piece);
         return piece;
 
     }

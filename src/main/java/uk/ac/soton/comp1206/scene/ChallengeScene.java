@@ -9,7 +9,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.soton.comp1206.component.GameBlock;
 import uk.ac.soton.comp1206.component.GameBoard;
+import uk.ac.soton.comp1206.component.PieceBoard;
+import uk.ac.soton.comp1206.event.NextPieceListener;
 import uk.ac.soton.comp1206.game.Game;
+import uk.ac.soton.comp1206.game.GamePiece;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 
@@ -67,13 +70,24 @@ public class ChallengeScene extends BaseScene {
         lives.getStyleClass().add("lives");
         multiplierTitle.getStyleClass().add("heading");
         multiplier.getStyleClass().add("level");
+
+
+        PieceBoard p = new PieceBoard(3, 3, 100, 100);
         
+        game.setNextPieceListener(new NextPieceListener(){
+            @Override
+            public void nextPiece(GamePiece piece) {
+                p.SetPieceToDisplay(piece);
+            }
+        });
+
+
         VBox v = new VBox();
         v.setStyle("-fx-padding: 5;");
         v.setSpacing(5);
         v.setAlignment(Pos.CENTER_RIGHT);
-
-        v.getChildren().addAll(scoreTitle,score,levelTitle,level,livesTitle,lives,multiplierTitle,multiplier);
+        
+        v.getChildren().addAll(scoreTitle,score,levelTitle,level,livesTitle,lives,multiplierTitle,multiplier,p);
 
         root.getChildren().addAll(challengePane);
         var mainPane = new BorderPane();
