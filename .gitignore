@@ -24,13 +24,13 @@ hs_err_pid*
 
 
 /target
-
+target/
 target
 /target/
 */target/**
 **/META-INF/
 !.mvn/wrapper/maven-wrapper.jar
-
+.mvn/
 ### STS ###
 .apt_generated
 .classpath
@@ -52,4 +52,17 @@ target
 /nbbuild/
 /dist/
 /nbdist/
-/.nb-gradle/
+/.nb-gradle/node_modules/
+
+
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+# https://github.com/takari/maven-wrapper#usage-without-binary-jar
+.mvn/wrapper/maven-wrapper.jar
