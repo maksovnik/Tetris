@@ -93,7 +93,7 @@ public class Game {
         //Create a new grid model to represent the game state
         this.grid = new Grid(cols,rows);
 
-        Multimedia.playSound("music/game.wav");
+        //Multimedia.playSound("music/game.wav");
     }
 
     /**

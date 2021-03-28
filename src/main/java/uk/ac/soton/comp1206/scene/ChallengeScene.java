@@ -40,6 +40,9 @@ public class ChallengeScene extends BaseScene {
     public void build() {
         logger.info("Building " + this.getClass().getName());
 
+
+        gameWindow.setBGMusic("music/game.wav");
+
         setupGame();
 
         root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
@@ -50,25 +53,26 @@ public class ChallengeScene extends BaseScene {
         challengePane.getStyleClass().add("menu-background");
         
 
-        Text scoreTitle = new Text("Score");
+        Text scoreT = new Text("Score");
         Text score = new Text("a Text");
 
-        Text levelTitle = new Text("Level");
+        Text levelT = new Text("Level");
         Text level = new Text("a Text");
         
-        Text livesTitle = new Text("Lives");
+        Text livesT = new Text("Lives");
         Text lives = new Text("a Text");
 
-        Text multiplierTitle = new Text("Multiplier");
+        Text multiplierT = new Text("Multiplier");
         Text multiplier = new Text("a Text");
 
-        scoreTitle.getStyleClass().add("heading");
+        for(Text i: new Text[] {scoreT,levelT,livesT,multiplierT}){
+            i.getStyleClass().add("heading");
+        }
+
+
         score.getStyleClass().add("score");
-        levelTitle.getStyleClass().add("heading");
         level.getStyleClass().add("level");
-        livesTitle.getStyleClass().add("heading");
         lives.getStyleClass().add("lives");
-        multiplierTitle.getStyleClass().add("heading");
         multiplier.getStyleClass().add("level");
 
 
@@ -87,7 +91,7 @@ public class ChallengeScene extends BaseScene {
         v.setSpacing(5);
         v.setAlignment(Pos.CENTER_RIGHT);
         
-        v.getChildren().addAll(scoreTitle,score,levelTitle,level,livesTitle,lives,multiplierTitle,multiplier,p);
+        v.getChildren().addAll(scoreT,score,levelT,level,livesT,lives,multiplierT,multiplier,p);
 
         root.getChildren().addAll(challengePane);
         var mainPane = new BorderPane();

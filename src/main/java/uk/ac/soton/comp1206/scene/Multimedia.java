@@ -1,37 +1,80 @@
 package uk.ac.soton.comp1206.scene;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.util.Duration;
+import javafx.scene.media.AudioClip;
+
+import java.util.concurrent.SynchronousQueue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Multimedia{
-    private static MediaPlayer musicPlayer;
-    private static boolean audioEnabled = true;
-    private static final Logger logger = LogManager.getLogger(Multimedia.class);
 
-    public static void playSound(String file) {
+
+
+    private static final Logger logger = LogManager.getLogger(Multimedia.class);
+    private AudioClip audio;
+    private boolean loop;
+    private SynchronousQueue queue;
+
+    public Multimedia(boolean loop){
+
+        this.queue = new SynchronousQueue();
+        this.loop = loop;
+
+        new Thread(() -> {
+            while(true){
+                get();
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+    public void playSound(String file) {
         String toPlay = Multimedia.class.getResource("/" + file).toExternalForm();
 
         logger.info("Playing audio: " + toPlay);
 
         try {
-            
-            Media play = new Media(toPlay);
-            musicPlayer = new MediaPlayer(play);
-            musicPlayer.play();
 
-            musicPlayer.setOnEndOfMedia(new Runnable() {
-                public void run() {
-                  musicPlayer.seek(Duration.ZERO);
-                }
-            });
+            if(audio != null){
+                audio.stop();
+            }
+
+            audio = new AudioClip(toPlay);
+
+            audio.setVolume(0.5f);
+            if(loop){
+                audio.setCycleCount(-1);
+            }
+        
+            audio.play();
+
+        
         } catch (Exception e) {
-            audioEnabled = false;
             e.printStackTrace();
             logger.error("Unable to play audio file, disabling audio");
+        }
+    }
+
+    public void get(){
+        String file;
+        try {
+            file = (String) queue.take();
+            playSound(file);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+       
+    }
+
+    public void put(String file){
+        try {
+            queue.put(file);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
