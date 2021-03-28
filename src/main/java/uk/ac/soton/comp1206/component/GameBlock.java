@@ -1,12 +1,14 @@
 package uk.ac.soton.comp1206.component;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.paint.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 /**
  * The Visual User Interface component representing a single block in the grid.

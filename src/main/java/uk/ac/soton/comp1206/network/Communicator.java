@@ -1,13 +1,19 @@
 package uk.ac.soton.comp1206.network;
 
-import com.neovisionaries.ws.client.*;
-import javafx.scene.control.Alert;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import uk.ac.soton.comp1206.event.CommunicationsListener;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.neovisionaries.ws.client.WebSocket;
+import com.neovisionaries.ws.client.WebSocketAdapter;
+import com.neovisionaries.ws.client.WebSocketException;
+import com.neovisionaries.ws.client.WebSocketFactory;
+import com.neovisionaries.ws.client.WebSocketFrame;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javafx.scene.control.Alert;
+import uk.ac.soton.comp1206.event.CommunicationsListener;
 
 /**
  * Uses web sockets to talk to a web socket server and relays communication to attached listeners

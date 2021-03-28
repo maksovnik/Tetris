@@ -1,11 +1,11 @@
 package uk.ac.soton.comp1206.scene;
 
-import javafx.scene.media.AudioClip;
-
 import java.util.concurrent.SynchronousQueue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javafx.scene.media.AudioClip;
 
 public class Multimedia{
 
@@ -14,11 +14,11 @@ public class Multimedia{
     private static final Logger logger = LogManager.getLogger(Multimedia.class);
     private AudioClip audio;
     private boolean loop;
-    private SynchronousQueue queue;
+    private SynchronousQueue<String> queue;
 
     public Multimedia(boolean loop){
 
-        this.queue = new SynchronousQueue();
+        this.queue = new SynchronousQueue<String>();
         this.loop = loop;
 
         new Thread(() -> {

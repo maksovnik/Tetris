@@ -1,9 +1,10 @@
 package uk.ac.soton.comp1206.component;
 
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import uk.ac.soton.comp1206.event.BlockClickedListener;
 import uk.ac.soton.comp1206.game.Grid;
 

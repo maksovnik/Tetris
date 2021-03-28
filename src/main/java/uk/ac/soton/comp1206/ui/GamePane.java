@@ -1,11 +1,12 @@
 package uk.ac.soton.comp1206.ui;
 
-import javafx.geometry.Pos;
-import javafx.scene.layout.*;
-import javafx.scene.transform.Scale;
-import javafx.scene.transform.Translate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javafx.geometry.Pos;
+import javafx.scene.layout.StackPane;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
 
 /**
  * The Game Pane is a special pane which will scale anything inside it to the screen and maintain the aspect ratio.
