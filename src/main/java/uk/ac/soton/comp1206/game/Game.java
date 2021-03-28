@@ -1,5 +1,6 @@
 package uk.ac.soton.comp1206.game;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -29,6 +30,8 @@ public class Game {
     private SimpleIntegerProperty level = new SimpleIntegerProperty(0);
     private SimpleIntegerProperty lives = new SimpleIntegerProperty(3);
     private SimpleIntegerProperty multiplier = new SimpleIntegerProperty(1);
+
+    
     /**
      * Number of rows
      */
@@ -43,6 +46,8 @@ public class Game {
      * The grid model linked to the game
      */
     protected final Grid grid;
+
+    int[][] blocks = new int[5][5];
 
     /**
      * Create a new game with the specified rows and columns. Creates a corresponding grid model.
@@ -109,6 +114,7 @@ public class Game {
         logger.info("Spawning a piece");
         Random rn = new Random();
         int number = rn.nextInt(15);
+        //int number = 3; //For testing
         GamePiece piece = GamePiece.createPiece(number);
         logger.info(Arrays.deepToString(piece.getBlocks()));
         npl.nextPiece(piece);
@@ -138,6 +144,7 @@ public class Game {
             newValue = 0;
         }
 
+        System.out.println(x+" "+y);
         //Update the grid with the new value
         if(grid.canPlayPiece(currentPiece, x, y)){
             grid.playPiece(currentPiece, x, y);
@@ -149,28 +156,48 @@ public class Game {
     }
 
     public void afterPiece(){
-        logger.info("Checking for lines");
+        logger.info("Checking for Rows");
         int first= 0; //Sets the number of cleared rows to 0
         int second= 0; //Sets the number of cleared lines to 0
+
+
+        ArrayList<Integer> rowsToClear = new ArrayList<Integer>();
+        ArrayList<Integer> colsToClear = new ArrayList<Integer>();
+        
+       
+
+        for(int i=0;i<blocks.length;i++){
+            for(int j=0; j<blocks[i].length;j++){
+                blocks[i][j] = grid.get(i, j);
+            }
+        }
+        System.out.println(Arrays.deepToString(blocks));
 
         for(int i=0;i<grid.getRows();i++){ //Loops through each row
             if(fullRow(i)){ //Checks if specific row is clear
                 logger.info("Row found - clearing");
-                setRowZero(i); //Clears that row
-                first++;
+                rowsToClear.add(i);
             }
         }
 
+        logger.info("Checking for Lines");
         for(int i=0;i<grid.getCols();i++){
             if(fullColumn(i)){
                 logger.info("Line found - clearing");
-                setColZero(i);
-                second++;
+                colsToClear.add(i);
             }
         }
 
-        int numLines = first+second;
-        int blocksCleared = (5*first)+(5*second)-(first*second); //Calculates number of blocks cleared
+        for(int i:rowsToClear){
+            setRowZero(i);
+        }
+
+        for(int i:colsToClear){
+            setColZero(i);
+        }
+
+        int numLines = rowsToClear.size()+colsToClear.size();
+        int blocksCleared = (5*rowsToClear.size())+(5*colsToClear.size())-(rowsToClear.size()*colsToClear.size()); //Calculates number of blocks cleared
         
         if(numLines == 0){
             multiplier.set(1);
@@ -192,14 +219,12 @@ public class Game {
             grid.set(row, i, 0);
         } 
     }
-
     public void setColZero(int col){
         // Set's each item in a column to 0
         for(int i=0;i<grid.getRows();i++){
             grid.set(i, col, 0);
         } 
     }
-
     public boolean fullColumn(int col){
         //Checks if a specific column is full
         for(int i =0;i < grid.getCols();i++){
@@ -209,7 +234,6 @@ public class Game {
         }
         return true;
     }
-
     public boolean fullRow(int row){
         //Checks if a specific row is full
         for(int i =0;i < grid.getRows();i++){

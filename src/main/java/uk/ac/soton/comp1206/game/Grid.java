@@ -68,26 +68,28 @@ public class Grid {
         logger.info(Arrays.deepToString(blocks));
 
 
-        if(canPlayPiece(z, x, y)){
-            for(int i=-1;i<2;i++){
-                for(int j=-1;j<2;j++){
-                    if(blocks[i+1][j+1]>0){
-                        set(x+i,y+j,z.getValue());
-                    }
+        for(int i=-1;i<2;i++){
+            for(int j=-1;j<2;j++){
+                if(blocks[i+1][j+1]>0){
+                    set(x+i,y+j,z.getValue());
+                    System.out.println("This is "+(x+i)+" "+(y+j));
                 }
             }
         }
+        
+        
     }
     public Grid(int cols, int rows) {
         this.cols = cols;
         this.rows = rows;
 
         //Create the grid itself
-        grid = new SimpleIntegerProperty[cols][rows];
+        grid = new SimpleIntegerProperty[rows][cols];
 
         //Add a SimpleIntegerProperty to every block in the grid
-        for(var y = 0; y < rows; y++) {
-            for(var x = 0; x < cols; x++) {
+        for(var x = 0; x < rows; x++) {
+            for(var y = 0; y < cols; y++) {
+             
                 grid[x][y] = new SimpleIntegerProperty(0);
             }
         }

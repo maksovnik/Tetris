@@ -37,7 +37,7 @@ public class Communicator {
 
             //Connect to the server
             ws = socketFactory.createSocket(server);
-            ws.connect();
+            //ws.connect(); //remember to reenable :))
             logger.info("Connected to " + server);
 
             //When a message is received, call the receive method

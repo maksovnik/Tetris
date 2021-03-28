@@ -108,27 +108,23 @@ public class GameBoard extends GridPane {
      * Build the GameBoard by creating a block at every x and y column and row
      */
     protected void build() {
-        logger.info("Building grid: {} x {}",cols,rows);
+        logger.info("Building grid: {} x {}",rows,cols);
 
         setMaxWidth(width);
         setMaxHeight(height);
 
         setGridLinesVisible(true);
 
-        blocks = new GameBlock[cols][rows];
+        blocks = new GameBlock[rows][cols];
 
-        for(var y = 0; y < rows; y++) {
-            for (var x = 0; x < cols; x++) {
+        for(var x = 0; x < rows; x++) {
+            for (var y = 0; y < cols; y++) {
                 createBlock(x,y);
             }
         }
     }
 
-    /**
-     * Create a block at the given x and y position in the GameBoard
-     * @param x column
-     * @param y row
-     */
+
     protected GameBlock createBlock(int x, int y) {
         var blockWidth = width / cols;
         var blockHeight = height / rows;
@@ -137,7 +133,7 @@ public class GameBoard extends GridPane {
         GameBlock block = new GameBlock(this, x, y, blockWidth, blockHeight);
 
         //Add to the GridPane
-        add(block,x,y);
+        add(block,y,x);
 
         //Add to our block directory
         blocks[x][y] = block;
