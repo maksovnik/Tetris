@@ -1,4 +1,4 @@
-package uk.ac.soton.comp1206.scene;
+package uk.ac.soton.comp1206.utility;
 
 import java.util.concurrent.SynchronousQueue;
 
@@ -15,6 +15,7 @@ public class Multimedia{
     private AudioClip audio;
     private boolean loop;
     private SynchronousQueue<String> queue;
+
 
     public Multimedia(boolean loop){
 
@@ -46,6 +47,7 @@ public class Multimedia{
             audio = new AudioClip(toPlay);
 
             audio.setVolume(0.5f);
+
             if(loop){
                 audio.setCycleCount(-1);
             }

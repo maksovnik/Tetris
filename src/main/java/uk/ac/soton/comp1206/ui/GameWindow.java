@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import uk.ac.soton.comp1206.App;
 import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.scene.*;
+import uk.ac.soton.comp1206.utility.Multimedia;
 
 /**
  * The GameWindow is the single window for the game where everything takes place. To move between screens in the game,
