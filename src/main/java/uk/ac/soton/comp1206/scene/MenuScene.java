@@ -70,6 +70,7 @@ public class MenuScene extends BaseScene {
         mainPane.setBottom(b);
 
         single.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  startGame(event));
+        how.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  showInstructions(event));
         
     }
 
@@ -87,6 +88,10 @@ public class MenuScene extends BaseScene {
      */
     private void startGame(MouseEvent mouseEvent) {
         gameWindow.startChallenge();
+    }
+
+    private void showInstructions(MouseEvent mouseEvent){
+        gameWindow.startInstructions();
     }
 
 }

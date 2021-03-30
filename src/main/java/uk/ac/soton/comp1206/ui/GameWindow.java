@@ -34,6 +34,7 @@ public class GameWindow {
 
     private BaseScene currentScene;
     private Scene scene;
+    private MenuScene menu;
 
     final Communicator communicator;
 
@@ -63,6 +64,8 @@ public class GameWindow {
 
         //Go to menu
         startMenu();
+
+        
     }
 
     /**
@@ -78,10 +81,18 @@ public class GameWindow {
     /**
      * Display the main menu
      */
+
+    public MenuScene getMenu(){
+        return menu;
+    }
     public void startMenu() {
-        loadScene(new MenuScene(this));
+        this.menu = new MenuScene(this);
+        loadScene(this.menu);
     }
 
+    public void startInstructions() {
+        loadScene(new InstructionsScene(this));
+    }
     /**
      * Display the single player challenge
      */

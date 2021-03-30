@@ -20,7 +20,7 @@ import uk.ac.soton.comp1206.ui.GameWindow;
 /**
  * The Single Player challenge scene. Holds the UI for the single player challenge mode in the game.
  */
-public class ChallengeScene extends BaseScene {
+public class ChallengeScene extends BaseScene{
 
     private static final Logger logger = LogManager.getLogger(MenuScene.class);
     protected Game game;

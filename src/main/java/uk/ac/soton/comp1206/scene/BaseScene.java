@@ -1,6 +1,9 @@
 package uk.ac.soton.comp1206.scene;
 
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
@@ -8,7 +11,7 @@ import uk.ac.soton.comp1206.ui.GameWindow;
 /**
  * A Base Scene used in the game. Handles common functionality between all scenes.
  */
-public abstract class BaseScene {
+public abstract class BaseScene{
 
     protected final GameWindow gameWindow;
 
@@ -21,6 +24,8 @@ public abstract class BaseScene {
      */
     public BaseScene(GameWindow gameWindow) {
         this.gameWindow = gameWindow;
+
+        
     }
 
     /**
@@ -42,6 +47,16 @@ public abstract class BaseScene {
         Scene scene = new Scene(root, previous.getWidth(), previous.getHeight(), Color.BLACK);
         scene.getStylesheets().add(getClass().getResource("/style/game.css").toExternalForm());
         this.scene = scene;
+        
+
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode()==KeyCode.ESCAPE){
+                    gameWindow.startMenu();
+                }
+            }
+        });
         return scene;
     }
 
@@ -52,5 +67,7 @@ public abstract class BaseScene {
     public Scene getScene() {
         return this.scene;
     }
+
+    
 
 }
