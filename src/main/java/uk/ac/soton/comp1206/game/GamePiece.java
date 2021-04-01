@@ -191,11 +191,9 @@ public class GamePiece {
         for(int i =0;i<3;i++){
             for(int j=0;j<3;j++){
                 if(direction==1){
-                    logger.info("{},{} ---> {},{}",i,j,2-j,i);
                     rotated[i][j]=blocks[2-j][i];
                 }
                 if(direction == -1){
-                    logger.info("{},{} ---> {},{}",i,j,j,2-i);
                     rotated[i][j]=blocks[j][2-i];
                 }
             }

@@ -1,7 +1,5 @@
 package uk.ac.soton.comp1206.component;
 
-import java.util.Arrays;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -61,7 +59,6 @@ public class GameBoard extends GridPane {
      */
     private BlockClickedListener blockClickedListener;
     private ClickListener ClickListener;
-    private MouseButton rotateKey;
 
     private int[] currentHoverCords = {0,0};
 

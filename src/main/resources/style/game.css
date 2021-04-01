@@ -117,13 +117,6 @@
     -fx-font-family: 'Orbitron';
 }
 
-.scoreitem {
-
-}
-
-.scorer {
-
-}
 
 .myscore {
     -fx-font-weight: 700;
@@ -133,12 +126,7 @@
     -fx-strikethrough: true;
 }
 
-.points {
-}
 
-.channelList {
-
-}
 
 .channelItem {
     -fx-fill: white;

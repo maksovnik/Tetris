@@ -25,6 +25,7 @@ public class App extends Application {
     private static App instance;
     private static final Logger logger = LogManager.getLogger(App.class);
     private Stage stage;
+    GameWindow gameWindow;
 
     /**
      * Start the game
@@ -44,6 +45,7 @@ public class App extends Application {
         instance = this;
         this.stage = stage;
 
+        
         //Open game window
         openGame();
     }
@@ -55,7 +57,7 @@ public class App extends Application {
         logger.info("Opening game window");
 
         //Change the width and height in this class to change the base rendering resolution for all game parts
-        var gameWindow = new GameWindow(stage,width,height);
+        this.gameWindow = new GameWindow(stage,width,height);
 
         //Display the GameWindow
         stage.show();

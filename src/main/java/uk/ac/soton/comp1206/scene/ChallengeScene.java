@@ -18,8 +18,8 @@ import javafx.scene.text.Text;
 import uk.ac.soton.comp1206.component.GameBlock;
 import uk.ac.soton.comp1206.component.GameBoard;
 import uk.ac.soton.comp1206.component.PieceBoard;
-import uk.ac.soton.comp1206.event.NextPieceListener;
 import uk.ac.soton.comp1206.event.ClickListener;
+import uk.ac.soton.comp1206.event.NextPieceListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
 import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.game.GamePiece;
@@ -196,20 +196,13 @@ public class ChallengeScene extends BaseScene{
             board.moveHover(keyMap.get(keyName));
         }
         
-        System.out.println(keyName);
         if(k.isArrowKey()){
             board.moveHover(keyName);
         }
         if(k==KeyCode.ESCAPE){
             gameWindow.startMenu();
         }
-        if(k==KeyCode.ENTER){
-            blockClicked(board.getCurrentHoverPiece());
-        }
-        if(k==KeyCode.ENTER){
-            blockClicked(board.getCurrentHoverPiece());
-        }
-        if(k==KeyCode.ENTER){
+        if(Arrays.asList("Enter","X").contains(keyName)){
             blockClicked(board.getCurrentHoverPiece());
         }
         if(Arrays.asList("Q","Z","Open Bracket").contains(keyName)){

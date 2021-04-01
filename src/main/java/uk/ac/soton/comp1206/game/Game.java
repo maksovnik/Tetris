@@ -180,9 +180,6 @@ public class Game {
 
     public void afterPiece(){
         logger.info("Checking for Rows");
-        int first= 0; //Sets the number of cleared rows to 0
-        int second= 0; //Sets the number of cleared lines to 0
-
 
         ArrayList<Integer> rowsToClear = new ArrayList<Integer>();
         ArrayList<Integer> colsToClear = new ArrayList<Integer>();
