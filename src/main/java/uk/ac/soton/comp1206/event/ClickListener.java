@@ -1,7 +1,6 @@
 package uk.ac.soton.comp1206.event;
 
 import javafx.scene.input.MouseButton;
-import uk.ac.soton.comp1206.component.GameBlock;
 
 /**
  * The Block Clicked listener is used to handle the event when a block in a GameBoard is clicked. It passes the

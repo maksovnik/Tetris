@@ -162,9 +162,32 @@ public class GameBlock extends Canvas {
         gc.setFill(colour);
         gc.fillRect(0,0, width, height);
 
+        //Triangle
+        gc.setFill(Color.color(1.0, 1.0, 1.0, 0.12));
+        var xCords = new double[] {0.0,width,0.0};
+        var yCords = new double[] {0.0,height,height};
+        gc.fillPolygon(xCords,yCords, 3);
+
+        //Left Bevel
+        gc.setFill(Color.color(1.0, 1.0, 1.0, 0.3));
+        gc.fillRect(0.0, 0.0, 4, height);
+        
+
+        //Right Bevel
+        gc.setFill(Color.color(0.0, 0.0, 0.0, 0.5));
+        gc.fillRect(width - 4, 0.0, width, height);
+
+        //Bottom Bevel
+        gc.setFill(Color.color(0.0, 0.0, 0.0, 0.5));
+        gc.fillRect(0.0, height - 4, width, height);
+        
+
+
         //Border
         gc.setStroke(Color.BLACK);
         gc.strokeRect(0,0,width,height);
+
+        
     }
 
     /**

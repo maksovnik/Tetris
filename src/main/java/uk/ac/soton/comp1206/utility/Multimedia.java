@@ -3,8 +3,12 @@ package uk.ac.soton.comp1206.utility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
 public class Multimedia{
 
@@ -13,6 +17,8 @@ public class Multimedia{
     private static MediaPlayer mediaPlayer;
     private static MediaPlayer backgroundPlayer;
 
+    private static boolean fadeIn=true;
+
 
     public static void startBackgroundMusic(String file) {
 
@@ -20,15 +26,33 @@ public class Multimedia{
             backgroundPlayer.stop();
             audioEnabled=false;
         }
+        
+
 
         String toPlay = Multimedia.class.getResource(file).toExternalForm();
         Media play = new Media(toPlay);
         backgroundPlayer = new MediaPlayer(play);
-        backgroundPlayer.setOnEndOfMedia(() -> startBackgroundMusic(file));
-        backgroundPlayer.play();
-        backgroundPlayer.setVolume(0.3);
-        audioEnabled = true;
+        backgroundPlayer.setOnEndOfMedia(() -> loopBackground(file));
         
+        backgroundPlayer.setVolume(0.2);
+
+        if(fadeIn){
+            backgroundPlayer.setVolume(0);
+            Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(4),
+                    new KeyValue(backgroundPlayer.volumeProperty(), 0.2)));
+            timeline.play();
+        }
+        backgroundPlayer.play();
+        
+        
+        audioEnabled = true;
+    }
+
+    public static void loopBackground(String file){
+        fadeIn = false;
+        startBackgroundMusic(file);
+        fadeIn = true;
     }
 
     public static void playAudio(final String file) {
