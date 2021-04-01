@@ -24,8 +24,6 @@ public abstract class BaseScene{
      */
     public BaseScene(GameWindow gameWindow) {
         this.gameWindow = gameWindow;
-
-        
     }
 
     /**
@@ -48,18 +46,15 @@ public abstract class BaseScene{
         scene.getStylesheets().add(getClass().getResource("/style/game.css").toExternalForm());
         this.scene = scene;
         
-
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if(event.getCode()==KeyCode.ESCAPE){
-                    gameWindow.startMenu();
-                }
-            }
-        });
+        //scene.setOnKeyPressed(e -> handleKeyPress(e));
         return scene;
     }
 
+    //private void handleKeyPress(KeyEvent e){
+    //     if(e.getCode()==KeyCode.ESCAPE){
+    //         gameWindow.startMenu();
+    //     }
+    // }
     /**
      * Get the JavaFX scene contained inside
      * @return JavaFX scene

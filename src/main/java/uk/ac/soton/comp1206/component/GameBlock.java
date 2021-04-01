@@ -7,6 +7,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
@@ -22,7 +23,8 @@ import javafx.scene.paint.Paint;
 public class GameBlock extends Canvas {
 
     private static final Logger logger = LogManager.getLogger(GameBlock.class);
-
+    private boolean hover = false;
+    
     /**
      * The set of colours for different pieces
      */
@@ -101,6 +103,17 @@ public class GameBlock extends Canvas {
         paint();
     }
 
+    public void paintHover() {
+        final GraphicsContext gc = this.getGraphicsContext2D();
+        gc.setFill(Color.color(1.0, 1.0, 1.0, 0.5));
+        gc.fillRect(0.0, 0.0, this.width, this.height);
+    }
+    
+    public void setHoverX(boolean m){
+        hover = m;
+        paint();
+    }
+
     /**
      * Handle painting of the block canvas
      */
@@ -112,7 +125,12 @@ public class GameBlock extends Canvas {
             //If the block is not empty, paint with the colour represented by the value
             paintColor(COLOURS[value.get()]);
         }
+
+        if(hover){
+            paintHover();
+        }
     }
+
 
     /**
      * Paint this canvas empty
@@ -124,7 +142,7 @@ public class GameBlock extends Canvas {
         gc.clearRect(0,0,width,height);
 
         //Fill
-        gc.setFill(Color.WHITE);
+        gc.setFill(Color.rgb(0, 0, 0, 0.5));
         gc.fillRect(0,0, width, height);
 
         //Border

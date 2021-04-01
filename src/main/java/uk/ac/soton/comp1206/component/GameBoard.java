@@ -1,11 +1,15 @@
 package uk.ac.soton.comp1206.component;
 
+import java.util.Arrays;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import uk.ac.soton.comp1206.event.BlockClickedListener;
+import uk.ac.soton.comp1206.event.ClickListener;
 import uk.ac.soton.comp1206.game.Grid;
 
 /**
@@ -56,6 +60,10 @@ public class GameBoard extends GridPane {
      * The listener to call when a specific block is clicked
      */
     private BlockClickedListener blockClickedListener;
+    private ClickListener ClickListener;
+    private MouseButton rotateKey;
+
+    private int[] currentHoverCords = {0,0};
 
 
     /**
@@ -73,6 +81,12 @@ public class GameBoard extends GridPane {
 
         //Build the GameBoard
         build();
+    }
+
+    public GameBlock getCurrentHoverPiece(){
+        int cx = currentHoverCords[0];
+        int cy = currentHoverCords[1];
+        return blocks[cx][cy];
     }
 
     /**
@@ -120,11 +134,56 @@ public class GameBoard extends GridPane {
 
         for(var x = 0; x < rows; x++) {
             for (var y = 0; y < cols; y++) {
-                createBlock(x,y);
+                GameBlock b = createBlock(x,y);
+                b.setOnMouseEntered(e -> this.hover(b));
+                b.setOnMouseExited(e -> this.unhover());
             }
         }
+
+        setOnMouseClicked(e -> Click(e));
+
     }
 
+    public void moveHover(String direction){
+        int cx = currentHoverCords[0];
+        int cy = currentHoverCords[1];
+        unhover();
+        try{
+            if(direction=="Left"){
+                hover(blocks[cx][cy-1]);
+            }
+            if(direction=="Right"){
+                hover(blocks[cx][cy+1]);
+            }
+            if(direction=="Up"){
+                hover(blocks[cx-1][cy]);
+            }
+            if(direction=="Down"){
+                hover(blocks[cx+1][cy]);
+            }
+        }
+        catch(ArrayIndexOutOfBoundsException ignored){
+            hover(blocks[cx][cy]);
+        }
+    }
+    private void hover(GameBlock b){
+        unhover();
+        b.setHoverX(true);
+        currentHoverCords[0] = b.getX();
+        currentHoverCords[1] = b.getY();
+        System.out.println(Arrays.toString(currentHoverCords));
+    }
+    
+    private void unhover(){
+        int cx = currentHoverCords[0];
+        int cy = currentHoverCords[1];
+        blocks[cx][cy].setHoverX(false);
+        currentHoverCords[0] = 0;
+        currentHoverCords[1] = 0;
+    }
+    private void Click(MouseEvent e) {
+        ClickListener.Click(e.getButton());
+    }
 
     protected GameBlock createBlock(int x, int y) {
         var blockWidth = width / cols;
@@ -156,17 +215,21 @@ public class GameBoard extends GridPane {
         this.blockClickedListener = listener;
     }
 
+    public void setOnClick(ClickListener listener) {
+        this.ClickListener = listener;
+    }
+
     /**
      * Triggered when a block is clicked. Call the attached listener.
      * @param event mouse event
      * @param block block clicked on
      */
     private void blockClicked(MouseEvent event, GameBlock block) {
-        logger.info("Block clicked: {}", block);
-
-        if(blockClickedListener != null) {
-            blockClickedListener.blockClicked(block);
+        if(event.getButton()==MouseButton.PRIMARY){
+            logger.info("Block clicked: {}", block);
+            if(blockClickedListener != null) {
+                blockClickedListener.blockClicked(block);
+            }
         }
     }
-
 }

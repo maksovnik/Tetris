@@ -1,9 +1,16 @@
 package uk.ac.soton.comp1206.scene;
 
+import java.util.Arrays;
+import java.util.Hashtable;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -12,6 +19,8 @@ import uk.ac.soton.comp1206.component.GameBlock;
 import uk.ac.soton.comp1206.component.GameBoard;
 import uk.ac.soton.comp1206.component.PieceBoard;
 import uk.ac.soton.comp1206.event.NextPieceListener;
+import uk.ac.soton.comp1206.event.ClickListener;
+import uk.ac.soton.comp1206.event.pieceEventListener;
 import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.game.GamePiece;
 import uk.ac.soton.comp1206.ui.GamePane;
@@ -20,10 +29,16 @@ import uk.ac.soton.comp1206.ui.GameWindow;
 /**
  * The Single Player challenge scene. Holds the UI for the single player challenge mode in the game.
  */
+
+
+
 public class ChallengeScene extends BaseScene{
+
+    private final Hashtable<String, String> keyMap = new Hashtable<String, String>();
 
     private static final Logger logger = LogManager.getLogger(MenuScene.class);
     protected Game game;
+    private GameBoard board;
 
     /**
      * Create a new Single Player challenge scene
@@ -31,7 +46,13 @@ public class ChallengeScene extends BaseScene{
      */
     public ChallengeScene(GameWindow gameWindow) {
         super(gameWindow);
-        logger.info("Creating Menu Scene");
+
+        keyMap.put("W", "Up");
+        keyMap.put("A", "Left");
+        keyMap.put("S", "Down");
+        keyMap.put("D", "Right");
+
+        logger.info("Creating Challenge Scene");
     }
 
     /**
@@ -41,19 +62,20 @@ public class ChallengeScene extends BaseScene{
     public void build() {
         logger.info("Building " + this.getClass().getName());
 
-
+        //scene.requestFocus(root);
+        
         gameWindow.setBGMusic("music/game.wav");
-
+        
         setupGame();
+        
 
         root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
-
         var challengePane = new StackPane();
         challengePane.setMaxWidth(gameWindow.getWidth());
         challengePane.setMaxHeight(gameWindow.getHeight());
         challengePane.getStyleClass().add("menu-background");
         
-
+        
         Text scoreT = new Text("Score");
         Text score = new Text("a Text");
 
@@ -78,21 +100,37 @@ public class ChallengeScene extends BaseScene{
 
 
         PieceBoard p = new PieceBoard(3, 3, 100, 100);
-        
+        PieceBoard f = new PieceBoard(3, 3, 75, 75);
+
         game.setNextPieceListener(new NextPieceListener(){
             @Override
-            public void nextPiece(GamePiece piece) {
+            public void nextPiece(GamePiece piece, GamePiece followingP) {
                 p.SetPieceToDisplay(piece);
+                f.SetPieceToDisplay(followingP);
             }
         });
 
+        game.setPieceEventListener(new pieceEventListener(){
+            @Override
+            public void playSound(String type){
+                if(type=="playPiece"){
+                    gameWindow.setSound("sounds/explode.wav");
+                }
+                if(type=="rotate"){
+                    Platform.runLater(() -> gameWindow.setSound("sounds/rotate.wav"));
+                }
+                if(type=="swap"){
+                    gameWindow.setSound("sounds/rotate.wav");
+                }
+            }
+        });
 
         VBox v = new VBox();
         v.setStyle("-fx-padding: 5;");
         v.setSpacing(5);
         v.setAlignment(Pos.CENTER_RIGHT);
         
-        v.getChildren().addAll(scoreT,score,levelT,level,livesT,lives,multiplierT,multiplier,p);
+        v.getChildren().addAll(scoreT,score,levelT,level,livesT,lives,multiplierT,multiplier,p,f);
 
         root.getChildren().addAll(challengePane);
         var mainPane = new BorderPane();
@@ -101,7 +139,34 @@ public class ChallengeScene extends BaseScene{
 
 
         var board = new GameBoard(game.getGrid(),gameWindow.getWidth()/2,gameWindow.getWidth()/2);
+        this.board=board;
 
+        board.setOnClick(new ClickListener(){
+            @Override
+            public void Click(MouseButton m) {
+                if(m==MouseButton.SECONDARY){
+                    game.rotateCurrentPiece(1);
+                }
+            }
+        });
+
+        p.setOnClick(new ClickListener(){
+            @Override
+            public void Click(MouseButton m) {
+                if(m==MouseButton.PRIMARY){
+                    game.rotateCurrentPiece(1);
+                }
+            }
+        });
+
+        f.setOnClick(new ClickListener(){
+            @Override
+            public void Click(MouseButton m) {
+                if(m==MouseButton.PRIMARY){
+                    game.swapCurrentPiece();
+                }
+            }
+        });
 
         score.textProperty().bind(game.getScoreProperty().asString());
         level.textProperty().bind(game.getLevelProperty().asString());
@@ -111,12 +176,53 @@ public class ChallengeScene extends BaseScene{
 
         //Handle block on gameboard grid being clicked
         board.setOnBlockClick(this::blockClicked);
+        Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
+
+        
+
     }
 
     /**
      * Handle when a block is clicked
      * @param gameBlock the Game Block that was clocked
      */
+
+    private void handleKeyPress(KeyEvent e){
+
+        KeyCode k = e.getCode();
+        String keyName = k.getName();
+
+        if(Arrays.asList("W","A","S","D").contains(keyName)){
+            board.moveHover(keyMap.get(keyName));
+        }
+        
+        if(k.isArrowKey()){
+            board.moveHover(keyName);
+        }
+        if(k==KeyCode.ESCAPE){
+            gameWindow.startMenu();
+        }
+        if(k==KeyCode.ENTER){
+            blockClicked(board.getCurrentHoverPiece());
+        }
+        if(k==KeyCode.ENTER){
+            blockClicked(board.getCurrentHoverPiece());
+        }
+        if(k==KeyCode.ENTER){
+            blockClicked(board.getCurrentHoverPiece());
+        }
+        if(Arrays.asList("Q","Z","[").contains(keyName)){
+            game.rotateCurrentPiece(-1);
+        }
+        if(Arrays.asList("E","C","]").contains(keyName)){
+            game.rotateCurrentPiece(1);
+        }
+        if(Arrays.asList("Space","R").contains(keyName)){
+            game.swapCurrentPiece();
+        }
+
+    }
+    
     private void blockClicked(GameBlock gameBlock) {
         game.blockClicked(gameBlock);
     }

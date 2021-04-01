@@ -1,5 +1,8 @@
 package uk.ac.soton.comp1206.game;
 
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /**
  * Instances of GamePiece Represents the model of a specific Game Piece with it's block makeup.
  *
@@ -12,6 +15,8 @@ public class GamePiece {
      * The total number of pieces in this game
      */
     public static final int PIECES = 15;
+
+    private static final Logger logger = LogManager.getLogger(GamePiece.class);
 
     /**
      * The 2D grid representation of the shape of this piece
@@ -180,34 +185,23 @@ public class GamePiece {
         return blocks;
     }
 
-    /**
-     * Rotate this piece the given number of rotations
-     * @param rotations number of rotations
-     */
-    public void rotate(int rotations) {
-        for(int rotated = 0; rotated < rotations; rotated ++) {
-            rotate();
-        }
-    }
 
-    /**
-     * Rotate this piece exactly once by rotating it's 3x3 grid
-     */
-    public void rotate() {
+    public void rotate(int direction){ //direction=1 is clockwise, -1 is anticlockwise
         int[][] rotated = new int[blocks.length][blocks[0].length];
-        rotated[2][0] = blocks[0][0];
-        rotated[1][0] = blocks[0][1];
-        rotated[0][0] = blocks[0][2];
+        for(int i =0;i<3;i++){
+            for(int j=0;j<3;j++){
+                if(direction==1){
+                    logger.info("{},{} ---> {},{}",i,j,2-j,i);
+                    rotated[i][j]=blocks[2-j][i];
+                }
+                if(direction == -1){
+                    logger.info("{},{} ---> {},{}",i,j,j,2-i);
+                    rotated[i][j]=blocks[j][2-i];
+                }
+            }
+        }
 
-        rotated[2][1] = blocks[1][0];
-        rotated[1][1] = blocks[1][1];
-        rotated[0][1] = blocks[1][2];
-
-        rotated[2][2] = blocks[2][0];
-        rotated[1][2] = blocks[2][1];
-        rotated[0][2] = blocks[2][2];
-
-        blocks = rotated;
+        blocks=rotated;
     }
 
 

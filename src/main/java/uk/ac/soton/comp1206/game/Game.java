@@ -11,6 +11,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import uk.ac.soton.comp1206.component.GameBlock;
 import uk.ac.soton.comp1206.event.NextPieceListener;
+import uk.ac.soton.comp1206.event.pieceEventListener;
 
 
 /**
@@ -21,6 +22,9 @@ public class Game {
 
     GamePiece currentPiece;
     NextPieceListener npl;
+    pieceEventListener ppl;
+
+    GamePiece followingPiece;
     
     private static final Logger logger = LogManager.getLogger(Game.class);
 
@@ -30,6 +34,12 @@ public class Game {
     private SimpleIntegerProperty multiplier = new SimpleIntegerProperty(1);
 
     
+    public void rotateCurrentPiece(int direction){
+        currentPiece.rotate(direction);
+        npl.nextPiece(currentPiece,followingPiece);
+        ppl.playSound("rotate");
+    }
+
     /**
      * Number of rows
      */
@@ -55,6 +65,10 @@ public class Game {
 
     public void setNextPieceListener(NextPieceListener npl){
         this.npl = npl;
+    }
+
+    public void setPieceEventListener(pieceEventListener ppl){
+        this.ppl = ppl;
     }
 
     public int getScore(){
@@ -101,21 +115,32 @@ public class Game {
         logger.info("Starting game");
         initialiseGame();
         currentPiece = spawnPiece();
+        this.followingPiece = spawnPiece();
+        npl.nextPiece(currentPiece,followingPiece);
+        
+    }
+
+    public void swapCurrentPiece(){
+        GamePiece temp = followingPiece;
+        followingPiece = currentPiece;
+        currentPiece = temp;
+        npl.nextPiece(currentPiece,followingPiece);
+        ppl.playSound("swap");
     }
 
     public void nextPiece(){
-        currentPiece = spawnPiece();
+        currentPiece = followingPiece;
+        followingPiece = spawnPiece();
+        npl.nextPiece(currentPiece,followingPiece);
         
     }
 
     public GamePiece spawnPiece(){
         logger.info("Spawning a piece");
         Random rn = new Random();
-        int number = rn.nextInt(15);
-        //int number = 3; //For testing
+        int number = rn.nextInt(15); //3 For testing
         GamePiece piece = GamePiece.createPiece(number);
         logger.info(Arrays.deepToString(piece.getBlocks()));
-        npl.nextPiece(piece);
         return piece;
 
     }
@@ -148,6 +173,7 @@ public class Game {
             grid.playPiece(currentPiece, x, y);
             afterPiece();
             nextPiece();
+            ppl.playSound("playPiece");
         }
         //grid.set(x,y,newValue);
 

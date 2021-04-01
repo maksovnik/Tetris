@@ -2,6 +2,7 @@ package uk.ac.soton.comp1206.ui;
 
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -140,6 +141,7 @@ public class GameWindow {
         stage.setScene(this.scene);
     }
 
+
     /**
      * When switching scenes, perform any cleanup needed, such as removing previous listeners
      */
@@ -154,6 +156,10 @@ public class GameWindow {
      */
     public Scene getScene() {
         return scene;
+    }
+
+    public BaseScene getBScene() {
+        return currentScene;
     }
 
     /**

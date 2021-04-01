@@ -46,17 +46,8 @@ public class InstructionsScene extends BaseScene {
     @Override
     public void build() {
         
-        gameWindow.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                System.out.println("Hi");
-                if(event.getCode()==KeyCode.ESCAPE){
-                    System.out.println("Hi");
-                    gameWindow.loadScene(gameWindow.getMenu());
-                }
-            }
-        });
-        
+
+
         logger.info("Building " + this.getClass().getName());
 
         root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
