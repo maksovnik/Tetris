@@ -3,6 +3,7 @@ package uk.ac.soton.comp1206.component;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javafx.animation.AnimationTimer;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
@@ -24,6 +25,7 @@ public class GameBlock extends Canvas {
 
     private static final Logger logger = LogManager.getLogger(GameBlock.class);
     private boolean hover = false;
+    
     
     /**
      * The set of colours for different pieces
@@ -66,6 +68,8 @@ public class GameBlock extends Canvas {
      */
     private final IntegerProperty value = new SimpleIntegerProperty(0);
 
+    private boolean showCenter;
+
     /**
      * Create a new single Game Block
      * @param gameBoard the board this block belongs to
@@ -90,7 +94,10 @@ public class GameBlock extends Canvas {
         //When the value property is updated, call the internal updateValue method
         value.addListener(this::updateValue);
     }
-
+    public void setShowCenter(boolean m){
+        showCenter=m;
+        paint();
+    }
     /**
      * When the value of this block is updated,
      * @param observable what was updated
@@ -112,6 +119,32 @@ public class GameBlock extends Canvas {
         paint();
     }
 
+    public void fadeOut(){
+
+        paintEmpty();
+        new AnimationTimer(){
+            double opacity = 1;
+
+            @Override
+            public void handle(long now){
+                fadeFrame();
+            }
+
+            public void fadeFrame(){
+                paintEmpty();
+                this.opacity -= 0.25;
+                if (this.opacity <= 0.0) {
+                    this.stop();
+                    return;
+                }
+                var gc = getGraphicsContext2D();
+                gc.setFill(Color.color(0.0, 1.0, 0.0, this.opacity));
+                gc.fillRect(0.0, 0.0, GameBlock.this.width, GameBlock.this.height);
+            }
+            
+        }.start();;
+    }
+
     /**
      * Handle painting of the block canvas
      */
@@ -122,6 +155,10 @@ public class GameBlock extends Canvas {
         } else {
             //If the block is not empty, paint with the colour represented by the value
             paintColor(COLOURS[value.get()]);
+        }
+        
+        if(showCenter){
+            paintCircle();
         }
 
         if(hover){
@@ -146,6 +183,7 @@ public class GameBlock extends Canvas {
         //Border
         gc.setStroke(Color.BLACK);
         gc.strokeRect(0,0,width,height);
+
     }
 
     /**
@@ -181,14 +219,18 @@ public class GameBlock extends Canvas {
         gc.setFill(Color.color(0.0, 0.0, 0.0, 0.5));
         gc.fillRect(0.0, height - 4, width, height);
         
-
-
         //Border
-        gc.setStroke(Color.BLACK);
+        gc.setFill(Color.color(0.0, 0.0, 0.0, 0.5));
         gc.strokeRect(0,0,width,height);
-
-        
     }
+
+    public void paintCircle(){
+        System.out.println("circle");
+        var gc = getGraphicsContext2D();
+        var radius = 8;
+        gc.setFill(Color.color(1.0, 1.0, 1.0, 0.5));
+        gc.fillOval((width/2)-radius, (height/2)-radius, radius*2, radius*2);
+    };
 
     /**
      * Get the column of this block

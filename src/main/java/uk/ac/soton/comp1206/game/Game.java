@@ -10,6 +10,8 @@ import org.apache.logging.log4j.Logger;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import uk.ac.soton.comp1206.component.GameBlock;
+import uk.ac.soton.comp1206.component.GameBlockCoordinate;
+import uk.ac.soton.comp1206.event.LineClearedListener;
 import uk.ac.soton.comp1206.event.NextPieceListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
 
@@ -23,6 +25,7 @@ public class Game {
     GamePiece currentPiece;
     NextPieceListener npl;
     pieceEventListener ppl;
+    LineClearedListener lcl;
 
     GamePiece followingPiece;
     
@@ -207,12 +210,14 @@ public class Game {
             }
         }
 
+        var c = new ArrayList<GameBlockCoordinate>();
+
         for(int i:rowsToClear){
-            setRowZero(i);
+            c.addAll(setRowZero(i));
         }
 
         for(int i:colsToClear){
-            setColZero(i);
+            c.addAll(setColZero(i));
         }
 
         int numLines = rowsToClear.size()+colsToClear.size();
@@ -226,23 +231,36 @@ public class Game {
         
         level.set((int)this.score.get()/1000); //Sets level
         multiplier.set(multiplier.get()+1); //Increases multiplier
+
+        var coords = new ArrayList<GameBlockCoordinate>();
+
+        lcl.linesCleared(c.toArray(new GameBlockCoordinate[coords.size()]));
         
     }
 
+    public void setLineClearedListener(LineClearedListener l){
+        this.lcl = l;
+    }
     public int score(int lines, int blocks){
         return lines*blocks*10*getMultiplier();
     }
-    public void setRowZero(int row){
+    public ArrayList<GameBlockCoordinate> setRowZero(int row){
+        var coords = new ArrayList<GameBlockCoordinate>();
         // Set's each item in a row to 0
         for(int i=0;i<grid.getCols();i++){
             grid.set(row, i, 0);
-        } 
+            coords.add(new GameBlockCoordinate(row,i));
+        }
+        return coords;
     }
-    public void setColZero(int col){
+    public ArrayList<GameBlockCoordinate> setColZero(int col){
+        var coords = new ArrayList<GameBlockCoordinate>();
         // Set's each item in a column to 0
         for(int i=0;i<grid.getRows();i++){
             grid.set(i, col, 0);
+            coords.add(new GameBlockCoordinate(i,col));
         } 
+        return coords;
     }
     public boolean fullColumn(int col){
         //Checks if a specific column is full

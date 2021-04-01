@@ -16,9 +16,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import uk.ac.soton.comp1206.component.GameBlock;
+import uk.ac.soton.comp1206.component.GameBlockCoordinate;
 import uk.ac.soton.comp1206.component.GameBoard;
 import uk.ac.soton.comp1206.component.PieceBoard;
 import uk.ac.soton.comp1206.event.ClickListener;
+import uk.ac.soton.comp1206.event.LineClearedListener;
 import uk.ac.soton.comp1206.event.NextPieceListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
 import uk.ac.soton.comp1206.game.Game;
@@ -101,10 +103,11 @@ public class ChallengeScene extends BaseScene{
 
         PieceBoard p = new PieceBoard(3, 3, 100, 100);
         PieceBoard f = new PieceBoard(3, 3, 75, 75);
-
+        p.setDoCircle(true);
         game.setNextPieceListener(new NextPieceListener(){
             @Override
             public void nextPiece(GamePiece piece, GamePiece followingP) {
+                System.out.println("Running");
                 p.SetPieceToDisplay(piece);
                 f.SetPieceToDisplay(followingP);
             }
@@ -122,6 +125,13 @@ public class ChallengeScene extends BaseScene{
                 if(type=="swap"){
                     Multimedia.playAudio("/sounds/rotate.wav");
                 }
+            }
+        });
+
+        game.setLineClearedListener(new LineClearedListener(){
+            @Override
+            public void linesCleared(GameBlockCoordinate[] x){
+                board.fadeOut(x);
             }
         });
 
