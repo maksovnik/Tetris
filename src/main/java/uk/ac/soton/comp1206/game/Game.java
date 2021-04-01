@@ -3,14 +3,22 @@ package uk.ac.soton.comp1206.game;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import uk.ac.soton.comp1206.component.GameBlock;
 import uk.ac.soton.comp1206.component.GameBlockCoordinate;
+import uk.ac.soton.comp1206.event.GameLoopListener;
 import uk.ac.soton.comp1206.event.LineClearedListener;
 import uk.ac.soton.comp1206.event.NextPieceListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
@@ -26,6 +34,10 @@ public class Game {
     NextPieceListener npl;
     pieceEventListener ppl;
     LineClearedListener lcl;
+    GameLoopListener gll;
+    ScheduledExecutorService executor;
+    Timer timer;
+    TimerTask task;
 
     GamePiece followingPiece;
     
@@ -43,6 +55,9 @@ public class Game {
         ppl.playSound("rotate");
     }
 
+    private int getTimerDelay(){
+        return Math.max(2500,12000-500*(level.get()));
+    }
     /**
      * Number of rows
      */
@@ -59,6 +74,7 @@ public class Game {
     protected final Grid grid;
 
     int[][] blocks = new int[5][5];
+    private ScheduledFuture<?> loop;
 
     /**
      * Create a new game with the specified rows and columns. Creates a corresponding grid model.
@@ -68,6 +84,10 @@ public class Game {
 
     public void setNextPieceListener(NextPieceListener npl){
         this.npl = npl;
+    }
+
+    public void setGameLoopListener(GameLoopListener gll){
+        this.gll = gll;
     }
 
     public void setPieceEventListener(pieceEventListener ppl){
@@ -108,7 +128,15 @@ public class Game {
         //Create a new grid model to represent the game state
         this.grid = new Grid(cols,rows);
 
-        //Multimedia.playSound("music/game.wav");
+        this.executor = Executors.newSingleThreadScheduledExecutor();
+
+        Platform.runLater(() -> startGameLoop());
+    }
+
+    private void startGameLoop(){
+        int delay = getTimerDelay();
+        gll.timerEnd(delay);
+        this.loop = executor.schedule(() -> gameLoop(), delay, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -120,7 +148,37 @@ public class Game {
         currentPiece = spawnPiece();
         this.followingPiece = spawnPiece();
         npl.nextPiece(currentPiece,followingPiece);
+    
+    }
+
+    public void restartLoop(){
+        System.out.println("Loop restarted");
+        this.loop.cancel(false);
+        this.startGameLoop();
+    }
+
+    private void gameLoop(){
+        if(multiplier.get()>1){
+            multiplier.set(1);
+        }
         
+        if(lives.get()>0){
+            lives.set(lives.get()-1);
+        }
+        else{
+            end();
+        }
+
+        nextPiece();
+
+        int nextDelay = getTimerDelay();
+        startGameLoop();
+
+        
+    }
+
+    private void end(){
+        System.out.println("Game Over");
     }
 
     public void swapCurrentPiece(){

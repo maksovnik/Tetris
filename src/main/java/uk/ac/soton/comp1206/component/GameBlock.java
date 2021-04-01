@@ -132,7 +132,7 @@ public class GameBlock extends Canvas {
 
             public void fadeFrame(){
                 paintEmpty();
-                this.opacity -= 0.25;
+                this.opacity -= 0.025;
                 if (this.opacity <= 0.0) {
                     this.stop();
                     return;

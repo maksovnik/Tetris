@@ -6,7 +6,11 @@ import java.util.Hashtable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -14,12 +18,15 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import uk.ac.soton.comp1206.component.GameBlock;
 import uk.ac.soton.comp1206.component.GameBlockCoordinate;
 import uk.ac.soton.comp1206.component.GameBoard;
 import uk.ac.soton.comp1206.component.PieceBoard;
 import uk.ac.soton.comp1206.event.ClickListener;
+import uk.ac.soton.comp1206.event.GameLoopListener;
 import uk.ac.soton.comp1206.event.LineClearedListener;
 import uk.ac.soton.comp1206.event.NextPieceListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
@@ -118,6 +125,7 @@ public class ChallengeScene extends BaseScene{
             public void playSound(String type){
                 if(type=="playPiece"){
                     Multimedia.playAudio("/sounds/explode.wav");
+                    game.restartLoop();
                 }
                 if(type=="rotate"){
                     Multimedia.playAudio("/sounds/rotate.wav");
@@ -134,6 +142,8 @@ public class ChallengeScene extends BaseScene{
                 board.fadeOut(x);
             }
         });
+
+
 
         VBox v = new VBox();
         v.setStyle("-fx-padding: 5;");
@@ -178,12 +188,31 @@ public class ChallengeScene extends BaseScene{
             }
         });
 
+
+        Rectangle rectangle = new Rectangle(0, 0, 600, 40);
+
+        double x = gameWindow.getWidth()-10;
+        game.setGameLoopListener(new GameLoopListener(){
+            @Override
+            public void timerEnd(int delay){
+                rectangle.setWidth(x);
+                KeyValue widthValue = new KeyValue(rectangle.widthProperty(), 0);
+                KeyFrame frame = new KeyFrame(Duration.millis(delay), widthValue);
+                Timeline timeline = new Timeline(frame);
+                timeline.play();
+            }
+        });
+
+        
         score.textProperty().bind(game.getScoreProperty().asString());
         level.textProperty().bind(game.getLevelProperty().asString());
         lives.textProperty().bind(game.getLivesProperty().asString());
         multiplier.textProperty().bind(game.getMultiplierProperty().asString());
         mainPane.setCenter(board);
+        mainPane.setBottom(rectangle);
 
+        BorderPane.setAlignment(rectangle, Pos.CENTER_LEFT);
+        BorderPane.setMargin(rectangle, new Insets(5,5,5,5)); // optional
         //Handle block on gameboard grid being clicked
         board.setOnBlockClick(this::blockClicked);
         Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
