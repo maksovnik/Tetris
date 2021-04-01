@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
+import uk.ac.soton.comp1206.utility.Multimedia;
 
 /**
  * The main menu of the game. Provides a gateway to the rest of the game.
@@ -38,7 +39,7 @@ public class MenuScene extends BaseScene {
 
         root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
 
-        gameWindow.setBGMusic("music/menu.mp3");
+        Multimedia.startBackgroundMusic("/music/menu.mp3");
 
         var menuPane = new StackPane();
         menuPane.setMaxWidth(gameWindow.getWidth());

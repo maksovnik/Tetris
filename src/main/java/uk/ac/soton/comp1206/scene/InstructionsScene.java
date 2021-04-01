@@ -30,7 +30,6 @@ public class InstructionsScene extends BaseScene {
     public InstructionsScene(GameWindow gameWindow) {
     
         super(gameWindow);
-        System.out.println();
 
 
         
@@ -83,7 +82,6 @@ public class InstructionsScene extends BaseScene {
         gridpane.setAlignment(Pos.CENTER);
         for(int i=0;i<3;i++){
             for(int j=0;j<5;j++){
-                //System.out.println(count);
                 PieceBoard p = new PieceBoard(3, 3, 50, 50);
                 var b = GamePiece.createPiece(count);
                 p.SetPieceToDisplay(b);

@@ -25,6 +25,7 @@ import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.game.GamePiece;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
+import uk.ac.soton.comp1206.utility.Multimedia;
 
 /**
  * The Single Player challenge scene. Holds the UI for the single player challenge mode in the game.
@@ -62,9 +63,8 @@ public class ChallengeScene extends BaseScene{
     public void build() {
         logger.info("Building " + this.getClass().getName());
 
-        //scene.requestFocus(root);
         
-        gameWindow.setBGMusic("music/game.wav");
+        Multimedia.startBackgroundMusic("/music/game.wav");
         
         setupGame();
         
@@ -114,13 +114,13 @@ public class ChallengeScene extends BaseScene{
             @Override
             public void playSound(String type){
                 if(type=="playPiece"){
-                    gameWindow.setSound("sounds/explode.wav");
+                    Multimedia.playAudio("/sounds/explode.wav");
                 }
                 if(type=="rotate"){
-                    Platform.runLater(() -> gameWindow.setSound("sounds/rotate.wav"));
+                    Multimedia.playAudio("/sounds/rotate.wav");
                 }
                 if(type=="swap"){
-                    gameWindow.setSound("sounds/rotate.wav");
+                    Multimedia.playAudio("/sounds/rotate.wav");
                 }
             }
         });
@@ -196,6 +196,7 @@ public class ChallengeScene extends BaseScene{
             board.moveHover(keyMap.get(keyName));
         }
         
+        System.out.println(keyName);
         if(k.isArrowKey()){
             board.moveHover(keyName);
         }
@@ -211,10 +212,10 @@ public class ChallengeScene extends BaseScene{
         if(k==KeyCode.ENTER){
             blockClicked(board.getCurrentHoverPiece());
         }
-        if(Arrays.asList("Q","Z","[").contains(keyName)){
+        if(Arrays.asList("Q","Z","Open Bracket").contains(keyName)){
             game.rotateCurrentPiece(-1);
         }
-        if(Arrays.asList("E","C","]").contains(keyName)){
+        if(Arrays.asList("E","C","Close Bracket").contains(keyName)){
             game.rotateCurrentPiece(1);
         }
         if(Arrays.asList("Space","R").contains(keyName)){

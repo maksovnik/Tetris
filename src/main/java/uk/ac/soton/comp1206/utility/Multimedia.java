@@ -1,83 +1,44 @@
 package uk.ac.soton.comp1206.utility;
 
-import java.util.concurrent.SynchronousQueue;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 public class Multimedia{
 
-
-
     private static final Logger logger = LogManager.getLogger(Multimedia.class);
-    private AudioClip audio;
-    private boolean loop;
-    private SynchronousQueue<String> queue;
+    private static boolean audioEnabled;
+    private static MediaPlayer mediaPlayer;
+    private static MediaPlayer backgroundPlayer;
 
 
-    public Multimedia(boolean loop){
+    public static void startBackgroundMusic(String file) {
 
-        this.queue = new SynchronousQueue<String>();
-        this.loop = loop;
+        if(audioEnabled){
+            backgroundPlayer.stop();
+            audioEnabled=false;
+        }
 
-        new Thread(() -> {
-            while(true){
-                get();
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-    public void playSound(String file) {
-        String toPlay = Multimedia.class.getResource("/" + file).toExternalForm();
-
-        logger.info("Playing audio: " + toPlay);
-
-        try {
-
-            if(audio != null){
-                audio.stop();
-            }
-
-            audio = new AudioClip(toPlay);
-
-            audio.setVolume(0.5f);
-
-            if(loop){
-                audio.setCycleCount(-1);
-            }
+        String toPlay = Multimedia.class.getResource(file).toExternalForm();
+        Media play = new Media(toPlay);
+        backgroundPlayer = new MediaPlayer(play);
+        backgroundPlayer.setOnEndOfMedia(() -> startBackgroundMusic(file));
+        backgroundPlayer.play();
+        backgroundPlayer.setVolume(0.3);
+        audioEnabled = true;
         
-            audio.play();
-
-        
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("Unable to play audio file, disabling audio");
-        }
     }
 
-    public void get(){
-        String file;
-        try {
-            file = (String) queue.take();
-            playSound(file);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-       
-    }
+    public static void playAudio(final String file) {
 
-    public void put(String file){
-        try {
-            queue.put(file);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+        String toPlay = Multimedia.class.getResource(file).toExternalForm();
+        Media play = new Media(toPlay);
+        mediaPlayer = new MediaPlayer(play);
+        mediaPlayer.setVolume(0.25);
+        mediaPlayer.play();
 
+    }
+    
 }

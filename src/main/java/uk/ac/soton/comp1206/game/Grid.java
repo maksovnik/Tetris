@@ -72,7 +72,6 @@ public class Grid {
             for(int j=-1;j<2;j++){
                 if(blocks[i+1][j+1]>0){
                     set(x+i,y+j,z.getValue());
-                    System.out.println("This is "+(x+i)+" "+(y+j));
                 }
             }
         }

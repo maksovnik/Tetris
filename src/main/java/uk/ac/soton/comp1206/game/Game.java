@@ -167,7 +167,6 @@ public class Game {
             newValue = 0;
         }
 
-        System.out.println(x+" "+y);
         //Update the grid with the new value
         if(grid.canPlayPiece(currentPiece, x, y)){
             grid.playPiece(currentPiece, x, y);
@@ -195,7 +194,6 @@ public class Game {
                 blocks[i][j] = grid.get(i, j);
             }
         }
-        System.out.println(Arrays.deepToString(blocks));
 
         for(int i=0;i<grid.getRows();i++){ //Loops through each row
             if(fullRow(i)){ //Checks if specific row is clear

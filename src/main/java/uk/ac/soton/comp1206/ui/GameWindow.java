@@ -28,8 +28,8 @@ public class GameWindow {
     private final int width;
     private final int height;
 
-    private Multimedia bgPlayer = new Multimedia(true);
-    private Multimedia soundPlayer = new Multimedia(false);
+    //private Multimedia bgPlayer = new Multimedia(true);
+    //private Multimedia soundPlayer = new Multimedia(false);
 
     private final Stage stage;
 
@@ -109,12 +109,12 @@ public class GameWindow {
         stage.setOnCloseRequest(ev -> App.getInstance().shutdown());
     }
 
-    public void setBGMusic(String f){
-        bgPlayer.put(f);
-    }
-    public void setSound(String f){
-        soundPlayer.put(f);
-    }
+    // public void setBGMusic(String f){
+    //     bgPlayer.put(f);
+    // }
+    // public void setSound(String f){
+    //     soundPlayer.put(f);
+    // }
     /**
      * Load a given scene which extends BaseScene and switch over.
      * @param newScene new scene to load

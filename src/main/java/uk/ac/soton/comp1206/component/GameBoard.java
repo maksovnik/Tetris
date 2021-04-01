@@ -171,7 +171,6 @@ public class GameBoard extends GridPane {
         b.setHoverX(true);
         currentHoverCords[0] = b.getX();
         currentHoverCords[1] = b.getY();
-        System.out.println(Arrays.toString(currentHoverCords));
     }
     
     private void unhover(){
