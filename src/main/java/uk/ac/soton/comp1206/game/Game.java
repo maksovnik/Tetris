@@ -64,6 +64,7 @@ public class Game {
     }
 
     private int getTimerDelay(){
+        //return 500;
         return Math.max(2500,12000-500*(level.get()));
     }
     /**

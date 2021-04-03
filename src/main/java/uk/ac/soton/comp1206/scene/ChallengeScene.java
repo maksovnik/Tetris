@@ -2,6 +2,7 @@ package uk.ac.soton.comp1206.scene;
 
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +13,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.WritableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
@@ -20,6 +22,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -219,15 +222,31 @@ public class ChallengeScene extends BaseScene{
 
         Rectangle rectangle = new Rectangle(0, 0, 600, 40);
 
+        rectangle.setFill(Color.BLUE);
+
+        Color[] palette = new Color[] { Color.RED, Color.BLUE, Color.ORANGE };
+        Random rng = new Random();
+        
         double x = gameWindow.getWidth()-10;
         game.setGameLoopListener(new GameLoopListener(){
             @Override
             public void timerEnd(int delay){
                 //delay = 1000;
+                
                 rectangle.setWidth(x);
                 KeyValue widthValue = new KeyValue(rectangle.widthProperty(), 0);
                 KeyFrame frame = new KeyFrame(Duration.millis(delay), widthValue);
-                Timeline timeline = new Timeline(frame);
+
+                KeyValue greenValue= new KeyValue(rectangle.fillProperty(), Color.GREEN);
+                KeyFrame frame1 = new KeyFrame(Duration.ZERO, greenValue);
+
+                KeyValue yellowValue= new KeyValue(rectangle.fillProperty(), Color.YELLOW);
+                KeyFrame frame2 = new KeyFrame(new Duration(delay*0.5), yellowValue);
+            
+                KeyValue redValue= new KeyValue(rectangle.fillProperty(), Color.RED);
+                KeyFrame frame3 = new KeyFrame(new Duration(delay*0.75), redValue);
+
+                Timeline timeline = new Timeline(frame,frame1,frame2,frame3);
                 timeline.play();
             }
         });

@@ -34,7 +34,6 @@ public class ScoresList extends VBox{
     }
 
     public void setScore(ListProperty<Pair<String, Integer>> s){
-        s.sort((a, b) -> b.getValue().compareTo(a.getValue()));
         scores.set(s);
     }
 
@@ -50,7 +49,6 @@ public class ScoresList extends VBox{
 
     public HBox makeScoreBox(Pair<String, Integer> x){
         var h = new HBox(8);
-        
 
         h.setAlignment(Pos.CENTER);
         var n = new Text(x.getKey());
@@ -60,7 +58,6 @@ public class ScoresList extends VBox{
         s.getStyleClass().add("scorelist");
         h.getChildren().addAll(n,s);
 
-        reveal();
         return h;
     }
 
@@ -70,7 +67,7 @@ public class ScoresList extends VBox{
     
     public void reveal(){
 
-        final FadeTransition fader = new FadeTransition(new Duration(300.0), scoreBox);
+        final FadeTransition fader = new FadeTransition(new Duration(300.0), this);
         fader.setFromValue(0.0);
         fader.setToValue(1.0);
         
