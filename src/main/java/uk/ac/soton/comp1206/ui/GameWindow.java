@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import uk.ac.soton.comp1206.App;
+import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.scene.BaseScene;
 import uk.ac.soton.comp1206.scene.ChallengeScene;
@@ -98,8 +99,8 @@ public class GameWindow {
         loadScene(new InstructionsScene(this));
     }
 
-    public void startScores() {
-        loadScene(new ScoreScene(this));
+    public void startScores(Game g) {
+        loadScene(new ScoreScene(this,g));
     }
 
     /**

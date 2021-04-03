@@ -26,10 +26,9 @@ public class Multimedia{
             backgroundPlayer.stop();
             audioEnabled=false;
         }
-        
-
-
+    
         String toPlay = Multimedia.class.getResource(file).toExternalForm();
+        logger.info("Playing Music: "+ toPlay);
         Media play = new Media(toPlay);
         backgroundPlayer = new MediaPlayer(play);
         backgroundPlayer.setOnEndOfMedia(() -> loopBackground(file));
@@ -58,6 +57,7 @@ public class Multimedia{
     public static void playAudio(final String file) {
 
         String toPlay = Multimedia.class.getResource(file).toExternalForm();
+        logger.info("Playing Sound: "+ toPlay);
         Media play = new Media(toPlay);
         mediaPlayer = new MediaPlayer(play);
         mediaPlayer.setVolume(0.25);

@@ -31,13 +31,16 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
+import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
+import uk.ac.soton.comp1206.utility.Utility;
 
 public class ScoreScene extends BaseScene{
 
@@ -47,71 +50,21 @@ public class ScoreScene extends BaseScene{
     ArrayList<Pair<String,Integer>> scores = new ArrayList<Pair<String,Integer>>();
     ObservableList<Pair<String,Integer>> scoresList = FXCollections.observableArrayList(scores);
     ListProperty<Pair<String,Integer>> wrapper = new SimpleListProperty<Pair<String,Integer>>(scoresList);
-    
 
-    public ScoreScene (GameWindow gameWindow) {
+    private ScoresList ScoreList;
+    
+    Game game;
+    public ScoreScene (GameWindow gameWindow, Game game) {
         super(gameWindow);
         logger.info("Creating Score Scene");
+        this.game=game;
     }
-        
-    public void loadScores(){
-        var x = new ArrayList<Pair<String, Integer>>();
-        
-
-            File f = new File("scores.txt");
-
-            try {
-                f.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(f));
-
-                Scanner s = new Scanner(reader);
-                while (s.hasNext()){
-                    String[] parts = s.next().split(":");
-                    var p = new Pair<String, Integer>(parts[0],Integer.parseInt(parts[1]));
-                    x.add(p);
-                }
-                s.close();
     
-                scores.sort((a, b) -> b.getValue().compareTo(a.getValue()));
-    
-                for(Pair<String, Integer> i : x){
-                    wrapper.add(i);
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+    private void addSort(String s, int score){
 
-        
-
-
+        //scores.add()
     }
-    public void writeScores(){
-        var file = new File("scores.txt");
-        try {
-            file.createNewFile();   
-            FileWriter fw = new FileWriter(file);
 
-            var bw= new BufferedWriter(fw);
-        
-            System.out.println(scores.size());
-            for(Pair<String,Integer> i:wrapper.get()){
-                String s = i.getKey() + ":"+i.getValue()+"\n";
-                bw.write(s);
-            }
-            bw.close();
-            fw.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-            
-    }
 
     @Override
     public void initialise() {  
@@ -147,24 +100,35 @@ public class ScoreScene extends BaseScene{
 
         title.getStyleClass().add("score");
 
-        var sl = new ScoresList();
-        wrapper.bind(sl.getScoreProperty());
+        ScoreList = new ScoresList();
 
-        loadScores();
+        var y = Utility.loadScores();
+        wrapper.setAll(y);
 
-        var b = new Pair<String,Integer>("Maks",500);
-        var c = new Pair<String,Integer>("Toby",2000);
-        var d = new Pair<String,Integer>("Toby",7000);
-        sl.makeScoreBox(c);
+        boolean addded = addNewScore("LKK", game.getScore());
+
+        ScoreList.setScore(wrapper);
+
+        if(addded){
+            Utility.writeScores(wrapper.get());
+        }
         
-        wrapper.add(d);
-        writeScores();
-
-
-
-        elements.getChildren().addAll(title,sl);
+        elements.getChildren().addAll(title,ScoreList);
         mainPane.setCenter(elements);
         
+    }
+
+    private boolean addNewScore(String name, int score){
+        var tempScores = new ArrayList<Pair<String, Integer>>(wrapper.get());
+        for(Pair<String, Integer> i: tempScores){
+            if(score>i.getValue()){
+                var x = new Pair<String, Integer>(name,score);
+                wrapper.add(x);
+                wrapper.remove(i);
+                return true;
+            }
+        }
+        return false;
     }
 
 }

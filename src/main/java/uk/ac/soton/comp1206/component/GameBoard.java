@@ -117,7 +117,6 @@ public class GameBoard extends GridPane {
     }
 
     public void fadeOut(GameBlockCoordinate[] cords){
-        System.out.println("Running! lol");
         for(GameBlockCoordinate i: cords){
             getBlock(i.getX(),i.getY()).fadeOut();
         }

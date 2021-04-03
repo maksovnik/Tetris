@@ -10,6 +10,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
@@ -30,12 +32,14 @@ import uk.ac.soton.comp1206.event.GameEndListener;
 import uk.ac.soton.comp1206.event.GameLoopListener;
 import uk.ac.soton.comp1206.event.LineClearedListener;
 import uk.ac.soton.comp1206.event.NextPieceListener;
+import uk.ac.soton.comp1206.event.ScoreListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
 import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.game.GamePiece;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Multimedia;
+import uk.ac.soton.comp1206.utility.Utility;
 
 /**
  * The Single Player challenge scene. Holds the UI for the single player challenge mode in the game.
@@ -50,6 +54,7 @@ public class ChallengeScene extends BaseScene{
     private static final Logger logger = LogManager.getLogger(MenuScene.class);
     protected Game game;
     private GameBoard board;
+
 
     /**
      * Create a new Single Player challenge scene
@@ -87,22 +92,25 @@ public class ChallengeScene extends BaseScene{
         
         
         Text scoreT = new Text("Score");
-        Text score = new Text("a Text");
+        Text score = new Text("0");
+
+        Text hscoreT = new Text("High Score");
+        Text hscore = new Text();
 
         Text levelT = new Text("Level");
-        Text level = new Text("a Text");
+        Text level = new Text();
         
         Text livesT = new Text("Lives");
-        Text lives = new Text("a Text");
+        Text lives = new Text();
 
         Text multiplierT = new Text("Multiplier");
-        Text multiplier = new Text("a Text");
+        Text multiplier = new Text();
 
-        for(Text i: new Text[] {scoreT,levelT,livesT,multiplierT}){
+        for(Text i: new Text[] {scoreT,levelT,livesT,multiplierT,hscoreT}){
             i.getStyleClass().add("heading");
         }
 
-
+        hscore.getStyleClass().add("hiscore");
         score.getStyleClass().add("score");
         level.getStyleClass().add("level");
         lives.getStyleClass().add("lives");
@@ -115,7 +123,7 @@ public class ChallengeScene extends BaseScene{
         game.setNextPieceListener(new NextPieceListener(){
             @Override
             public void nextPiece(GamePiece piece, GamePiece followingP) {
-                System.out.println("Running");
+                logger.info("Next Piece");
                 p.SetPieceToDisplay(piece);
                 f.SetPieceToDisplay(followingP);
             }
@@ -148,7 +156,7 @@ public class ChallengeScene extends BaseScene{
             @Override
             public void endGame(Game g){
                 game.endGameLoop();
-                Platform.runLater(() -> gameWindow.startScores());
+                Platform.runLater(() -> gameWindow.startScores(game));
             }
         });
 
@@ -159,7 +167,7 @@ public class ChallengeScene extends BaseScene{
         v.setSpacing(5);
         v.setAlignment(Pos.CENTER_RIGHT);
         
-        v.getChildren().addAll(scoreT,score,levelT,level,livesT,lives,multiplierT,multiplier,p,f);
+        v.getChildren().addAll(hscoreT,hscore,scoreT,score,levelT,level,livesT,lives,multiplierT,multiplier,p,f);
 
         root.getChildren().addAll(challengePane);
         var mainPane = new BorderPane();
@@ -197,6 +205,17 @@ public class ChallengeScene extends BaseScene{
             }
         });
 
+        game.setScoreListener(new ScoreListener(){
+            @Override
+            public void setScore(int scoreC){
+                score.setText(Integer.toString(scoreC));
+                if(Integer.parseInt(hscore.getText()) < scoreC){
+                    hscore.setText(Integer.toString(scoreC));
+                
+                }
+            }
+        });
+
 
         Rectangle rectangle = new Rectangle(0, 0, 600, 40);
 
@@ -213,8 +232,8 @@ public class ChallengeScene extends BaseScene{
             }
         });
 
-        
-        score.textProperty().bind(game.getScoreProperty().asString());
+        hscore.setText(Integer.toString(getHighScore()));
+    
         level.textProperty().bind(game.getLevelProperty().asString());
         lives.textProperty().bind(game.getLivesProperty().asString());
         
@@ -228,10 +247,15 @@ public class ChallengeScene extends BaseScene{
         board.setOnBlockClick(this::blockClicked);
         Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
 
-        
+    }
+     
+    private int getHighScore(){
+        Utility.fetchHighScore();
+        String name = Utility.getHighName();
+        var highScore = Utility.getHighScore();
+        return highScore;
 
     }
-
     /**
      * Handle when a block is clicked
      * @param gameBlock the Game Block that was clocked

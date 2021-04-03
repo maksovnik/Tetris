@@ -9,7 +9,6 @@ public class PieceBoard extends GameBoard {
     }
 
     public void SetPieceToDisplay(GamePiece g){
-        System.out.println("----------------------------------");
         int[][] blocks = g.getBlocks();
         for(int i=0;i<3;i++){
             for(int j=0;j<3;j++){

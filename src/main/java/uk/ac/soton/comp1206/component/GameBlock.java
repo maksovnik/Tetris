@@ -225,7 +225,6 @@ public class GameBlock extends Canvas {
     }
 
     public void paintCircle(){
-        System.out.println("circle");
         var gc = getGraphicsContext2D();
         var radius = 8;
         gc.setFill(Color.color(1.0, 1.0, 1.0, 0.5));

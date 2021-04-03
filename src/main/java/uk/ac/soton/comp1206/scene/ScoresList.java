@@ -33,6 +33,11 @@ public class ScoresList extends VBox{
         });
     }
 
+    public void setScore(ListProperty<Pair<String, Integer>> s){
+        s.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+        scores.set(s);
+    }
+
     public void updateScores(){
         //scoreList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
         this.getChildren().clear();
@@ -44,8 +49,8 @@ public class ScoresList extends VBox{
     }
 
     public HBox makeScoreBox(Pair<String, Integer> x){
-        var h = new HBox();
-
+        var h = new HBox(8);
+        
 
         h.setAlignment(Pos.CENTER);
         var n = new Text(x.getKey());
@@ -57,9 +62,6 @@ public class ScoresList extends VBox{
 
         reveal();
         return h;
-
-        
-        
     }
 
     public ListProperty<Pair<String, Integer>> getScoreProperty() {

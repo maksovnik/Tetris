@@ -22,6 +22,7 @@ import uk.ac.soton.comp1206.event.GameEndListener;
 import uk.ac.soton.comp1206.event.GameLoopListener;
 import uk.ac.soton.comp1206.event.LineClearedListener;
 import uk.ac.soton.comp1206.event.NextPieceListener;
+import uk.ac.soton.comp1206.event.ScoreListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
 import uk.ac.soton.comp1206.ui.GameWindow;
 
@@ -38,6 +39,7 @@ public class Game {
     LineClearedListener lcl;
     GameEndListener gel;
     GameLoopListener gll;
+    ScoreListener sl;
 
 
     ScheduledExecutorService executor;
@@ -62,8 +64,7 @@ public class Game {
     }
 
     private int getTimerDelay(){
-        return 1000;
-        //return Math.max(2500,12000-500*(level.get()));
+        return Math.max(2500,12000-500*(level.get()));
     }
     /**
      * Number of rows
@@ -164,7 +165,6 @@ public class Game {
     }
 
     public void restartLoop(){
-        System.out.println("Loop restarted");
         this.loop.cancel(false);
         this.startGameLoop();
     }
@@ -302,6 +302,7 @@ public class Game {
             return;
         }
         this.score.set(getScore()+score(numLines,blocksCleared)); //Increases score
+        sl.setScore(this.score.get());
         
         level.set((int)this.score.get()/1000); //Sets level
         multiplier.set(multiplier.get()+1); //Increases multiplier
@@ -310,6 +311,10 @@ public class Game {
 
         lcl.linesCleared(c.toArray(new GameBlockCoordinate[coords.size()]));
         
+    }
+
+    public void setScoreListener(ScoreListener l){
+        this.sl = l;
     }
 
     public void setLineClearedListener(LineClearedListener l){
