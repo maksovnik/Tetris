@@ -1,16 +1,5 @@
-# Compiled class file
 *.class
-
-# Log file
 *.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.nar
@@ -18,11 +7,6 @@
 *.zip
 *.tar.gz
 *.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-
-
 /target
 target/
 target
@@ -31,7 +15,6 @@ target
 **/META-INF/
 !.mvn/wrapper/maven-wrapper.jar
 .mvn/
-### STS ###
 .apt_generated
 .classpath
 .factorypath
@@ -43,6 +26,7 @@ target
 .sts4-cache
 
 
+### VSCode ###
 **/.vscode/
 .vscode/*
 !.vscode/settings.json
@@ -51,21 +35,7 @@ target
 !.vscode/extensions.json
 
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/build/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/node_modules/
-
-
+### Maven ###
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -75,5 +45,4 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
-# https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar

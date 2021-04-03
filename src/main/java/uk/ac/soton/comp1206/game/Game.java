@@ -24,7 +24,6 @@ import uk.ac.soton.comp1206.event.LineClearedListener;
 import uk.ac.soton.comp1206.event.NextPieceListener;
 import uk.ac.soton.comp1206.event.ScoreListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
-import uk.ac.soton.comp1206.ui.GameWindow;
 
 
 /**
@@ -185,7 +184,6 @@ public class Game {
 
         nextPiece();
 
-        int nextDelay = getTimerDelay();
         startGameLoop();
 
         

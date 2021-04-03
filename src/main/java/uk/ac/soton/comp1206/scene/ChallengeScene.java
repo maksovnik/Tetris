@@ -2,7 +2,6 @@ package uk.ac.soton.comp1206.scene;
 
 import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,9 +10,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.WritableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
@@ -223,9 +219,6 @@ public class ChallengeScene extends BaseScene{
         Rectangle rectangle = new Rectangle(0, 0, 600, 40);
 
         rectangle.setFill(Color.BLUE);
-
-        Color[] palette = new Color[] { Color.RED, Color.BLUE, Color.ORANGE };
-        Random rng = new Random();
         
         double x = gameWindow.getWidth()-10;
         game.setGameLoopListener(new GameLoopListener(){
@@ -270,7 +263,6 @@ public class ChallengeScene extends BaseScene{
      
     private int getHighScore(){
         Utility.fetchHighScore();
-        String name = Utility.getHighName();
         var highScore = Utility.getHighScore();
         return highScore;
 
