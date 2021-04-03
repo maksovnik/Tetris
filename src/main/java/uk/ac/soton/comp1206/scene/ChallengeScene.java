@@ -26,6 +26,7 @@ import uk.ac.soton.comp1206.component.GameBlockCoordinate;
 import uk.ac.soton.comp1206.component.GameBoard;
 import uk.ac.soton.comp1206.component.PieceBoard;
 import uk.ac.soton.comp1206.event.ClickListener;
+import uk.ac.soton.comp1206.event.GameEndListener;
 import uk.ac.soton.comp1206.event.GameLoopListener;
 import uk.ac.soton.comp1206.event.LineClearedListener;
 import uk.ac.soton.comp1206.event.NextPieceListener;
@@ -143,6 +144,14 @@ public class ChallengeScene extends BaseScene{
             }
         });
 
+        game.setGameEndListener(new GameEndListener(){
+            @Override
+            public void endGame(Game g){
+                game.endGameLoop();
+                Platform.runLater(() -> gameWindow.startScores());
+            }
+        });
+
 
 
         VBox v = new VBox();
@@ -195,6 +204,7 @@ public class ChallengeScene extends BaseScene{
         game.setGameLoopListener(new GameLoopListener(){
             @Override
             public void timerEnd(int delay){
+                //delay = 1000;
                 rectangle.setWidth(x);
                 KeyValue widthValue = new KeyValue(rectangle.widthProperty(), 0);
                 KeyFrame frame = new KeyFrame(Duration.millis(delay), widthValue);
@@ -207,6 +217,7 @@ public class ChallengeScene extends BaseScene{
         score.textProperty().bind(game.getScoreProperty().asString());
         level.textProperty().bind(game.getLevelProperty().asString());
         lives.textProperty().bind(game.getLivesProperty().asString());
+        
         multiplier.textProperty().bind(game.getMultiplierProperty().asString());
         mainPane.setCenter(board);
         mainPane.setBottom(rectangle);

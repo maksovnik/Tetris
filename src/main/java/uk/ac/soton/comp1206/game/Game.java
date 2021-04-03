@@ -18,10 +18,12 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import uk.ac.soton.comp1206.component.GameBlock;
 import uk.ac.soton.comp1206.component.GameBlockCoordinate;
+import uk.ac.soton.comp1206.event.GameEndListener;
 import uk.ac.soton.comp1206.event.GameLoopListener;
 import uk.ac.soton.comp1206.event.LineClearedListener;
 import uk.ac.soton.comp1206.event.NextPieceListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
+import uk.ac.soton.comp1206.ui.GameWindow;
 
 
 /**
@@ -34,7 +36,10 @@ public class Game {
     NextPieceListener npl;
     pieceEventListener ppl;
     LineClearedListener lcl;
+    GameEndListener gel;
     GameLoopListener gll;
+
+
     ScheduledExecutorService executor;
     Timer timer;
     TimerTask task;
@@ -45,7 +50,8 @@ public class Game {
 
     private SimpleIntegerProperty score = new SimpleIntegerProperty(0);
     private SimpleIntegerProperty level = new SimpleIntegerProperty(0);
-    private SimpleIntegerProperty lives = new SimpleIntegerProperty(3);
+    //private SimpleIntegerProperty lives = new SimpleIntegerProperty(3);
+    private SimpleIntegerProperty lives = new SimpleIntegerProperty(0);
     private SimpleIntegerProperty multiplier = new SimpleIntegerProperty(1);
 
     
@@ -56,7 +62,8 @@ public class Game {
     }
 
     private int getTimerDelay(){
-        return Math.max(2500,12000-500*(level.get()));
+        return 1000;
+        //return Math.max(2500,12000-500*(level.get()));
     }
     /**
      * Number of rows
@@ -139,6 +146,11 @@ public class Game {
         this.loop = executor.schedule(() -> gameLoop(), delay, TimeUnit.MILLISECONDS);
     }
 
+    public void endGameLoop(){
+        executor.shutdown();
+        executor.shutdownNow();
+    }
+
     /**
      * Start the game
      */
@@ -167,6 +179,7 @@ public class Game {
         }
         else{
             end();
+            return;
         }
 
         nextPiece();
@@ -178,9 +191,12 @@ public class Game {
     }
 
     private void end(){
-        System.out.println("Game Over");
+        gel.endGame(this);
     }
 
+    public void setGameEndListener(GameEndListener g){
+        this.gel = g;
+    }
     public void swapCurrentPiece(){
         GamePiece temp = followingPiece;
         followingPiece = currentPiece;

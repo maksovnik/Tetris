@@ -1,0 +1,13 @@
+Toby:7000
+Toby:7000
+Toby:2000
+Toby:2000
+Maks:500
+Maks:500
+Sd:3
+Sd:3
+Sd:3
+Sd:3
+Toby:2000
+Toby:7000
+Toby:7000

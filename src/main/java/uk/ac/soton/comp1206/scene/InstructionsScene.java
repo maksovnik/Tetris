@@ -19,7 +19,7 @@ import uk.ac.soton.comp1206.ui.GameWindow;
 public class InstructionsScene extends BaseScene {
 
     private static final Logger logger = LogManager.getLogger(InstructionsScene.class);
-
+    
     public InstructionsScene(GameWindow gameWindow) {
     
         super(gameWindow);

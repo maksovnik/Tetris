@@ -15,6 +15,7 @@ import uk.ac.soton.comp1206.scene.BaseScene;
 import uk.ac.soton.comp1206.scene.ChallengeScene;
 import uk.ac.soton.comp1206.scene.InstructionsScene;
 import uk.ac.soton.comp1206.scene.MenuScene;
+import uk.ac.soton.comp1206.scene.ScoreScene;
 
 /**
  * The GameWindow is the single window for the game where everything takes place. To move between screens in the game,
@@ -96,6 +97,11 @@ public class GameWindow {
     public void startInstructions() {
         loadScene(new InstructionsScene(this));
     }
+
+    public void startScores() {
+        loadScene(new ScoreScene(this));
+    }
+
     /**
      * Display the single player challenge
      */
