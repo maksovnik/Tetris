@@ -17,7 +17,7 @@ public class Utility {
     static String highName;
     static int highScore;
 
-    public static List<Pair<String, Integer>> loadScores(){
+    public static ArrayList<Pair<String, Integer>> loadScores(){
         var x = new ArrayList<Pair<String, Integer>>();
     
         File f = new File("scores.txt");
@@ -51,6 +51,21 @@ public class Utility {
         return x;
        
     }
+
+    public static ArrayList<Pair<String, Integer>> getScoreArrayList(String scores){
+        var x = new ArrayList<Pair<String, Integer>>();
+                
+        String[] parts = scores.split(" ");
+        String[] newScores = parts[1].split("\n");
+        for(String i: newScores){
+            String[] newParts = i.split(":");
+            var p = new Pair<String, Integer>(newParts[0],Integer.parseInt(newParts[1]));
+            x.add(p);
+        }
+
+        return x;
+    }
+
 
 
 

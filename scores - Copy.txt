@@ -1,4 +1,3 @@
-sdfsdfsdf:30000
 James:2370
 Mac:1770
 maks:550
@@ -7,4 +6,5 @@ test:100
 Oli:60
 test:59
 test:59
+Maks:50
 Maks:50

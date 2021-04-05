@@ -4,7 +4,6 @@ import javafx.animation.FadeTransition;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -14,14 +13,16 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import javafx.util.Pair;
 
-public class ScoresList extends VBox{
+public class ScoreBox extends VBox{
 
-    ObservableList<Pair<String, Integer>> scoreList = FXCollections.observableArrayList();
-    SimpleListProperty<Pair<String, Integer>> scores = new SimpleListProperty<Pair<String, Integer>>(scoreList);
+    ObservableList<Pair<String, Integer>> scoreList;
+    SimpleListProperty<Pair<String, Integer>> scores;
     StringProperty name;
     HBox scoreBox;
     
-    public ScoresList(){
+    public ScoreBox(){
+        this.scores=new SimpleListProperty<Pair<String, Integer>>();
+        setOpacity(0);
 
         scores.addListener(new ListChangeListener<Pair<String,Integer>>() {
             @Override
@@ -31,12 +32,7 @@ public class ScoresList extends VBox{
         });
     }
 
-    public void setScore(ListProperty<Pair<String, Integer>> s){
-        scores.set(s);
-    }
-
     public void updateScores(){
-        //scoreList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
         this.getChildren().clear();
         
         for(Pair<String, Integer> i : scores){
@@ -64,7 +60,6 @@ public class ScoresList extends VBox{
     }
     
     public void reveal(){
-
         final FadeTransition fader = new FadeTransition(new Duration(300.0), this);
         fader.setFromValue(0.0);
         fader.setToValue(1.0);

@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javafx.application.Platform;
-import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,7 +19,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 import uk.ac.soton.comp1206.event.CommunicationsListener;
+import uk.ac.soton.comp1206.event.handleHighscore;
 import uk.ac.soton.comp1206.game.Game;
+import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Utility;
@@ -29,155 +30,165 @@ public class ScoreScene extends BaseScene{
 
     private static final Logger logger = LogManager.getLogger(ScoreScene.class);
 
-    SimpleListProperty<Pair<String,Integer>> localScores;
-    ArrayList<Pair<String,Integer>> scores = new ArrayList<Pair<String,Integer>>();
-    ObservableList<Pair<String,Integer>> scoresList = FXCollections.observableArrayList(scores);
-    ListProperty<Pair<String,Integer>> wrapper = new SimpleListProperty<Pair<String,Integer>>(scoresList);
+    private ObservableList<Pair<String, Integer>> localScoreList;
+    private ObservableList<Pair<String, Integer>> remoteScoreList;
 
-    SimpleListProperty<Pair<String,Integer>> localScores2;
-    ArrayList<Pair<String,Integer>> scores2 = new ArrayList<Pair<String,Integer>>();
-    ObservableList<Pair<String,Integer>> scoresList2 = FXCollections.observableArrayList(scores2);
-    ListProperty<Pair<String,Integer>> remoteScores = new SimpleListProperty<Pair<String,Integer>>(scoresList2);
+    private ScoreBox localHiScoresBox;
+    private ScoreBox remoteHiScoresBox;
 
-    private ScoresList ScoreList;
-    private ScoresList RemoteScoreList;
-    
+    private ArrayList<Pair<String, Integer>> remoteScores;
+
+
     Game game;
     int score;
+    String name;
+    Communicator communicator;
+
+    handleHighscore h;
 
     private VBox elements;
+
     public ScoreScene (GameWindow gameWindow, Game game) {
         super(gameWindow);
         logger.info("Creating Score Scene");
         this.game=game;
         this.score=game.getScore();
+        this.communicator = gameWindow.getCommunicator();
+        this.remoteScores = new ArrayList<Pair<String, Integer>>();
+
     }
+
     
 
     @Override
-    public void initialise() {  
+    public void initialise() { 
+        this.communicator.addListener(message -> Platform.runLater(() -> this.handleMessage(message.trim())));
+        this.communicator.send("HISCORES");
     }
 
-    private void loadOnlineScores(){
-        gameWindow.getCommunicator().send("HISCORES");
+    private void seth(handleHighscore h){
+        this.h=h;
+    }
+    private void handleMessage(final String message) {
+        System.out.println("asdas");
+        remoteScores = Utility.getScoreArrayList(message);
+        remoteScores.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+        remoteScoreList.addAll(remoteScores);
+
+        var lowestRemote = remoteScores.get(this.remoteScores.size() - 1).getValue();
+        var lowestLocal = this.localScoreList.get(this.localScoreList.size() - 1).getValue();
+        
+
+        if((score>lowestLocal)&&(score>lowestRemote)){
+
+            seth(() -> {
+                Pair<String,Integer> lowestLocalItem = localScoreList.get(localScoreList.size() - 1);
+                localScoreList.remove(lowestLocalItem);
+                Pair<String,Integer> lowestRemoteItem = remoteScoreList.get(remoteScoreList.size() - 1);
+                remoteScoreList.remove(lowestRemoteItem);
+
+                var newScore = new Pair<String, Integer>(name,score);
+                
+                remoteScoreList.add(newScore);
+                localScoreList.add(newScore);
+                
+                remoteScoreList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+                localScoreList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+
+            });
+
+            letEnterName();
+
+        }
+        else if(score>lowestLocal){
+            
+            seth(() -> {
+                Pair<String,Integer> lowestLocalItem = localScoreList.get(localScoreList.size() - 1);
+                localScoreList.remove(lowestLocalItem);
+                var newScore = new Pair<String, Integer>(name,score);
+                localScoreList.add(newScore);
+                localScoreList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+            });
+            letEnterName();
+        }
+        else if(score>lowestRemote){
+            seth(() -> {
+                Pair<String,Integer> lowestRemoteItem = remoteScoreList.get(remoteScoreList.size() - 1);
+                remoteScoreList.remove(lowestRemoteItem);
+
+                var newScore = new Pair<String, Integer>(name,score);
+                remoteScoreList.add(newScore);
+                remoteScoreList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+
+            });
+            letEnterName();
+        }
+
+    }
+
+    private void letEnterName(){
+        var name =  new TextField();
+        var enter =  new Button("Add");
+
+        enter.setOnAction(event -> {
+            this.name = name.getText();
+            
+            elements.getChildren().remove(name);
+            elements.getChildren().remove(enter);
+
+            h.handleIt();
+
+            Utility.writeScores(localScoreList);
+            localHiScoresBox.reveal();
+            remoteHiScoresBox.reveal();
+
+        });
+        
+        elements.getChildren().addAll(name,enter);
     }
 
     @Override
     public void build() {
         
-
-
-        logger.info("Building " + this.getClass().getName());
-
         root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
 
         var instructionsPane = new StackPane();
-        instructionsPane.setMaxWidth(gameWindow.getWidth());
-        instructionsPane.setMaxHeight(gameWindow.getHeight());
         instructionsPane.getStyleClass().add("menu-background");
         root.getChildren().add(instructionsPane);
 
         var mainPane = new BorderPane();
         instructionsPane.getChildren().add(mainPane);
 
-        var boxes = new HBox(12);
-        boxes.setAlignment(Pos.CENTER);
+        var scoreBoxes = new HBox(12);
+        scoreBoxes.setAlignment(Pos.CENTER);
         
         elements = new VBox();
-        loadOnlineScores();
-        
         elements.setAlignment(Pos.CENTER);
 
         Text title = new Text("Scores");
-
         title.getStyleClass().add("score");
 
-        ScoreList = new ScoresList();
-        
-        RemoteScoreList = new ScoresList();
+        localHiScoresBox = new ScoreBox();
+        remoteHiScoresBox = new ScoreBox();
 
-        gameWindow.getCommunicator().addListener(new CommunicationsListener(){
-            @Override
-            public void receiveCommunication(String communication){
-                var x = new ArrayList<Pair<String, Integer>>();
-                String[] parts = communication.split(" ");
-                String[] newScores = parts[1].split("\n");
-                for(String i: newScores){
-                    String[] newParts = i.split(":");
-                    var p = new Pair<String, Integer>(newParts[0],Integer.parseInt(newParts[1]));
-                    x.add(p);
-                }
-                x.sort((a, b) -> b.getValue().compareTo(a.getValue()));
-                remoteScores.setAll(x);
-                Platform.runLater(() -> RemoteScoreList.setScore(remoteScores));
-                RemoteScoreList.reveal();
-            }
-        });
+        this.localScoreList = FXCollections.observableArrayList(Utility.loadScores());
+        var wrapper = new SimpleListProperty<Pair<String, Integer>>(this.localScoreList);
+        this.localHiScoresBox.getScoreProperty().bind(wrapper);
+
+        this.remoteScoreList = FXCollections.observableArrayList(this.remoteScores);
+        var wrapper2 = new SimpleListProperty<Pair<String, Integer>>(this.remoteScoreList);
+        this.remoteHiScoresBox.getScoreProperty().bind(wrapper2);
 
         
-        
-
-        
-
-        ScoreList.setOpacity(0);
-
-        var y = Utility.loadScores();
-        wrapper.setAll(y);
-
-        
-        int lastScore = (y.get(y.size() - 1).getValue());
-
-        if(score > lastScore){
-            var r = wrapper.get(wrapper.size()-1);
-            wrapper.remove(r);
-            newHighScore();
-        }
-        else{
-            ScoreList.reveal();
-            ScoreList.setScore(wrapper);
-        }
-        
-        
-        boxes.getChildren().addAll(ScoreList,RemoteScoreList);
-        elements.getChildren().addAll(title,boxes);
+        scoreBoxes.getChildren().addAll(localHiScoresBox,remoteHiScoresBox);
+                
+        elements.getChildren().addAll(title,scoreBoxes);
         mainPane.setCenter(elements);
+
         
     }
 
-    private void newHighScore(){
-        var name =  new TextField();
-        var enter =  new Button("Add");
-
-        enter.setOnAction(event -> {
-            String nameS = name.getText();
-            
-            name.setOpacity(0);
-            enter.setOpacity(0);
-
-            addNewScore(nameS, score);
-            ScoreList.reveal();
-        });
-
-        elements.getChildren().addAll(name,enter);
 
 
-    }
 
-    private void addNewScore(String name, int score){
-        var tempScores = new ArrayList<Pair<String, Integer>>(wrapper.get());
-        for(Pair<String, Integer> i: tempScores){
-            if(i.getValue()<score){
-                add(new Pair<String, Integer>(name,score));
-                ScoreList.setScore(wrapper);
-                Utility.writeScores(wrapper.get());
-                break;
-            }
-        } 
-
-    }
-
-    private void add(Pair<String, Integer> c){
-        wrapper.add(c);
-        wrapper.sort((a, b) -> b.getValue().compareTo(a.getValue()));
-    }
 }

@@ -120,7 +120,6 @@ public class Communicator {
      */
     private void receive(WebSocket websocket, String message) {
         //logger.info("Received: " + message);
-        System.out.println(handlers.size());
         for(CommunicationsListener handler : handlers) {
             handler.receiveCommunication(message);
         }
