@@ -17,15 +17,23 @@ public class Multimedia{
     private static MediaPlayer mediaPlayer;
     private static MediaPlayer backgroundPlayer;
 
+    static String file;
+
     private static boolean fadeIn=true;
 
 
     public static void startBackgroundMusic(String file) {
 
+        if(Multimedia.file == file){
+            return;
+        }
+        
         if(audioEnabled){
             backgroundPlayer.stop();
             audioEnabled=false;
         }
+
+        Multimedia.file=file;
     
         String toPlay = Multimedia.class.getResource(file).toExternalForm();
         logger.info("Playing Music: "+ toPlay);

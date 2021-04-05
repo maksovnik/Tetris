@@ -9,12 +9,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -34,12 +36,14 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
+import uk.ac.soton.comp1206.event.CommunicationsListener;
 import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
@@ -54,7 +58,13 @@ public class ScoreScene extends BaseScene{
     ObservableList<Pair<String,Integer>> scoresList = FXCollections.observableArrayList(scores);
     ListProperty<Pair<String,Integer>> wrapper = new SimpleListProperty<Pair<String,Integer>>(scoresList);
 
+    SimpleListProperty<Pair<String,Integer>> localScores2;
+    ArrayList<Pair<String,Integer>> scores2 = new ArrayList<Pair<String,Integer>>();
+    ObservableList<Pair<String,Integer>> scoresList2 = FXCollections.observableArrayList(scores2);
+    ListProperty<Pair<String,Integer>> remoteScores = new SimpleListProperty<Pair<String,Integer>>(scoresList2);
+
     private ScoresList ScoreList;
+    private ScoresList RemoteScoreList;
     
     Game game;
     int score;
@@ -70,6 +80,10 @@ public class ScoreScene extends BaseScene{
 
     @Override
     public void initialise() {  
+    }
+
+    private void loadOnlineScores(){
+        gameWindow.getCommunicator().send("HISCORES");
     }
 
     @Override
@@ -90,8 +104,11 @@ public class ScoreScene extends BaseScene{
         var mainPane = new BorderPane();
         instructionsPane.getChildren().add(mainPane);
 
-
+        var boxes = new HBox(12);
+        boxes.setAlignment(Pos.CENTER);
+        
         elements = new VBox();
+        loadOnlineScores();
         
         elements.setAlignment(Pos.CENTER);
 
@@ -100,6 +117,32 @@ public class ScoreScene extends BaseScene{
         title.getStyleClass().add("score");
 
         ScoreList = new ScoresList();
+        
+        RemoteScoreList = new ScoresList();
+
+        gameWindow.getCommunicator().addListener(new CommunicationsListener(){
+            @Override
+            public void receiveCommunication(String communication){
+                var x = new ArrayList<Pair<String, Integer>>();
+                String[] parts = communication.split(" ");
+                String[] newScores = parts[1].split("\n");
+                for(String i: newScores){
+                    String[] newParts = i.split(":");
+                    var p = new Pair<String, Integer>(newParts[0],Integer.parseInt(newParts[1]));
+                    x.add(p);
+                }
+                x.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+                remoteScores.setAll(x);
+                Platform.runLater(() -> RemoteScoreList.setScore(remoteScores));
+                RemoteScoreList.reveal();
+            }
+        });
+
+        
+        
+
+        
+
         ScoreList.setOpacity(0);
 
         var y = Utility.loadScores();
@@ -119,12 +162,11 @@ public class ScoreScene extends BaseScene{
         }
         
         
-
-        elements.getChildren().addAll(title,ScoreList);
+        boxes.getChildren().addAll(ScoreList,RemoteScoreList);
+        elements.getChildren().addAll(title,boxes);
         mainPane.setCenter(elements);
         
     }
-
 
     private void newHighScore(){
         var name =  new TextField();
@@ -148,7 +190,6 @@ public class ScoreScene extends BaseScene{
     private void addNewScore(String name, int score){
         var tempScores = new ArrayList<Pair<String, Integer>>(wrapper.get());
         for(Pair<String, Integer> i: tempScores){
-            System.out.println(i.getValue());
             if(i.getValue()<score){
                 add(new Pair<String, Integer>(name,score));
                 ScoreList.setScore(wrapper);

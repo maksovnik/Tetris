@@ -43,7 +43,7 @@ public class Communicator {
 
             //Connect to the server
             ws = socketFactory.createSocket(server);
-            //ws.connect(); //remember to reenable :))
+            ws.connect(); //remember to reenable :))
             logger.info("Connected to " + server);
 
             //When a message is received, call the receive method
@@ -119,8 +119,8 @@ public class Communicator {
      * @param message the message that was received
      */
     private void receive(WebSocket websocket, String message) {
-        logger.info("Received: " + message);
-
+        //logger.info("Received: " + message);
+        System.out.println(handlers.size());
         for(CommunicationsListener handler : handlers) {
             handler.receiveCommunication(message);
         }

@@ -16,19 +16,17 @@ public class Utility {
 
     static String highName;
     static int highScore;
-    
+
     public static List<Pair<String, Integer>> loadScores(){
         var x = new ArrayList<Pair<String, Integer>>();
     
         File f = new File("scores.txt");
 
-        
         try {
             var q = f.createNewFile();
 
             if(q){
                 for(int i=0;i<10;i++){
-                    //wrapper.add(new Pair<String,Integer>("Oli",5000));
                     x.add(new Pair<String,Integer>("Oli",5000));
                 }
                 writeScores(x);

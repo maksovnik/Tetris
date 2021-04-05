@@ -17,6 +17,7 @@ import uk.ac.soton.comp1206.scene.ChallengeScene;
 import uk.ac.soton.comp1206.scene.InstructionsScene;
 import uk.ac.soton.comp1206.scene.MenuScene;
 import uk.ac.soton.comp1206.scene.ScoreScene;
+import uk.ac.soton.comp1206.utility.Multimedia;
 
 /**
  * The GameWindow is the single window for the game where everything takes place. To move between screens in the game,
@@ -85,7 +86,7 @@ public class GameWindow {
 
     /**
      * Display the main menu
-     */
+     */ 
 
     public MenuScene getMenu(){
         return menu;

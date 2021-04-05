@@ -3,8 +3,11 @@ package uk.ac.soton.comp1206.scene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -23,11 +26,6 @@ public class InstructionsScene extends BaseScene {
     public InstructionsScene(GameWindow gameWindow) {
     
         super(gameWindow);
-
-
-        
-
-        
         logger.info("Creating Menu Scene");
     }
 
@@ -84,10 +82,19 @@ public class InstructionsScene extends BaseScene {
 
         }
 
+        Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
         gridpane.setHgap(6);
         gridpane.setVgap(6);
         elements.getChildren().addAll(title,image,title2,gridpane);
         mainPane.setCenter(elements);
         
+    }
+
+    private void handleKeyPress(KeyEvent e){
+
+        KeyCode k = e.getCode();
+        if(k==KeyCode.ESCAPE){
+            gameWindow.loadScene(gameWindow.getMenu());
+        }
     }
 }
