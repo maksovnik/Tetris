@@ -1,6 +1,7 @@
 package uk.ac.soton.comp1206.scene;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,8 +70,17 @@ public class ScoreScene extends BaseScene{
     private void seth(handleHighscore h){
         this.h=h;
     }
+
+    private void removeLowestItem(List<Pair<String, Integer>> x){
+        Pair<String,Integer> lowest = x.get(x.size() - 1);
+        x.remove(lowest);
+    }
+
+    private void sortListByScore(List<Pair<String, Integer>> x){
+        x.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+    }
     private void handleMessage(final String message) {
-        System.out.println("asdas");
+
         remoteScores = Utility.getScoreArrayList(message);
         remoteScores.sort((a, b) -> b.getValue().compareTo(a.getValue()));
         remoteScoreList.addAll(remoteScores);
@@ -82,46 +92,44 @@ public class ScoreScene extends BaseScene{
         if((score>lowestLocal)&&(score>lowestRemote)){
 
             seth(() -> {
-                Pair<String,Integer> lowestLocalItem = localScoreList.get(localScoreList.size() - 1);
-                localScoreList.remove(lowestLocalItem);
-                Pair<String,Integer> lowestRemoteItem = remoteScoreList.get(remoteScoreList.size() - 1);
-                remoteScoreList.remove(lowestRemoteItem);
+                removeLowestItem(localScoreList);
+                removeLowestItem(remoteScoreList);
 
                 var newScore = new Pair<String, Integer>(name,score);
                 
                 remoteScoreList.add(newScore);
                 localScoreList.add(newScore);
-                
-                remoteScoreList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
-                localScoreList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
 
+                sortListByScore(remoteScoreList);
+                sortListByScore(localScoreList);
             });
 
             letEnterName();
 
         }
         else if(score>lowestLocal){
-            
             seth(() -> {
-                Pair<String,Integer> lowestLocalItem = localScoreList.get(localScoreList.size() - 1);
-                localScoreList.remove(lowestLocalItem);
+                removeLowestItem(localScoreList);
                 var newScore = new Pair<String, Integer>(name,score);
                 localScoreList.add(newScore);
-                localScoreList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+                sortListByScore(localScoreList);
             });
             letEnterName();
         }
         else if(score>lowestRemote){
             seth(() -> {
-                Pair<String,Integer> lowestRemoteItem = remoteScoreList.get(remoteScoreList.size() - 1);
-                remoteScoreList.remove(lowestRemoteItem);
+                removeLowestItem(remoteScoreList);
 
                 var newScore = new Pair<String, Integer>(name,score);
                 remoteScoreList.add(newScore);
-                remoteScoreList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+                sortListByScore(localScoreList);
 
             });
             letEnterName();
+        }
+        else{
+            localHiScoresBox.reveal();
+            remoteHiScoresBox.reveal();
         }
 
     }

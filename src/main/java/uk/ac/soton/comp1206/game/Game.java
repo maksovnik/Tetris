@@ -49,7 +49,7 @@ public class Game {
     
     private static final Logger logger = LogManager.getLogger(Game.class);
 
-    private SimpleIntegerProperty score = new SimpleIntegerProperty(30000);
+    private SimpleIntegerProperty score = new SimpleIntegerProperty(3);
     private SimpleIntegerProperty level = new SimpleIntegerProperty(0);
     //private SimpleIntegerProperty lives = new SimpleIntegerProperty(3);
     private SimpleIntegerProperty lives = new SimpleIntegerProperty(0);
