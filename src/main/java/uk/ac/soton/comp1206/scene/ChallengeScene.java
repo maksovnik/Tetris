@@ -119,99 +119,73 @@ public class ChallengeScene extends BaseScene{
         PieceBoard p = new PieceBoard(3, 3, 100, 100);
         PieceBoard f = new PieceBoard(3, 3, 75, 75);
         p.setDoCircle(true);
-        game.setNextPieceListener(new NextPieceListener(){
-            @Override
-            public void nextPiece(GamePiece piece, GamePiece followingP) {
-                logger.info("Next Piece");
-                p.SetPieceToDisplay(piece);
-                f.SetPieceToDisplay(followingP);
+
+        game.setNextPieceListener((piece, followingP) -> {
+            logger.info("Next Piece");
+            p.SetPieceToDisplay(piece);
+            f.SetPieceToDisplay(followingP);
+        });
+
+        game.setPieceEventListener(type -> {
+            if(type=="playPiece"){
+                Multimedia.playAudio("/sounds/explode.wav");
+                game.restartLoop();
+            }
+            if(type=="rotate"){
+                Multimedia.playAudio("/sounds/rotate.wav");
+            }
+            if(type=="swap"){
+                Multimedia.playAudio("/sounds/rotate.wav");
             }
         });
 
-        game.setPieceEventListener(new pieceEventListener(){
-            @Override
-            public void playSound(String type){
-                if(type=="playPiece"){
-                    Multimedia.playAudio("/sounds/explode.wav");
-                    game.restartLoop();
-                }
-                if(type=="rotate"){
-                    Multimedia.playAudio("/sounds/rotate.wav");
-                }
-                if(type=="swap"){
-                    Multimedia.playAudio("/sounds/rotate.wav");
-                }
-            }
-        });
+        game.setLineClearedListener(x -> board.fadeOut(x));
 
-        game.setLineClearedListener(new LineClearedListener(){
-            @Override
-            public void linesCleared(GameBlockCoordinate[] x){
-                board.fadeOut(x);
-            }
-        });
-
-        game.setGameEndListener(new GameEndListener(){
-            @Override
-            public void endGame(Game g){
-                game.endGameLoop();
-                Platform.runLater(() -> gameWindow.startScores(game));
-            }
+        game.setGameEndListener(g -> {
+            game.endGameLoop();
+            Platform.runLater(() -> gameWindow.startScores(game));
         });
 
 
 
-        VBox v = new VBox();
+        VBox v = new VBox(5);
         v.setStyle("-fx-padding: 5;");
-        v.setSpacing(5);
         v.setAlignment(Pos.CENTER_RIGHT);
         
         v.getChildren().addAll(hscoreT,hscore,scoreT,score,levelT,level,livesT,lives,multiplierT,multiplier,p,f);
 
         root.getChildren().addAll(challengePane);
+
         var mainPane = new BorderPane();
         mainPane.setRight(v);
         challengePane.getChildren().add(mainPane); //choose this but broken
 
 
-        var board = new GameBoard(game.getGrid(),gameWindow.getWidth()/2,gameWindow.getWidth()/2);
-        this.board=board;
-
-        board.setOnClick(new ClickListener(){
-            @Override
-            public void Click(MouseButton m) {
-                if(m==MouseButton.SECONDARY){
-                    game.rotateCurrentPiece(1);
-                }
+        this.board = new GameBoard(game.getGrid(),gameWindow.getWidth()/2,gameWindow.getWidth()/2);
+        
+        board.setOnClick(m -> {
+            if(m==MouseButton.SECONDARY){
+                game.rotateCurrentPiece(1);
             }
         });
 
-        p.setOnClick(new ClickListener(){
-            @Override
-            public void Click(MouseButton m) {
-                if(m==MouseButton.PRIMARY){
-                    game.rotateCurrentPiece(1);
-                }
+        p.setOnClick(m -> {
+            if(m==MouseButton.PRIMARY){
+                game.rotateCurrentPiece(1);
+            }
+        });
+        
+        f.setOnClick(m -> {
+            if(m==MouseButton.PRIMARY){
+                game.swapCurrentPiece();
             }
         });
 
-        f.setOnClick(new ClickListener(){
-            @Override
-            public void Click(MouseButton m) {
-                if(m==MouseButton.PRIMARY){
-                    game.swapCurrentPiece();
-                }
-            }
-        });
-
-        game.setScoreListener(new ScoreListener(){
-            @Override
-            public void setScore(int scoreC){
-                score.setText(Integer.toString(scoreC));
-                if(Integer.parseInt(hscore.getText()) < scoreC){
-                    hscore.setText(Integer.toString(scoreC));
-                
-                }
+        game.setScoreListener(scoreC -> {
+            score.setText(Integer.toString(scoreC));
+            if(Integer.parseInt(hscore.getText()) < scoreC){
+                hscore.setText(Integer.toString(scoreC));
+            
             }
         });
 
@@ -221,28 +195,24 @@ public class ChallengeScene extends BaseScene{
         rectangle.setFill(Color.BLUE);
         
         double x = gameWindow.getWidth()-10;
-        game.setGameLoopListener(new GameLoopListener(){
-            @Override
-            public void timerEnd(int delay){
-                //delay = 1000;
-                
-                rectangle.setWidth(x);
-                KeyValue widthValue = new KeyValue(rectangle.widthProperty(), 0);
-                KeyFrame frame = new KeyFrame(Duration.millis(delay), widthValue);
+        game.setGameLoopListener(delay -> {
+            rectangle.setWidth(x);
+            KeyValue widthValue = new KeyValue(rectangle.widthProperty(), 0);
+            KeyFrame frame = new KeyFrame(Duration.millis(delay), widthValue);
 
-                KeyValue greenValue= new KeyValue(rectangle.fillProperty(), Color.GREEN);
-                KeyFrame frame1 = new KeyFrame(Duration.ZERO, greenValue);
+            KeyValue greenValue= new KeyValue(rectangle.fillProperty(), Color.GREEN);
+            KeyFrame frame1 = new KeyFrame(Duration.ZERO, greenValue);
 
-                KeyValue yellowValue= new KeyValue(rectangle.fillProperty(), Color.YELLOW);
-                KeyFrame frame2 = new KeyFrame(new Duration(delay*0.5), yellowValue);
-            
-                KeyValue redValue= new KeyValue(rectangle.fillProperty(), Color.RED);
-                KeyFrame frame3 = new KeyFrame(new Duration(delay*0.75), redValue);
+            KeyValue yellowValue= new KeyValue(rectangle.fillProperty(), Color.YELLOW);
+            KeyFrame frame2 = new KeyFrame(new Duration(delay*0.5), yellowValue);
+        
+            KeyValue redValue= new KeyValue(rectangle.fillProperty(), Color.RED);
+            KeyFrame frame3 = new KeyFrame(new Duration(delay*0.75), redValue);
 
-                Timeline timeline = new Timeline(frame,frame1,frame2,frame3);
-                timeline.play();
-            }
+            Timeline timeline = new Timeline(frame,frame1,frame2,frame3);
+            timeline.play();
         });
+
 
         hscore.setText(Integer.toString(getHighScore()));
     

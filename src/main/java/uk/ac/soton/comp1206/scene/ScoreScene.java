@@ -60,7 +60,6 @@ public class ScoreScene extends BaseScene{
     }
 
     
-
     @Override
     public void initialise() { 
         this.communicator.addListener(message -> Platform.runLater(() -> this.handleMessage(message.trim())));
