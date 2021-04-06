@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
@@ -33,9 +34,10 @@ public class LobbyScene extends BaseScene {
 
     VBox topBox;
 
-    ArrayList<String> x;
+    List<String> x;
     ScheduledFuture<?> loop;
     private HBox main;
+    boolean inChannel;
     
     private ChannelChat channelChat;
     
@@ -48,8 +50,11 @@ public class LobbyScene extends BaseScene {
     }
 
     private void requestChannels(){
+        if(inChannel){
+            this.communicator.send("USERS");
+        }
         this.communicator.send("LIST");
-        this.loop = executor.schedule(() -> requestChannels(), 1000, TimeUnit.MILLISECONDS);
+        this.loop = executor.schedule(() -> requestChannels(), 500, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -62,7 +67,7 @@ public class LobbyScene extends BaseScene {
 
 
     private void handleMessage(String s){
-        String[] parts = s.split(" ");
+        String[] parts = s.split(" ",2);
         String header = parts[0];
 
 
@@ -74,9 +79,8 @@ public class LobbyScene extends BaseScene {
             System.out.println(Arrays.toString(parts));
             String message = parts[1];
             List<String> list = Arrays.asList(message.split("\\s+"));
-            System.out.println(list.toString());
 
-            if(list!=x){
+            if(!list.equals(x)){
                 channelList.getChildren().clear();
 
                 for(String i: list){
@@ -91,9 +95,12 @@ public class LobbyScene extends BaseScene {
             }
         }
         if(header.equals("JOIN")){
+            inChannel = true;
             String channelName = parts[1];
 
             channelChat = new ChannelChat(gameWindow,channelName);
+
+
             main.getChildren().add(channelChat);
         }
         if(header.equals("HOST")){
@@ -101,21 +108,34 @@ public class LobbyScene extends BaseScene {
         }
         if(header.equals("ERROR")){
             String message = parts[1];
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText(message);
+            logger.error(message);
+            alert.showAndWait();
         }
         if(header.equals("NICK")){
             String message = parts[1];
         }
-        if(header.equals("START")){
+        if(header.equals("HOST")){
+            channelChat.revealStartButton();
         }
         if(header.equals("PARTED")){
+            main.getChildren().remove(channelChat);
+            inChannel = false;
         }
         if(header.equals("USERS")){
             String message = parts[1];
+            List<String> list = Arrays.asList(message.split("\\s+"));
+            channelChat.updateUsers(list);
         }
         if(header.equals("NICK")){
             String message = parts[1];
         }
         if(header.equals("START")){
+            //start game
+        }
+        if(header.equals("QUIT")){
+            //quit
         }
         if(header.equals("MSG")){
             String[] subParts = parts[1].split(":");
