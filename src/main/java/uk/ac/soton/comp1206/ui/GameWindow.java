@@ -15,6 +15,7 @@ import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.scene.BaseScene;
 import uk.ac.soton.comp1206.scene.ChallengeScene;
 import uk.ac.soton.comp1206.scene.InstructionsScene;
+import uk.ac.soton.comp1206.scene.LobbyScene;
 import uk.ac.soton.comp1206.scene.MenuScene;
 import uk.ac.soton.comp1206.scene.ScoreScene;
 
@@ -103,10 +104,16 @@ public class GameWindow {
         loadScene(new ScoreScene(this,g));
     }
 
+    public void startLobby() {
+        loadScene(new LobbyScene(this));
+    }
+
     /**
      * Display the single player challenge
      */
-    public void startChallenge() { loadScene(new ChallengeScene(this)); }
+    public void startChallenge() {
+        loadScene(new ChallengeScene(this));
+    }
 
     /**
      * Setup the default settings for the stage itself (the window), such as the title and minimum width and height.

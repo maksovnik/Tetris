@@ -58,6 +58,9 @@
     -fx-effect: dropshadow(gaussian, black, 1, 1.0, 1, 1);
 }
 
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+ }
 .heading {
     -fx-fill: white;
     -fx-font-family: 'Orbitron';
@@ -164,11 +167,9 @@
     -fx-background-color: transparent;
     -fx-font-size: 12px;
     -fx-font-family: 'Orbitron';
-}
-
-.messages Text {
     -fx-fill: white;
 }
+
 
 TextField {
     -fx-border-color: white;

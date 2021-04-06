@@ -19,7 +19,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
-import uk.ac.soton.comp1206.event.CommunicationsListener;
 import uk.ac.soton.comp1206.event.handleHighscore;
 import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.network.Communicator;
@@ -87,9 +86,8 @@ public class ScoreScene extends BaseScene{
         var lowestRemote = remoteScores.get(this.remoteScores.size() - 1).getValue();
         var lowestLocal = this.localScoreList.get(this.localScoreList.size() - 1).getValue();
         
-
         if((score>lowestLocal)&&(score>lowestRemote)){
-
+            
             seth(() -> {
                 removeLowestItem(localScoreList);
                 removeLowestItem(remoteScoreList);

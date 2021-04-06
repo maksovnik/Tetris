@@ -70,8 +70,9 @@ public class MenuScene extends BaseScene {
         b.getChildren().addAll(single,multi,how,exit);
         mainPane.setBottom(b);
 
-        single.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  startGame(event));
-        how.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  showInstructions(event));
+        single.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  gameWindow.startChallenge());
+        multi.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  gameWindow.startLobby());
+        how.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  gameWindow.startInstructions());
         
     }
 
@@ -81,18 +82,6 @@ public class MenuScene extends BaseScene {
     @Override
     public void initialise() {
 
-    }
-
-    /**
-     * Handle when the Start Game button is pressed
-     * @param mouseEvent event
-     */
-    private void startGame(MouseEvent mouseEvent) {
-        gameWindow.startChallenge();
-    }
-
-    private void showInstructions(MouseEvent mouseEvent){
-        gameWindow.startInstructions();
     }
 
 }

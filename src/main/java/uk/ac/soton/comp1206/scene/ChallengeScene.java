@@ -23,18 +23,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import uk.ac.soton.comp1206.component.GameBlock;
-import uk.ac.soton.comp1206.component.GameBlockCoordinate;
 import uk.ac.soton.comp1206.component.GameBoard;
 import uk.ac.soton.comp1206.component.PieceBoard;
-import uk.ac.soton.comp1206.event.ClickListener;
-import uk.ac.soton.comp1206.event.GameEndListener;
-import uk.ac.soton.comp1206.event.GameLoopListener;
-import uk.ac.soton.comp1206.event.LineClearedListener;
-import uk.ac.soton.comp1206.event.NextPieceListener;
-import uk.ac.soton.comp1206.event.ScoreListener;
-import uk.ac.soton.comp1206.event.pieceEventListener;
 import uk.ac.soton.comp1206.game.Game;
-import uk.ac.soton.comp1206.game.GamePiece;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Multimedia;
@@ -162,7 +153,7 @@ public class ChallengeScene extends BaseScene{
 
 
         this.board = new GameBoard(game.getGrid(),gameWindow.getWidth()/2,gameWindow.getWidth()/2);
-        
+
         board.setOnClick(m -> {
             if(m==MouseButton.SECONDARY){
                 game.rotateCurrentPiece(1);
@@ -188,7 +179,6 @@ public class ChallengeScene extends BaseScene{
             
             }
         });
-
 
         Rectangle rectangle = new Rectangle(0, 0, 600, 40);
 
@@ -269,7 +259,6 @@ public class ChallengeScene extends BaseScene{
         if(Arrays.asList("Space","R").contains(keyName)){
             game.swapCurrentPiece();
         }
-
     }
     
     private void blockClicked(GameBlock gameBlock) {
