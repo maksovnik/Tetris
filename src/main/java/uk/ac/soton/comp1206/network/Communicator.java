@@ -39,6 +39,7 @@ public class Communicator {
     public Communicator(String server) {
 
         try {
+
             var socketFactory = new WebSocketFactory();
 
             //Connect to the server

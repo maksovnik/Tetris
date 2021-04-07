@@ -1,4 +1,4 @@
-package uk.ac.soton.comp1206.scene;
+package uk.ac.soton.comp1206.component;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.property.ListProperty;
@@ -24,15 +24,11 @@ public class ScoreBox extends VBox{
         this.scores=new SimpleListProperty<Pair<String, Integer>>();
         setOpacity(0);
 
-        scores.addListener(new ListChangeListener<Pair<String,Integer>>() {
-            @Override
-            public void onChanged(Change<? extends Pair<String,Integer>> change) {
-                updateScores();
-            }
-        });
+        scores.addListener((ListChangeListener<Pair<String,Integer>>)(c -> updateScores()));
     }
 
     public void updateScores(){
+        System.out.println("MMUAHAAHAHAHHAAHAH");
         this.getChildren().clear();
         
         for(Pair<String, Integer> i : scores){

@@ -16,7 +16,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import uk.ac.soton.comp1206.component.ChannelChat;
@@ -54,7 +53,7 @@ public class LobbyScene extends BaseScene {
             this.communicator.send("USERS");
         }
         this.communicator.send("LIST");
-        this.loop = executor.schedule(() -> requestChannels(), 500, TimeUnit.MILLISECONDS);
+        this.loop = executor.schedule(() -> requestChannels(), 2000, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -63,8 +62,6 @@ public class LobbyScene extends BaseScene {
         this.communicator.addListener(message -> Platform.runLater(() -> this.handleMessage(message)));
         requestChannels();
     }
-
-
 
     private void handleMessage(String s){
         String[] parts = s.split(" ",2);
@@ -132,6 +129,10 @@ public class LobbyScene extends BaseScene {
             String message = parts[1];
         }
         if(header.equals("START")){
+            executor.shutdown();
+            executor.shutdownNow();
+            communicator.clearListeners();
+            gameWindow.startMultiChallenge();
             //start game
         }
         if(header.equals("QUIT")){

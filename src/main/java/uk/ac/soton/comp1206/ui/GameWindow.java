@@ -17,6 +17,7 @@ import uk.ac.soton.comp1206.scene.ChallengeScene;
 import uk.ac.soton.comp1206.scene.InstructionsScene;
 import uk.ac.soton.comp1206.scene.LobbyScene;
 import uk.ac.soton.comp1206.scene.MenuScene;
+import uk.ac.soton.comp1206.scene.MultiplayerScene;
 import uk.ac.soton.comp1206.scene.ScoreScene;
 
 /**
@@ -66,6 +67,8 @@ public class GameWindow {
         setupDefaultScene();
 
         //Setup communicator
+
+        //communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
         communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
 
         //Go to menu
@@ -113,6 +116,9 @@ public class GameWindow {
      */
     public void startChallenge() {
         loadScene(new ChallengeScene(this));
+    }
+    public void startMultiChallenge() {
+        loadScene(new MultiplayerScene(this));
     }
 
     /**

@@ -24,6 +24,7 @@ import uk.ac.soton.comp1206.event.LineClearedListener;
 import uk.ac.soton.comp1206.event.NextPieceListener;
 import uk.ac.soton.comp1206.event.ScoreListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
+import uk.ac.soton.comp1206.ui.GameWindow;
 
 
 /**
@@ -49,10 +50,9 @@ public class Game {
     
     private static final Logger logger = LogManager.getLogger(Game.class);
 
-    private SimpleIntegerProperty score = new SimpleIntegerProperty(2000);
+    protected SimpleIntegerProperty score = new SimpleIntegerProperty(0);
     private SimpleIntegerProperty level = new SimpleIntegerProperty(0);
-    //private SimpleIntegerProperty lives = new SimpleIntegerProperty(3);
-    private SimpleIntegerProperty lives = new SimpleIntegerProperty(0);
+    protected SimpleIntegerProperty lives = new SimpleIntegerProperty(3);
     private SimpleIntegerProperty multiplier = new SimpleIntegerProperty(1);
 
     
@@ -63,8 +63,8 @@ public class Game {
     }
 
     private int getTimerDelay(){
-        return 500;
-        //return Math.max(2500,12000-500*(level.get()));
+        //return 500;
+        return Math.max(2500,12000-500*(level.get()));
     }
     /**
      * Number of rows
@@ -187,8 +187,9 @@ public class Game {
 
     }
 
-    private void end(){
-        gel.endGame(this);
+    public void end(){
+        endGameLoop();
+        gel.endGame();
     }
 
     public void setGameEndListener(GameEndListener g){
@@ -216,8 +217,8 @@ public class Game {
         GamePiece piece = GamePiece.createPiece(number);
         logger.info(Arrays.deepToString(piece.getBlocks()));
         return piece;
-
     }
+    
     /**
      * Initialise a new game and set up anything that needs to be done at the start
      */
@@ -244,6 +245,7 @@ public class Game {
         //Update the grid with the new value
         if(grid.canPlayPiece(currentPiece, x, y)){
             grid.playPiece(currentPiece, x, y);
+            logger.info("THIS PIECE IS ID:{}",currentPiece.getValue());
             afterPiece();
             nextPiece();
             ppl.playSound("playPiece");
@@ -298,6 +300,7 @@ public class Game {
             multiplier.set(1);
             return;
         }
+
         this.score.set(getScore()+score(numLines,blocksCleared)); //Increases score
         sl.setScore(this.score.get());
         
@@ -313,6 +316,7 @@ public class Game {
     public void setScoreListener(ScoreListener l){
         this.sl = l;
     }
+    
 
     public void setLineClearedListener(LineClearedListener l){
         this.lcl = l;

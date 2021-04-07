@@ -131,6 +131,7 @@ public class GamePiece {
             }
         }
 
+        
         //Not a valid piece number
         throw new IndexOutOfBoundsException("No such piece: " + piece);
     }
@@ -155,11 +156,23 @@ public class GamePiece {
      * @param blocks block makeup of the piece
      * @param value the value of this piece
      */
+
+    private int[][] transpose(int[][] q){
+        var b = new int[q.length][q[0].length];
+        for(int x = 0; x < blocks.length; x++) {
+            for (int y = 0; y < blocks[x].length; y++) {
+                b[x][y] = q[y][x];
+            }
+        }
+        return b;
+    }
     private GamePiece(String name, int[][] blocks, int value) {
         this.name = name;
         this.blocks = blocks;
-        this.value = value;
 
+        System.out.println("hi");
+        this.value = value;
+        
         //Use the shape of the block to create a grid with either 0 (empty) or the value of this shape for each block.
         for(int x = 0; x < blocks.length; x++) {
             for (int y = 0; y < blocks[x].length; y++) {
@@ -182,7 +195,7 @@ public class GamePiece {
      * @return 2D grid of the blocks representing the piece shape
      */
     public int[][] getBlocks() {
-        return blocks;
+        return transpose(blocks);
     }
 
 

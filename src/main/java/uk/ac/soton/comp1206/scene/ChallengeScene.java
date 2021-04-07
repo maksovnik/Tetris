@@ -41,9 +41,23 @@ public class ChallengeScene extends BaseScene{
 
     private final Hashtable<String, String> keyMap = new Hashtable<String, String>();
 
-    private static final Logger logger = LogManager.getLogger(MenuScene.class);
+    private static final Logger logger = LogManager.getLogger(ChallengeScene.class);
     protected Game game;
     private GameBoard board;
+
+    VBox elements;
+
+	protected Text levelT;
+
+	protected Text level;
+
+	protected Text hscore;
+
+	protected Text hscoreT;
+
+	protected Text multiplierT;
+
+	protected Text multiplier;
 
 
     /**
@@ -84,17 +98,17 @@ public class ChallengeScene extends BaseScene{
         Text scoreT = new Text("Score");
         Text score = new Text("0");
 
-        Text hscoreT = new Text("High Score");
-        Text hscore = new Text();
+        hscoreT = new Text("High Score");
+        hscore = new Text();
 
-        Text levelT = new Text("Level");
-        Text level = new Text();
+        levelT = new Text("Level");
+        level = new Text();
         
         Text livesT = new Text("Lives");
         Text lives = new Text();
 
-        Text multiplierT = new Text("Multiplier");
-        Text multiplier = new Text();
+        multiplierT = new Text("Multiplier");
+        multiplier = new Text();
 
         for(Text i: new Text[] {scoreT,levelT,livesT,multiplierT,hscoreT}){
             i.getStyleClass().add("heading");
@@ -132,23 +146,20 @@ public class ChallengeScene extends BaseScene{
 
         game.setLineClearedListener(x -> board.fadeOut(x));
 
-        game.setGameEndListener(g -> {
-            game.endGameLoop();
-            Platform.runLater(() -> gameWindow.startScores(game));
-        });
+        game.setGameEndListener(() -> Platform.runLater(() -> gameWindow.startScores(game)));
 
 
 
-        VBox v = new VBox(5);
-        v.setStyle("-fx-padding: 5;");
-        v.setAlignment(Pos.CENTER_RIGHT);
+        elements = new VBox(5);
+        elements.setStyle("-fx-padding: 5;");
+        elements.setAlignment(Pos.CENTER_RIGHT);
         
-        v.getChildren().addAll(hscoreT,hscore,scoreT,score,levelT,level,livesT,lives,multiplierT,multiplier,p,f);
+        elements.getChildren().addAll(hscoreT,hscore,scoreT,score,levelT,level,livesT,lives,multiplierT,multiplier,p,f);
 
         root.getChildren().addAll(challengePane);
 
         var mainPane = new BorderPane();
-        mainPane.setRight(v);
+        mainPane.setRight(elements);
         challengePane.getChildren().add(mainPane); //choose this but broken
 
 
@@ -232,7 +243,7 @@ public class ChallengeScene extends BaseScene{
      * @param gameBlock the Game Block that was clocked
      */
 
-    private void handleKeyPress(KeyEvent e){
+    public void handleKeyPress(KeyEvent e){
 
         KeyCode k = e.getCode();
         String keyName = k.getName();
@@ -245,6 +256,7 @@ public class ChallengeScene extends BaseScene{
             board.moveHover(keyName);
         }
         if(k==KeyCode.ESCAPE){
+            game.endGameLoop();
             gameWindow.startMenu();
         }
         if(Arrays.asList("Enter","X").contains(keyName)){
@@ -272,7 +284,7 @@ public class ChallengeScene extends BaseScene{
         logger.info("Starting a new challenge");
 
         //Start new game
-        game = new Game(5, 5);
+        game = new Game(5,5);
     }
 
     /**
