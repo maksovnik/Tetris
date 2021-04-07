@@ -50,6 +50,9 @@ public class MultiplayerScene extends ChallengeScene{
     public void build() {
         super.build();
 
+        this.board.setDisable(true);
+
+        
         elements.getChildren().remove(this.level);
         elements.getChildren().remove(this.levelT);
         elements.getChildren().remove(this.multiplier);
@@ -67,10 +70,11 @@ public class MultiplayerScene extends ChallengeScene{
         var wrapper = new SimpleListProperty<Pair<String, Integer>>(this.localScoreList);
         r.getScoreProperty().bind(wrapper);
         
-
-        ((MultiplayerGame) game).setMultiScoreListener(x -> {
-            localScoreList.setAll(x);
+        ((MultiplayerGame) game).setGameStartListener(() -> {
+            this.board.setDisable(false);
         });
+
+        ((MultiplayerGame) game).setMultiScoreListener(x -> localScoreList.setAll(x));
 
         
         ((MultiplayerGame) game).setPlayerLostListener(x -> {

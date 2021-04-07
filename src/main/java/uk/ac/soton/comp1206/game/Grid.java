@@ -45,6 +45,9 @@ public class Grid {
      */
 
     public boolean canPlayPiece(GamePiece z, int x, int y){
+        if(z==null){
+            return false;
+        }
         
         logger.info("Checking if piece can be played");
         int[][] blocks = z.getBlocks();

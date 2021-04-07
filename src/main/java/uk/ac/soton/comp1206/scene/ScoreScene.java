@@ -14,6 +14,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -181,6 +182,12 @@ public class ScoreScene extends BaseScene{
         var instructionsPane = new StackPane();
         instructionsPane.getStyleClass().add("menu-background");
         root.getChildren().add(instructionsPane);
+
+        Platform.runLater(() -> scene.setOnKeyPressed(e -> {
+            if(e.getCode()==KeyCode.ESCAPE){
+                gameWindow.startMenu();
+            }
+        }));
 
         var mainPane = new BorderPane();
         instructionsPane.getChildren().add(mainPane);

@@ -57,9 +57,15 @@ public class Game {
 
     
     public void rotateCurrentPiece(int direction){
+        if(currentPiece == null){
+            return;
+        }
+
         currentPiece.rotate(direction);
         npl.nextPiece(currentPiece,followingPiece);
         ppl.playSound("rotate");
+        
+
     }
 
     private int getTimerDelay(){
@@ -138,7 +144,7 @@ public class Game {
 
         this.executor = Executors.newSingleThreadScheduledExecutor();
 
-        Platform.runLater(() -> startGameLoop());
+        
     }
 
     private void startGameLoop(){
@@ -161,6 +167,7 @@ public class Game {
         currentPiece = spawnPiece();
         this.followingPiece = spawnPiece();
         npl.nextPiece(currentPiece,followingPiece);
+        Platform.runLater(() -> startGameLoop());
     
     }
 
@@ -196,6 +203,14 @@ public class Game {
         this.gel = g;
     }
     public void swapCurrentPiece(){
+
+        if(currentPiece == null){
+            return;
+        }
+        if(followingPiece == null){
+            return;
+        }
+
         GamePiece temp = followingPiece;
         followingPiece = currentPiece;
         currentPiece = temp;

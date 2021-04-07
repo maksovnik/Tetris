@@ -43,7 +43,7 @@ public class ChallengeScene extends BaseScene{
 
     private static final Logger logger = LogManager.getLogger(ChallengeScene.class);
     protected Game game;
-    private GameBoard board;
+    protected GameBoard board;
 
     VBox elements;
 
@@ -137,6 +137,7 @@ public class ChallengeScene extends BaseScene{
                 game.restartLoop();
             }
             if(type=="rotate"){
+                System.out.println("hahha");
                 Multimedia.playAudio("/sounds/rotate.wav");
             }
             if(type=="swap"){
@@ -175,6 +176,9 @@ public class ChallengeScene extends BaseScene{
             if(m==MouseButton.PRIMARY){
                 game.rotateCurrentPiece(1);
             }
+            if(m==MouseButton.SECONDARY){
+                game.rotateCurrentPiece(-1);
+            }
         });
         
         f.setOnClick(m -> {
@@ -193,9 +197,11 @@ public class ChallengeScene extends BaseScene{
 
         Rectangle rectangle = new Rectangle(0, 0, 600, 40);
 
-        rectangle.setFill(Color.BLUE);
+        rectangle.setFill(Color.GREEN);
         
         double x = gameWindow.getWidth()-10;
+        rectangle.setWidth(x);
+
         game.setGameLoopListener(delay -> {
             rectangle.setWidth(x);
             KeyValue widthValue = new KeyValue(rectangle.widthProperty(), 0);

@@ -1,6 +1,7 @@
 package uk.ac.soton.comp1206.component;
-
+import javafx.scene.input.MouseEvent;
 import uk.ac.soton.comp1206.game.GamePiece;
+
 
 public class PieceBoard extends GameBoard {
     private boolean doCircle;
@@ -8,10 +9,18 @@ public class PieceBoard extends GameBoard {
     public PieceBoard(int cols, int rows, double width, double height) {
         super(cols, rows, width, height);
 
+        
     }
 
+    @Override
+    public void blockClicked(MouseEvent event, GameBlock block) {
+    }
 
     public void SetPieceToDisplay(GamePiece g){
+        if(g==null){
+            return;
+        }
+
         int[][] blocks = g.getBlocks();
         for(int i=0;i<3;i++){
             for(int j=0;j<3;j++){
