@@ -256,8 +256,7 @@ public class ChallengeScene extends BaseScene{
             board.moveHover(keyName);
         }
         if(k==KeyCode.ESCAPE){
-            game.endGameLoop();
-            gameWindow.startMenu();
+            game.end();
         }
         if(Arrays.asList("Enter","X").contains(keyName)){
             blockClicked(board.getCurrentHoverPiece());

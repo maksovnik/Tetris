@@ -31,6 +31,8 @@ public class MultiplayerScene extends ChallengeScene{
         
     }
 
+
+
     @Override
     public void setupGame(){
         logger.info("Starting a new Multiplayer game");
@@ -38,18 +40,10 @@ public class MultiplayerScene extends ChallengeScene{
         //Start new game
         game = new MultiplayerGame(5, 5,gameWindow);
     }
-    
 
-    public void handleKeyPress(KeyEvent e){
-        KeyCode k = e.getCode();
-        String keyName = k.getName();
-        
-        super.handleKeyPress(e);
 
-        if(k==KeyCode.ESCAPE){
-            game.end();
-        }
-        
+    @Override
+    public void initialise() {
     }
 
     @Override
@@ -67,13 +61,12 @@ public class MultiplayerScene extends ChallengeScene{
         r.reveal();
         elements.getChildren().add(r);
 
-        game.setGameEndListener(() -> Platform.runLater(() -> {
-            gameWindow.startScores(game,localScoreList);
-        }));
+        game.setGameEndListener(() -> Platform.runLater(() -> gameWindow.startScores(game,localScoreList)));
 
         this.localScoreList = FXCollections.observableArrayList();
         var wrapper = new SimpleListProperty<Pair<String, Integer>>(this.localScoreList);
         r.getScoreProperty().bind(wrapper);
+        
 
         ((MultiplayerGame) game).setMultiScoreListener(x -> {
             localScoreList.setAll(x);

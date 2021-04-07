@@ -170,7 +170,6 @@ public class GamePiece {
         this.name = name;
         this.blocks = blocks;
 
-        System.out.println("hi");
         this.value = value;
         
         //Use the shape of the block to create a grid with either 0 (empty) or the value of this shape for each block.

@@ -58,7 +58,6 @@ public class LobbyScene extends BaseScene {
 
     @Override
     public void initialise() {
-        System.out.println("sjdhfghjsdgfsgdhfjsghfjdg");
         this.communicator.addListener(message -> Platform.runLater(() -> this.handleMessage(message)));
         requestChannels();
     }
@@ -73,7 +72,6 @@ public class LobbyScene extends BaseScene {
                 channelList.getChildren().clear();
                 return;
             }
-            System.out.println(Arrays.toString(parts));
             String message = parts[1];
             List<String> list = Arrays.asList(message.split("\\s+"));
 

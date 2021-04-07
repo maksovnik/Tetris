@@ -87,7 +87,6 @@ public class ChannelChat extends VBox{
                 String text = entry.getText();
                 entry.clear();
                 String[] parts = text.split(" ",2);
-                System.out.println(Arrays.toString(parts));
                 if(parts[0].equals("/nick")){
                     if(parts.length >1){
                         this.communicator.send("NICK " +parts[1]);

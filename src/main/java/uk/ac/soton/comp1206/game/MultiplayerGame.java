@@ -31,21 +31,20 @@ public class MultiplayerGame extends Game{
     MultiScoreListener msl;
     PlayerLostListener ppl;
 
+    boolean recievedInitial;
+
     public MultiplayerGame(int cols, int rows, GameWindow g) {
         super(cols, rows);
         this.communicator = g.getCommunicator();
 
 
-
         this.communicator.addListener(message -> Platform.runLater(() -> this.handleMessage(message)));
-        this.executor = Executors.newSingleThreadScheduledExecutor();
-        System.out.println("testingtesting");
+    
+        requestPieces(5);
 
         this.score.addListener((c,a,b) -> updateScore(b));
         this.lives.addListener((c,a,b) -> updateLives(b));
-
-
-        requestPieces(5);
+        this.executor = Executors.newSingleThreadScheduledExecutor();
         
         requestLoop();
     }
@@ -72,11 +71,16 @@ public class MultiplayerGame extends Game{
     private void handleMessage(String s){
         String[] parts = s.split(" ",2);
         String header = parts[0];
-        System.out.println(s);
         if(header.equals("PIECE")){
-            logger.info("Here is the number: {}",parts[1]);
             try {
 				queue.put(Integer.parseInt(parts[1]));
+                System.out.println(queue.size());
+
+                if((queue.size()==5)&&(!recievedInitial)){
+                    start();
+                    recievedInitial = true;
+                }
+
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
@@ -103,7 +107,7 @@ public class MultiplayerGame extends Game{
 
     public void requestPieces(int num){
         for(int i=0; i<num;i++){
-            System.out.println("REQUESTING");
+            System.out.println("REQUESTING PIECE");
             communicator.send("PIECE");
         }
     }

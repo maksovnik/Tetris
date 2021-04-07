@@ -103,7 +103,6 @@ public class ScoreScene extends BaseScene{
             localHiScoresBox.reveal();
             remoteHiScoresBox.reveal();
 
-            System.out.println("Reveal");
             return;
         }
         

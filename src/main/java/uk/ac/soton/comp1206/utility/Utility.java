@@ -59,7 +59,6 @@ public class Utility {
         
         String[] w = scores.split(" ",2);
         String header = w[0];
-        System.out.println("the header is"+header);
         
         if(!header.equals("HISCORES")){
             return null;
@@ -69,7 +68,6 @@ public class Utility {
         
         String[] newScores = parts[1].split("\n");
         for(String i: newScores){
-            System.out.println("The thing im llooking for is:"+i);
             String[] newParts = i.split(":");
             var p = new Pair<String, Integer>(newParts[0],Integer.parseInt(newParts[1]));
             x.add(p);

@@ -33,7 +33,6 @@ public class ScoreBox extends VBox{
     }
 
     public void updateScores(){
-        System.out.println("MMUAHAAHAHAHHAAHAH");
         this.getChildren().clear();
         
         for(Pair<String, Integer> i : scores){
