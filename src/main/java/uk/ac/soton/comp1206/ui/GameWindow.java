@@ -1,14 +1,18 @@
 package uk.ac.soton.comp1206.ui;
 
+import java.util.ArrayList;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import uk.ac.soton.comp1206.App;
 import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.network.Communicator;
@@ -19,6 +23,7 @@ import uk.ac.soton.comp1206.scene.LobbyScene;
 import uk.ac.soton.comp1206.scene.MenuScene;
 import uk.ac.soton.comp1206.scene.MultiplayerScene;
 import uk.ac.soton.comp1206.scene.ScoreScene;
+import uk.ac.soton.comp1206.utility.Utility;
 
 /**
  * The GameWindow is the single window for the game where everything takes place. To move between screens in the game,
@@ -103,8 +108,8 @@ public class GameWindow {
         loadScene(new InstructionsScene(this));
     }
 
-    public void startScores(Game g) {
-        loadScene(new ScoreScene(this,g));
+    public void startScores(Game g, ObservableList<Pair<String, Integer>> localScoreList) {
+        loadScene(new ScoreScene(this,g,localScoreList));
     }
 
     public void startLobby() {

@@ -1,10 +1,2 @@
-maks:3240
-James:2370
-Haya:2000
-fg:2000
-:2000
-Mac:1770
-maks:550
-John:100
-test:100
-Oli:60
+Player2:50
+Player1:0

@@ -1,5 +1,7 @@
 package uk.ac.soton.comp1206.component;
 
+import java.util.ArrayList;
+
 import javafx.animation.FadeTransition;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -19,8 +21,11 @@ public class ScoreBox extends VBox{
     SimpleListProperty<Pair<String, Integer>> scores;
     StringProperty name;
     HBox scoreBox;
+    ArrayList<String> lostPlayers;
     
     public ScoreBox(){
+
+        lostPlayers = new ArrayList<String>();
         this.scores=new SimpleListProperty<Pair<String, Integer>>();
         setOpacity(0);
 
@@ -37,11 +42,23 @@ public class ScoreBox extends VBox{
         }
     }
 
+    public void addLostPlayer(ArrayList<String> s){
+        lostPlayers.clear();
+        lostPlayers.addAll(s);
+    }
+
     public HBox makeScoreBox(Pair<String, Integer> x){
         var h = new HBox(8);
 
         h.setAlignment(Pos.CENTER);
+
+        
         var n = new Text(x.getKey());
+
+        if(lostPlayers.contains(x.getKey())){
+            n.setStyle("-fx-strikethrough: true;");
+        }
+
         var s = new Text(Integer.toString(x.getValue()));
 
         n.getStyleClass().add("scorelist");

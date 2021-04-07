@@ -5,13 +5,14 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Pair;
-import uk.ac.soton.comp1206.component.Leaderboard;
+import uk.ac.soton.comp1206.component.ScoreBox;
 import uk.ac.soton.comp1206.event.ScoreListener;
 import uk.ac.soton.comp1206.game.MultiplayerGame;
 import uk.ac.soton.comp1206.network.Communicator;
@@ -62,18 +63,28 @@ public class MultiplayerScene extends ChallengeScene{
         elements.getChildren().remove(this.hscore);
         elements.getChildren().remove(this.hscoreT);
 
-        var r = new Leaderboard();
+        var r = new ScoreBox();
         r.reveal();
         elements.getChildren().add(r);
+
+        game.setGameEndListener(() -> Platform.runLater(() -> {
+            gameWindow.startScores(game,localScoreList);
+        }));
 
         this.localScoreList = FXCollections.observableArrayList();
         var wrapper = new SimpleListProperty<Pair<String, Integer>>(this.localScoreList);
         r.getScoreProperty().bind(wrapper);
 
         ((MultiplayerGame) game).setMultiScoreListener(x -> {
-            System.out.println("Helllo");
             localScoreList.setAll(x);
         });
+
+        
+        ((MultiplayerGame) game).setPlayerLostListener(x -> {
+            r.addLostPlayer(x);
+        });
+
+
 
     }
 }

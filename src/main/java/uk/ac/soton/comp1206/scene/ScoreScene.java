@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleListProperty;
+import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -22,6 +23,7 @@ import javafx.util.Pair;
 import uk.ac.soton.comp1206.component.ScoreBox;
 import uk.ac.soton.comp1206.event.handleHighscore;
 import uk.ac.soton.comp1206.game.Game;
+import uk.ac.soton.comp1206.game.MultiplayerGame;
 import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
@@ -37,7 +39,7 @@ public class ScoreScene extends BaseScene{
     private ScoreBox localHiScoresBox;
     private ScoreBox remoteHiScoresBox;
 
-    private ArrayList<Pair<String, Integer>> remoteScores;
+    private ObservableList<Pair<String, Integer>> remoteScores;
 
 
     Game game;
@@ -49,14 +51,18 @@ public class ScoreScene extends BaseScene{
 
     private VBox elements;
 
-    public ScoreScene (GameWindow gameWindow, Game game) {
+    ObservableList<Pair<String, Integer>> localItems;
+
+    private Object multiGame;
+
+    public ScoreScene (GameWindow gameWindow, Game game, ObservableList<Pair<String, Integer>> localItems) {
         super(gameWindow);
         logger.info("Creating Score Scene");
         this.game=game;
         this.score=game.getScore();
         this.communicator = gameWindow.getCommunicator();
-        this.remoteScores = new ArrayList<Pair<String, Integer>>();
-
+        this.localItems = localItems;
+        this.remoteScores = FXCollections.observableArrayList();
     }
 
     
@@ -81,12 +87,27 @@ public class ScoreScene extends BaseScene{
     private void handleMessage(final String message) {
 
         remoteScores = Utility.getScoreArrayList(message);
+        if(remoteScores==null){
+            return;
+        }
+
+
         remoteScores.sort((a, b) -> b.getValue().compareTo(a.getValue()));
         remoteScoreList.addAll(remoteScores);
 
         var lowestRemote = remoteScores.get(this.remoteScores.size() - 1).getValue();
         var lowestLocal = this.localScoreList.get(this.localScoreList.size() - 1).getValue();
         
+
+        if(game instanceof MultiplayerGame){
+            localHiScoresBox.reveal();
+            remoteHiScoresBox.reveal();
+
+            System.out.println("Reveal");
+            return;
+        }
+        
+
         if((score>lowestLocal)&&(score>lowestRemote)){
             
             seth(() -> {
@@ -177,7 +198,7 @@ public class ScoreScene extends BaseScene{
         localHiScoresBox = new ScoreBox();
         remoteHiScoresBox = new ScoreBox();
 
-        this.localScoreList = FXCollections.observableArrayList(Utility.loadScores());
+        this.localScoreList = FXCollections.observableArrayList(this.localItems);
         var wrapper = new SimpleListProperty<Pair<String, Integer>>(this.localScoreList);
         this.localHiScoresBox.getScoreProperty().bind(wrapper);
 

@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import javafx.application.Platform;
 import javafx.util.Pair;
 import uk.ac.soton.comp1206.event.MultiScoreListener;
+import uk.ac.soton.comp1206.event.PlayerLostListener;
 import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.ui.GameWindow;
 
@@ -28,6 +29,7 @@ public class MultiplayerGame extends Game{
     ScheduledExecutorService executor;
     ScheduledFuture<?> loop;
     MultiScoreListener msl;
+    PlayerLostListener ppl;
 
     public MultiplayerGame(int cols, int rows, GameWindow g) {
         super(cols, rows);
@@ -46,6 +48,10 @@ public class MultiplayerGame extends Game{
         requestPieces(5);
         
         requestLoop();
+    }
+
+    public void setPlayerLostListener(PlayerLostListener m){
+        this.ppl = m;
     }
 
     public void setMultiScoreListener(MultiScoreListener m){
@@ -79,13 +85,19 @@ public class MultiplayerGame extends Game{
         }
         if(header.equals("SCORES")){
             String[] playerData = parts[1].split("\n");
+            var dead = new ArrayList<String>();
             var t = new ArrayList<Pair<String,Integer>>();
             for(String i:playerData){
                 String[] x = i.split(":");
                 var g = new Pair<String,Integer>(x[0],Integer.parseInt(x[1]));
                 t.add(g);
+                if(x[2].equals("DEAD")){
+                    dead.add(x[0]);
+                }
             }
+            t.sort((a, b) -> b.getValue().compareTo(a.getValue()));
             msl.setScores(t);
+            ppl.lostPlayers(dead);
         }
     }
 

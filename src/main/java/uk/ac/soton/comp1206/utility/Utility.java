@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.util.Pair;
 
 public class Utility {
@@ -17,9 +19,9 @@ public class Utility {
     static String highName;
     static int highScore;
 
-    public static ArrayList<Pair<String, Integer>> loadScores(){
-        var x = new ArrayList<Pair<String, Integer>>();
-    
+    public static ObservableList<Pair<String, Integer>> loadScores(){
+        ObservableList<Pair<String, Integer>> x = FXCollections.observableArrayList();
+       // ObservableList<Pair<String, Integer>> x = new ArrayList<Pair<String, Integer>>();
         File f = new File("scores.txt");
 
         try {
@@ -52,12 +54,22 @@ public class Utility {
        
     }
 
-    public static ArrayList<Pair<String, Integer>> getScoreArrayList(String scores){
-        var x = new ArrayList<Pair<String, Integer>>();
-                
-        String[] parts = scores.split(" ");
+    public static ObservableList<Pair<String, Integer>> getScoreArrayList(String scores){
+        ObservableList<Pair<String, Integer>> x = FXCollections.observableArrayList();
+        
+        String[] w = scores.split(" ",2);
+        String header = w[0];
+        System.out.println("the header is"+header);
+        
+        if(!header.equals("HISCORES")){
+            return null;
+        }
+
+        String[] parts = scores.split(" ",2);
+        
         String[] newScores = parts[1].split("\n");
         for(String i: newScores){
+            System.out.println("The thing im llooking for is:"+i);
             String[] newParts = i.split(":");
             var p = new Pair<String, Integer>(newParts[0],Integer.parseInt(newParts[1]));
             x.add(p);

@@ -146,7 +146,7 @@ public class ChallengeScene extends BaseScene{
 
         game.setLineClearedListener(x -> board.fadeOut(x));
 
-        game.setGameEndListener(() -> Platform.runLater(() -> gameWindow.startScores(game)));
+        game.setGameEndListener(() -> Platform.runLater(() -> gameWindow.startScores(game,Utility.loadScores())));
 
 
 
