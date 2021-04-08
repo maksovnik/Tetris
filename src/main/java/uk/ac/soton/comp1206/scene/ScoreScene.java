@@ -1,6 +1,5 @@
 package uk.ac.soton.comp1206.scene;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -8,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleListProperty;
-import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;

@@ -1,7 +1,5 @@
 package uk.ac.soton.comp1206.ui;
 
-import java.util.ArrayList;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,7 +21,6 @@ import uk.ac.soton.comp1206.scene.LobbyScene;
 import uk.ac.soton.comp1206.scene.MenuScene;
 import uk.ac.soton.comp1206.scene.MultiplayerScene;
 import uk.ac.soton.comp1206.scene.ScoreScene;
-import uk.ac.soton.comp1206.utility.Utility;
 
 /**
  * The GameWindow is the single window for the game where everything takes place. To move between screens in the game,

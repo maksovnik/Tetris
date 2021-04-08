@@ -98,9 +98,6 @@ public class LobbyScene extends BaseScene {
 
             main.getChildren().add(channelChat);
         }
-        if(header.equals("HOST")){
-
-        }
         if(header.equals("ERROR")){
             String message = parts[1];
             var alert = new Alert(Alert.AlertType.ERROR);

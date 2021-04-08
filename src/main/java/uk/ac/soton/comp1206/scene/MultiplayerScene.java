@@ -1,7 +1,5 @@
 package uk.ac.soton.comp1206.scene;
 
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,14 +7,12 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 import uk.ac.soton.comp1206.component.ScoreBox;
-import uk.ac.soton.comp1206.event.ScoreListener;
 import uk.ac.soton.comp1206.game.MultiplayerGame;
 import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.ui.GameWindow;
