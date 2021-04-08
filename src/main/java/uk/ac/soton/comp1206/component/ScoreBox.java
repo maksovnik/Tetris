@@ -40,9 +40,8 @@ public class ScoreBox extends VBox{
         }
     }
 
-    public void addLostPlayer(ArrayList<String> s){
-        lostPlayers.clear();
-        lostPlayers.addAll(s);
+    public void addLostPlayer(String s){
+        lostPlayers.add(s);
     }
 
     public HBox makeScoreBox(Pair<String, Integer> x){

@@ -125,6 +125,10 @@ public class Game {
         return score;
     }
 
+    public int getQueueSize(){return 0;}
+    public void addToQueue(String c){};
+    public void requestPieces(int i) {}
+
     public IntegerProperty getLivesProperty() {
         return lives;
     }
@@ -397,6 +401,8 @@ public class Game {
     public int getRows() {
         return rows;
     }
+
+
 
 
 }

@@ -1,5 +1,7 @@
 package uk.ac.soton.comp1206.scene;
 
+import java.util.ArrayList;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,6 +28,8 @@ public class MultiplayerScene extends ChallengeScene{
     Communicator communicator;
     private TextField sendBox;
     private Text message;
+    private ScoreBox r;
+
 
     public MultiplayerScene(GameWindow gameWindow) {
         super(gameWindow);
@@ -64,6 +68,61 @@ public class MultiplayerScene extends ChallengeScene{
 
     @Override
     public void initialise() {
+        System.out.println("adfsdfsdflklhjflkjlshfklsjdfkjasdf");
+        
+        game.requestPieces(5);
+        this.communicator.addListener(message -> Platform.runLater(() -> receiveMessage(message.trim())));
+
+    }
+
+    private void receiveMessage(String s){
+        String[] parts = s.split(" ",2);
+        String header = parts[0];
+
+        if(header.equals("PIECE")){
+
+            game.addToQueue(parts[1]);
+
+            if((game.getQueueSize()==5) && board.isDisabled()){
+                logger.info("Recieved All Good pieces, game starting.");
+                game.start();
+                board.setDisable(false);
+            }
+        }
+
+        if(header.equals("MSG")){
+            var comps = parts[1].split(":");
+            var sender = comps[0];
+            var m = comps[1];
+
+            message.setText(sender+" "+m);
+            message.setOpacity(1);
+        }
+
+        if(header.equals("SCORES")){
+
+
+            var playerData = parts[1].split("\n");
+
+            //var t = new ArrayList<Pair<String,Integer>>();
+            localScoreList.clear();
+
+            for(String i:playerData){
+                var x = i.split(":");
+                var g = new Pair<String,Integer>(x[0],Integer.parseInt(x[1]));
+                
+                if(!localScoreList.contains(g))
+                localScoreList.add(g);
+
+                if(x[2].equals("DEAD")){
+                    r.addLostPlayer(x[0]);
+                }
+            }
+            
+            localScoreList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+
+        }
+
     }
 
     @Override
@@ -81,7 +140,7 @@ public class MultiplayerScene extends ChallengeScene{
         elements.getChildren().remove(this.hscore);
         elements.getChildren().remove(this.hscoreT);
 
-        var r = new ScoreBox();
+        r = new ScoreBox();
 
         Utility.reveal(300, r);
         elements.getChildren().add(r);
@@ -92,24 +151,8 @@ public class MultiplayerScene extends ChallengeScene{
         var wrapper = new SimpleListProperty<Pair<String, Integer>>(this.localScoreList);
         r.getScoreProperty().bind(wrapper);
         
-        ((MultiplayerGame) game).setGameStartListener(() -> {
-            this.board.setDisable(false);
-        });
 
-        ((MultiplayerGame) game).setMultiScoreListener(x -> localScoreList.setAll(x));
 
-        
-        ((MultiplayerGame) game).setPlayerLostListener(x -> {
-            r.addLostPlayer(x);
-        });
-
-        ((MultiplayerGame) game).setMultiMessageListener((s,m) -> {
-            System.out.println("New message");
-            message.setText(s+" "+m);
-            message.setOpacity(1);
-        });
-
-        
         
         message = new Text();
         sendBox = new TextField();
