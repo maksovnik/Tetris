@@ -9,8 +9,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
+import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.util.Duration;
 import javafx.util.Pair;
 
 public class Utility {
@@ -73,6 +76,15 @@ public class Utility {
         }
 
         return x;
+    }
+
+    public static void reveal(double millis, Node node){
+        //300
+        final FadeTransition fader = new FadeTransition(new Duration(millis), node);
+        fader.setFromValue(0.0);
+        fader.setToValue(1.0);
+        
+        fader.play();
     }
 
 

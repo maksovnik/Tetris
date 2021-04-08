@@ -27,7 +27,6 @@ public class ScoreBox extends VBox{
 
         lostPlayers = new ArrayList<String>();
         this.scores=new SimpleListProperty<Pair<String, Integer>>();
-        setOpacity(0);
 
         scores.addListener((ListChangeListener<Pair<String,Integer>>)(c -> updateScores()));
     }
@@ -71,13 +70,6 @@ public class ScoreBox extends VBox{
         return this.scores;
     }
     
-    public void reveal(){
-        final FadeTransition fader = new FadeTransition(new Duration(300.0), this);
-        fader.setFromValue(0.0);
-        fader.setToValue(1.0);
-        
-        fader.play();
-    }
     public StringProperty getNameProperty() {
         return this.name;
     }

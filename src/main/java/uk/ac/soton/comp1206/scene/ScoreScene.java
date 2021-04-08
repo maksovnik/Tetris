@@ -54,6 +54,10 @@ public class ScoreScene extends BaseScene{
 
     private Object multiGame;
 
+    private HBox scoreBoxes;
+
+    private Text title;
+
     public ScoreScene (GameWindow gameWindow, Game game, ObservableList<Pair<String, Integer>> localItems) {
         super(gameWindow);
         logger.info("Creating Score Scene");
@@ -90,6 +94,8 @@ public class ScoreScene extends BaseScene{
             return;
         }
 
+        title.setOpacity(1);
+
 
         remoteScores.sort((a, b) -> b.getValue().compareTo(a.getValue()));
         remoteScoreList.addAll(remoteScores);
@@ -99,8 +105,7 @@ public class ScoreScene extends BaseScene{
         
 
         if(game instanceof MultiplayerGame){
-            localHiScoresBox.reveal();
-            remoteHiScoresBox.reveal();
+            Utility.reveal(300, scoreBoxes);
 
             return;
         }
@@ -145,8 +150,7 @@ public class ScoreScene extends BaseScene{
             letEnterName();
         }
         else{
-            localHiScoresBox.reveal();
-            remoteHiScoresBox.reveal();
+            Utility.reveal(300, scoreBoxes);
         }
 
     }
@@ -164,8 +168,7 @@ public class ScoreScene extends BaseScene{
             h.handleIt();
 
             Utility.writeScores(localScoreList);
-            localHiScoresBox.reveal();
-            remoteHiScoresBox.reveal();
+            Utility.reveal(300, scoreBoxes);
 
         });
         
@@ -190,13 +193,15 @@ public class ScoreScene extends BaseScene{
         var mainPane = new BorderPane();
         instructionsPane.getChildren().add(mainPane);
 
-        var scoreBoxes = new HBox(12);
+        scoreBoxes = new HBox(12);
+        scoreBoxes.setOpacity(0);
         scoreBoxes.setAlignment(Pos.CENTER);
         
         elements = new VBox();
         elements.setAlignment(Pos.CENTER);
 
-        Text title = new Text("Scores");
+        title = new Text("Scores");
+        title.setOpacity(0);
         title.getStyleClass().add("score");
 
         localHiScoresBox = new ScoreBox();

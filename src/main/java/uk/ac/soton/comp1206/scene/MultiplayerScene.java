@@ -16,6 +16,7 @@ import uk.ac.soton.comp1206.component.ScoreBox;
 import uk.ac.soton.comp1206.game.MultiplayerGame;
 import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.ui.GameWindow;
+import uk.ac.soton.comp1206.utility.Utility;
 
 public class MultiplayerScene extends ChallengeScene{
     
@@ -81,7 +82,8 @@ public class MultiplayerScene extends ChallengeScene{
         elements.getChildren().remove(this.hscoreT);
 
         var r = new ScoreBox();
-        r.reveal();
+
+        Utility.reveal(300, r);
         elements.getChildren().add(r);
 
         game.setGameEndListener(() -> Platform.runLater(() -> gameWindow.startScores(game,localScoreList)));
@@ -109,7 +111,7 @@ public class MultiplayerScene extends ChallengeScene{
 
         
         
-        message = new Text("Hellllo");
+        message = new Text();
         sendBox = new TextField();
         
         sendBox.setOnKeyPressed(e -> {
@@ -125,6 +127,7 @@ public class MultiplayerScene extends ChallengeScene{
                 e.consume();           
             }
         });
+        message.setOpacity(0);
         sendBox.setOpacity(0);
         message.getStyleClass().add("messages");
         message.setStyle("-fx-font-size: 20px;");
