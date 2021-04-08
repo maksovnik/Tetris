@@ -22,7 +22,6 @@ import uk.ac.soton.comp1206.event.GameEndListener;
 import uk.ac.soton.comp1206.event.GameLoopListener;
 import uk.ac.soton.comp1206.event.LineClearedListener;
 import uk.ac.soton.comp1206.event.NextPieceListener;
-import uk.ac.soton.comp1206.event.ScoreListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
 
 
@@ -38,7 +37,6 @@ public class Game {
     LineClearedListener lcl;
     GameEndListener gel;
     GameLoopListener gll;
-    ScoreListener sl;
 
 
     ScheduledExecutorService executor;
@@ -49,6 +47,7 @@ public class Game {
     
     private static final Logger logger = LogManager.getLogger(Game.class);
 
+    protected SimpleIntegerProperty hscore = new SimpleIntegerProperty(0);
     protected SimpleIntegerProperty score = new SimpleIntegerProperty(0);
     private SimpleIntegerProperty level = new SimpleIntegerProperty(0);
     protected SimpleIntegerProperty lives = new SimpleIntegerProperty(3);
@@ -123,6 +122,14 @@ public class Game {
     // Define a getter for the property itself
     public IntegerProperty getScoreProperty() {
         return score;
+    }
+
+    public IntegerProperty getHScoreProperty() {
+        return hscore;
+    }
+
+    public void setHScore(int h){
+        hscore.set(h);
     }
 
     public int getQueueSize(){return 0;}
@@ -319,8 +326,7 @@ public class Game {
             return;
         }
 
-        this.score.set(getScore()+score(numLines,blocksCleared)); //Increases score
-        sl.setScore(this.score.get());
+        setScore(score.get()+score(numLines,blocksCleared));
         
         level.set((int)this.score.get()/1000); //Sets level
         multiplier.set(multiplier.get()+1); //Increases multiplier
@@ -330,11 +336,14 @@ public class Game {
         lcl.linesCleared(c.toArray(new GameBlockCoordinate[coords.size()]));
         
     }
-
-    public void setScoreListener(ScoreListener l){
-        this.sl = l;
-    }
     
+    public void setScore(int newScore){
+        if(newScore>hscore.get()){
+            hscore.set(newScore);
+        }
+        score.set(newScore);
+    }
+
 
     public void setLineClearedListener(LineClearedListener l){
         this.lcl = l;

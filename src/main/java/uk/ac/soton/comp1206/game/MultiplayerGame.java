@@ -12,9 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 import javafx.application.Platform;
 import javafx.util.Pair;
-import uk.ac.soton.comp1206.event.GameStartListener;
-import uk.ac.soton.comp1206.event.MultiScoreListener;
-import uk.ac.soton.comp1206.event.PlayerLostListener;
 import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.ui.GameWindow;
 
@@ -26,16 +23,17 @@ public class MultiplayerGame extends Game{
     private static final Logger logger = LogManager.getLogger(MultiplayerGame.class);
     ScheduledExecutorService executor;
     ScheduledFuture<?> loop;
-    MultiScoreListener msl;
-    PlayerLostListener ppl;
 
     boolean recievedInitial;
-    GameStartListener gsl;
 
     public MultiplayerGame(int cols, int rows, GameWindow g) {
         super(cols, rows);
         this.communicator = g.getCommunicator();
 
+
+        //this.communicator.addListener(message -> Platform.runLater(() -> this.handleMessage(message)));
+    
+        //requestPieces(5);
 
 
         this.executor = Executors.newSingleThreadScheduledExecutor();
@@ -43,13 +41,6 @@ public class MultiplayerGame extends Game{
         
     }
 
-    public void setPlayerLostListener(PlayerLostListener m){
-        this.ppl = m;
-    }
-
-    public void setMultiScoreListener(MultiScoreListener m){
-        this.msl = m;
-    }
     public void end(){
         this.communicator.send("DIE");
         this.communicator.clearListeners();
@@ -71,9 +62,6 @@ public class MultiplayerGame extends Game{
         this.loop = executor.schedule(() -> requestLoop(), 2000, TimeUnit.MILLISECONDS);
     }
 
-    public void setGameStartListener(GameStartListener g){
-        this.gsl = g;
-    }
 
     public void addToQueue(String c){
         try {

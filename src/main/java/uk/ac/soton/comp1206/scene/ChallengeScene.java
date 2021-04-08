@@ -189,24 +189,24 @@ public class ChallengeScene extends BaseScene{
             }
         });
 
-        game.setScoreListener(scoreC -> {
-            score.setText(Integer.toString(scoreC));
-            if(Integer.parseInt(hscore.getText()) < scoreC){
-                hscore.setText(Integer.toString(scoreC));
-            
-            }
-        });
+        // game.setScoreListener(scoreC -> {
+        //     score.setText(Integer.toString(scoreC));
+        //     if(Integer.parseInt(hscore.getText()) < scoreC){
+        //         hscore.setText(Integer.toString(scoreC));
+        //     }
+        // });
 
 
         var rectangle = new RectangleTimer(gameWindow.getWidth(), 40);
 
         game.setGameLoopListener(delay -> rectangle.shrink(delay));
 
-
-        hscore.setText(Integer.toString(getHighScore()));
+        game.setHScore(getHighScore());
     
         level.textProperty().bind(game.getLevelProperty().asString());
         lives.textProperty().bind(game.getLivesProperty().asString());
+        score.textProperty().bind(game.getScoreProperty().asString());
+        hscore.textProperty().bind(game.getHScoreProperty().asString());
         
         multiplier.textProperty().bind(game.getMultiplierProperty().asString());
 
