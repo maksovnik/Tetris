@@ -91,7 +91,6 @@ public class InstructionsScene extends BaseScene {
     }
 
     private void handleKeyPress(KeyEvent e){
-
         KeyCode k = e.getCode();
         if(k==KeyCode.ESCAPE){
             gameWindow.loadScene(gameWindow.getMenu());

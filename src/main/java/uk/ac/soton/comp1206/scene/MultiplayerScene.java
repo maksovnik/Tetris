@@ -9,8 +9,11 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Text;
 import javafx.util.Pair;
 import uk.ac.soton.comp1206.component.ScoreBox;
 import uk.ac.soton.comp1206.event.ScoreListener;
@@ -24,6 +27,8 @@ public class MultiplayerScene extends ChallengeScene{
     private static final Logger logger = LogManager.getLogger(MultiplayerScene.class);
     private ObservableList<Pair<String, Integer>> localScoreList;
     Communicator communicator;
+    private TextField sendBox;
+    private Text message;
 
     public MultiplayerScene(GameWindow gameWindow) {
         super(gameWindow);
@@ -43,6 +48,24 @@ public class MultiplayerScene extends ChallengeScene{
 
 
     @Override
+    public void handleKeyPress(KeyEvent e){
+        System.out.println("HAHAAHAHA");
+
+        KeyCode k = e.getCode();
+        String keyName = k.getName();
+
+        super.handleKeyPress(e);
+        System.out.println(keyName);
+
+        if(keyName.equals("T")){
+            sendBox.setDisable(false);
+            sendBox.requestFocus();
+            sendBox.setOpacity(1);
+        }
+        
+    }
+
+    @Override
     public void initialise() {
     }
 
@@ -51,6 +74,7 @@ public class MultiplayerScene extends ChallengeScene{
         super.build();
 
         this.board.setDisable(true);
+
 
         
         elements.getChildren().remove(this.level);
@@ -81,6 +105,37 @@ public class MultiplayerScene extends ChallengeScene{
             r.addLostPlayer(x);
         });
 
+        ((MultiplayerGame) game).setMultiMessageListener((s,m) -> {
+            System.out.println("New message");
+            message.setText(s+" "+m);
+            message.setOpacity(1);
+        });
+
+        
+        
+        message = new Text("Hellllo");
+        sendBox = new TextField();
+        
+        sendBox.setOnKeyPressed(e -> {
+            if (e.getCode().equals(KeyCode.ENTER)) {
+                String text = sendBox.getText();
+                sendBox.clear();
+                this.communicator.send("MSG " +text);
+                sendBox.setOpacity(0);
+                sendBox.setDisable(true);
+            }
+
+            if (e.getCode() == KeyCode.ENTER) {
+                e.consume();           
+            }
+        });
+        sendBox.setOpacity(0);
+        message.getStyleClass().add("messages");
+        message.setStyle("-fx-font-size: 20px;");
+
+        sendBox.setDisable(true);
+        y.getChildren().add(0,sendBox);
+        k.getChildren().add(1,message);
 
 
     }

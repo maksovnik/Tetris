@@ -12,6 +12,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -58,6 +59,10 @@ public class ChallengeScene extends BaseScene{
 	protected Text multiplierT;
 
 	protected Text multiplier;
+
+    public VBox y;
+
+    protected VBox k;
 
 
     /**
@@ -227,16 +232,29 @@ public class ChallengeScene extends BaseScene{
         lives.textProperty().bind(game.getLivesProperty().asString());
         
         multiplier.textProperty().bind(game.getMultiplierProperty().asString());
-        mainPane.setCenter(board);
-        mainPane.setBottom(rectangle);
+
+        k = new VBox(4);
+        k.getChildren().addAll(board);
+        k.setAlignment(Pos.CENTER);
+        mainPane.setCenter(k);
+
+        
+        
+        y = new VBox(10);
+        y.getChildren().addAll(rectangle);
+        //mainPane.setBottom(rectangle);
+        mainPane.setBottom(y);
 
         BorderPane.setAlignment(rectangle, Pos.CENTER_LEFT);
         BorderPane.setMargin(rectangle, new Insets(5,5,5,5)); // optional
         //Handle block on gameboard grid being clicked
         board.setOnBlockClick(this::blockClicked);
         Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
+        //Platform.runLater(() -> scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> handleKeyPress(e)));
 
     }
+
+
      
     private int getHighScore(){
         Utility.fetchHighScore();
@@ -249,8 +267,10 @@ public class ChallengeScene extends BaseScene{
      * @param gameBlock the Game Block that was clocked
      */
 
+    
     public void handleKeyPress(KeyEvent e){
 
+        System.out.println("nnono");
         KeyCode k = e.getCode();
         String keyName = k.getName();
 

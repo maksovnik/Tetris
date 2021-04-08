@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import javafx.application.Platform;
 import javafx.util.Pair;
 import uk.ac.soton.comp1206.event.GameStartListener;
+import uk.ac.soton.comp1206.event.MultiMessageListener;
 import uk.ac.soton.comp1206.event.MultiScoreListener;
 import uk.ac.soton.comp1206.event.PlayerLostListener;
 import uk.ac.soton.comp1206.network.Communicator;
@@ -34,6 +35,7 @@ public class MultiplayerGame extends Game{
 
     boolean recievedInitial;
     GameStartListener gsl;
+    private MultiMessageListener mml;
 
     public MultiplayerGame(int cols, int rows, GameWindow g) {
         super(cols, rows);
@@ -85,15 +87,21 @@ public class MultiplayerGame extends Game{
     private void handleMessage(String s){
         String[] parts = s.split(" ",2);
         String header = parts[0];
+        logger.info("Header is '{}' .. {}",header,(header.equals("MSG")));
+
+
+
         if(header.equals("PIECE")){
             try {
 				queue.put(Integer.parseInt(parts[1]));
                 System.out.println(queue.size());
 
                 if((queue.size()==5)&&(!recievedInitial)){
+                    logger.info("Recieved All Good pieces, gamme starting.");
                     start();
                     gsl.gameStart();
                     recievedInitial = true;
+                    
                 }
 
 			} catch (NumberFormatException e) {
@@ -117,7 +125,19 @@ public class MultiplayerGame extends Game{
             t.sort((a, b) -> b.getValue().compareTo(a.getValue()));
             msl.setScores(t);
             ppl.lostPlayers(dead);
+
         }
+
+        if(header.equals("MSG")){
+            var comps = parts[1].split(":");
+            var sender = comps[0];
+            var message = comps[1];
+            mml.newMessage(sender,message);
+        }
+    }
+
+    public void setMultiMessageListener(MultiMessageListener d){
+        this.mml=d;
     }
 
     public void requestPieces(int num){

@@ -1,12 +1,8 @@
 package uk.ac.soton.comp1206.component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 
-import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -29,8 +25,6 @@ public class ChannelChat extends VBox{
     List<String> x;
     ScrollPane sp;
 
-    ScheduledExecutorService executor;
-    ScheduledFuture<?> loop;
     private Node start;
 
     public ChannelChat(GameWindow g, String name){
