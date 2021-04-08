@@ -185,11 +185,16 @@ public class ScoreScene extends BaseScene{
         root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
 
         var instructionsPane = new StackPane();
+        instructionsPane.setMaxWidth(gameWindow.getWidth());
+        instructionsPane.setMaxHeight(gameWindow.getHeight());
         instructionsPane.getStyleClass().add("menu-background");
+        //instructionsPane.getStyleClass().add("menu-background");
         root.getChildren().add(instructionsPane);
 
         Platform.runLater(() -> scene.setOnKeyPressed(e -> {
             if(e.getCode()==KeyCode.ESCAPE){
+
+                System.out.println("#3");
                 gameWindow.startMenu();
             }
         }));

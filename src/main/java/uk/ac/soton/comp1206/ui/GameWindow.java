@@ -19,6 +19,7 @@ import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.scene.BaseScene;
 import uk.ac.soton.comp1206.scene.ChallengeScene;
 import uk.ac.soton.comp1206.scene.InstructionsScene;
+import uk.ac.soton.comp1206.scene.IntroScene;
 import uk.ac.soton.comp1206.scene.LobbyScene;
 import uk.ac.soton.comp1206.scene.MenuScene;
 import uk.ac.soton.comp1206.scene.MultiplayerScene;
@@ -78,7 +79,7 @@ public class GameWindow {
 
         //Go to menu
 
-
+        startIntro();
         
 
         
@@ -102,7 +103,9 @@ public class GameWindow {
         return menu;
     }
     public void startMenu() {
-        this.menu = new MenuScene(this);
+        scene.setOnKeyPressed(null);
+        this.menu = new MenuScene(this); 
+        System.out.println("#2");
         loadScene(this.menu);
     }
 
@@ -121,6 +124,11 @@ public class GameWindow {
     /**
      * Display the single player challenge
      */
+
+    public void startIntro() {
+        loadScene(new IntroScene(this));
+    }
+
     public void startChallenge() {
         loadScene(new ChallengeScene(this));
     }
@@ -165,15 +173,10 @@ public class GameWindow {
     /**
      * Setup the default scene (an empty black scene) when no scene is loaded
      */
+
+
     public void setupDefaultScene() {
-        var b= new BorderPane();
-        final ImageView image = new ImageView(GameWindow.class.getResource("/images/ECSGames.png").toExternalForm());
-        image.setFitWidth(getHeight());
-        image.setPreserveRatio(true);
-        b.setCenter(image);
-        this.scene = new Scene(b,width,height, Color.BLACK);
-        Utility.reveal(4000, b);
-        Utility.fader.setOnFinished(e -> startMenu());
+        this.scene = new Scene(new Pane(),width,height, Color.BLACK);
         stage.setScene(this.scene);
     }
 
