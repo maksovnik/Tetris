@@ -7,7 +7,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import uk.ac.soton.comp1206.event.BlockClickedListener;
-import uk.ac.soton.comp1206.event.ClickListener;
 import uk.ac.soton.comp1206.game.Grid;
 
 /**
@@ -58,8 +57,6 @@ public class GameBoard extends GridPane {
      * The listener to call when a specific block is clicked
      */
     private BlockClickedListener blockClickedListener;
-    private ClickListener ClickListener;
-
     private int[] currentHoverCords = {0,0};
 
 
@@ -140,10 +137,11 @@ public class GameBoard extends GridPane {
                 GameBlock b = createBlock(x,y);
                 b.setOnMouseEntered(e -> this.hover(b));
                 b.setOnMouseExited(e -> this.unhover());
+                //b.setOnMouseClicked(e -> blockClickedListener.blockClicked(e,b));
             }
         }
 
-        setOnMouseClicked(e -> Click(e));
+        
 
     }
 
@@ -183,9 +181,7 @@ public class GameBoard extends GridPane {
         currentHoverCords[0] = 0;
         currentHoverCords[1] = 0;
     }
-    private void Click(MouseEvent e) {
-        ClickListener.Click(e.getButton());
-    }
+
 
     protected GameBlock createBlock(int x, int y) {
         var blockWidth = width / cols;
@@ -204,7 +200,7 @@ public class GameBoard extends GridPane {
         block.bind(grid.getGridProperty(x,y));
 
         //Add a mouse click handler to the block to trigger GameBoard blockClicked method
-        block.setOnMouseClicked((e) -> blockClicked(e, block)); //stops working
+        block.setOnMouseClicked(e -> blockClickedListener.blockClicked(e,block)); //stops working
 
         return block;
     }
@@ -217,22 +213,12 @@ public class GameBoard extends GridPane {
         this.blockClickedListener = listener;
     }
 
-    public void setOnClick(ClickListener listener) {
-        this.ClickListener = listener;
-    }
+
 
     /**
      * Triggered when a block is clicked. Call the attached listener.
      * @param event mouse event
      * @param block block clicked on
-     */
-    public void blockClicked(MouseEvent event, GameBlock block) {
-        System.out.println("Incorrect one.");
-        if(event.getButton()==MouseButton.PRIMARY){
-            logger.info("Block clicked: {}", block);
-            if(blockClickedListener != null) {
-                blockClickedListener.blockClicked(block);
-            }
-        }
-    }
+    //  */
+
 }

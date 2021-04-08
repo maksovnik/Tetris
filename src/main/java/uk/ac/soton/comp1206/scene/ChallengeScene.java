@@ -15,6 +15,7 @@ import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -25,6 +26,7 @@ import javafx.util.Duration;
 import uk.ac.soton.comp1206.component.GameBlock;
 import uk.ac.soton.comp1206.component.GameBoard;
 import uk.ac.soton.comp1206.component.PieceBoard;
+import uk.ac.soton.comp1206.component.RectangleTimer;
 import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
@@ -170,23 +172,19 @@ public class ChallengeScene extends BaseScene{
 
         this.board = new GameBoard(game.getGrid(),gameWindow.getWidth()/2,gameWindow.getWidth()/2);
 
-        board.setOnClick(m -> {
-            if(m==MouseButton.SECONDARY){
-                game.rotateCurrentPiece(1);
-            }
-        });
 
-        p.setOnClick(m -> {
-            if(m==MouseButton.PRIMARY){
+
+        p.setOnBlockClick((m,b) -> {
+            if(m.getButton()==MouseButton.PRIMARY){
                 game.rotateCurrentPiece(1);
             }
-            if(m==MouseButton.SECONDARY){
+            if(m.getButton()==MouseButton.SECONDARY){
                 game.rotateCurrentPiece(-1);
             }
         });
         
-        f.setOnClick(m -> {
-            if(m==MouseButton.PRIMARY){
+        f.setOnBlockClick((m,b) -> {
+            if(m.getButton()==MouseButton.PRIMARY){
                 game.swapCurrentPiece();
             }
         });
@@ -199,30 +197,10 @@ public class ChallengeScene extends BaseScene{
             }
         });
 
-        Rectangle rectangle = new Rectangle(0, 0, 600, 40);
 
-        rectangle.setFill(Color.GREEN);
-        
-        double x = gameWindow.getWidth()-10;
-        rectangle.setWidth(x);
+        var rectangle = new RectangleTimer(gameWindow.getWidth(), 40);
 
-        game.setGameLoopListener(delay -> {
-            rectangle.setWidth(x);
-            KeyValue widthValue = new KeyValue(rectangle.widthProperty(), 0);
-            KeyFrame frame = new KeyFrame(Duration.millis(delay), widthValue);
-
-            KeyValue greenValue= new KeyValue(rectangle.fillProperty(), Color.GREEN);
-            KeyFrame frame1 = new KeyFrame(Duration.ZERO, greenValue);
-
-            KeyValue yellowValue= new KeyValue(rectangle.fillProperty(), Color.YELLOW);
-            KeyFrame frame2 = new KeyFrame(new Duration(delay*0.5), yellowValue);
-        
-            KeyValue redValue= new KeyValue(rectangle.fillProperty(), Color.RED);
-            KeyFrame frame3 = new KeyFrame(new Duration(delay*0.75), redValue);
-
-            Timeline timeline = new Timeline(frame,frame1,frame2,frame3);
-            timeline.play();
-        });
+        game.setGameLoopListener(delay -> rectangle.shrink(delay));
 
 
         hscore.setText(Integer.toString(getHighScore()));
@@ -237,22 +215,24 @@ public class ChallengeScene extends BaseScene{
         k.setAlignment(Pos.CENTER);
         mainPane.setCenter(k);
 
-        
-        
         y = new VBox(10);
         y.getChildren().addAll(rectangle);
-        //mainPane.setBottom(rectangle);
+
         mainPane.setBottom(y);
 
         BorderPane.setAlignment(rectangle, Pos.CENTER_LEFT);
         BorderPane.setMargin(rectangle, new Insets(5,5,5,5)); // optional
-        //Handle block on gameboard grid being clicked
-        board.setOnBlockClick(this::blockClicked);
+        
+        board.setOnBlockClick((e,g) -> {
+            if(e.getButton()==MouseButton.SECONDARY){
+                game.rotateCurrentPiece(1);
+            }
+            if(e.getButton()==MouseButton.PRIMARY){
+                game.blockClicked(g);
+            }
+        });
         Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
-        //Platform.runLater(() -> scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> handleKeyPress(e)));
-
     }
-
 
      
     private int getHighScore(){
@@ -284,7 +264,7 @@ public class ChallengeScene extends BaseScene{
             game.end();
         }
         if(Arrays.asList("Enter","X").contains(keyName)){
-            blockClicked(board.getCurrentHoverPiece());
+            game.blockClicked(board.getCurrentHoverPiece());
         }
         if(Arrays.asList("Q","Z","Open Bracket").contains(keyName)){
             game.rotateCurrentPiece(-1);
@@ -297,9 +277,7 @@ public class ChallengeScene extends BaseScene{
         }
     }
     
-    private void blockClicked(GameBlock gameBlock) {
-        game.blockClicked(gameBlock);
-    }
+
 
     /**
     * Setup the game object and model

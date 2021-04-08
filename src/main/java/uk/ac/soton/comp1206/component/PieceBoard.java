@@ -12,10 +12,6 @@ public class PieceBoard extends GameBoard {
         
     }
 
-    @Override
-    public void blockClicked(MouseEvent event, GameBlock block) {
-    }
-
     public void SetPieceToDisplay(GamePiece g){
         if(g==null){
             return;
