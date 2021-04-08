@@ -122,6 +122,10 @@ public class ScoreScene extends BaseScene{
                 remoteScoreList.add(newScore);
                 localScoreList.add(newScore);
 
+                String sendString = "HISCORE "+name+":"+score;
+                logger.info("The system would send '{}'",sendString);
+                //communicator.send("HISCORE "+name+":"+score);
+
                 sortListByScore(remoteScoreList);
                 sortListByScore(localScoreList);
             });

@@ -20,6 +20,7 @@ public class Utility {
 
     static String highName;
     static int highScore;
+    public static FadeTransition fader;
 
     public static ObservableList<Pair<String, Integer>> loadScores(){
         ObservableList<Pair<String, Integer>> x = FXCollections.observableArrayList();
@@ -79,8 +80,7 @@ public class Utility {
     }
 
     public static void reveal(double millis, Node node){
-        //300
-        final FadeTransition fader = new FadeTransition(new Duration(millis), node);
+        fader = new FadeTransition(new Duration(millis), node);
         fader.setFromValue(0.0);
         fader.setToValue(1.0);
         

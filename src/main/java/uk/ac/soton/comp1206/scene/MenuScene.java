@@ -3,6 +3,13 @@ package uk.ac.soton.comp1206.scene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javafx.animation.Interpolator;
+import javafx.animation.ParallelTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
+import javafx.animation.SequentialTransition;
+import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -10,9 +17,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Multimedia;
+import uk.ac.soton.comp1206.utility.Utility;
 
 /**
  * The main menu of the game. Provides a gateway to the rest of the game.
@@ -54,7 +63,33 @@ public class MenuScene extends BaseScene {
         final ImageView image = new ImageView(MenuScene.class.getResource("/images/TetrECS.png").toExternalForm());
         image.setFitWidth(this.gameWindow.getHeight());
         image.setPreserveRatio(true);
+
+        var rt = new RotateTransition(Duration.millis(1000), image);
+        var st = new ScaleTransition(Duration.millis(1000), image);
+        var pt = new ParallelTransition();
+        var sst = new SequentialTransition();
+        var rt2 = new RotateTransition(Duration.millis(1000), image);
+
+        
+
+        st.setFromX(4f);
+        st.setToX(1f);
+
+        rt.setByAngle(360);
+
+        rt2.setCycleCount(-1);
+        rt2.setFromAngle(5);
+        rt2.setInterpolator(Interpolator.EASE_BOTH);
+        rt2.setToAngle(-5);
+        rt2.setCycleCount(-1);
+        rt2.setAutoReverse(true);
+
+        pt.getChildren().addAll(rt,st);
+        
+
         mainPane.setCenter(image);
+        sst.getChildren().addAll(pt,rt2);
+        sst.play();
 
         VBox b = new VBox();
         b.setAlignment(Pos.CENTER);

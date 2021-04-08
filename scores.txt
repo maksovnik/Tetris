@@ -1,4 +1,6 @@
+kll:50000
 James:2370
+max:2010
 Mac:1770
 maks:550
 John:100
@@ -6,5 +8,3 @@ test:100
 Oli:60
 test:59
 test:59
-Maks:50
-Maks:50

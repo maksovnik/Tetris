@@ -6,6 +6,8 @@ import org.apache.logging.log4j.Logger;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -21,6 +23,7 @@ import uk.ac.soton.comp1206.scene.LobbyScene;
 import uk.ac.soton.comp1206.scene.MenuScene;
 import uk.ac.soton.comp1206.scene.MultiplayerScene;
 import uk.ac.soton.comp1206.scene.ScoreScene;
+import uk.ac.soton.comp1206.utility.Utility;
 
 /**
  * The GameWindow is the single window for the game where everything takes place. To move between screens in the game,
@@ -74,7 +77,9 @@ public class GameWindow {
         communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
 
         //Go to menu
-        startMenu();
+
+
+        
 
         
     }
@@ -161,7 +166,14 @@ public class GameWindow {
      * Setup the default scene (an empty black scene) when no scene is loaded
      */
     public void setupDefaultScene() {
-        this.scene = new Scene(new Pane(),width,height, Color.BLACK);
+        var b= new BorderPane();
+        final ImageView image = new ImageView(GameWindow.class.getResource("/images/ECSGames.png").toExternalForm());
+        image.setFitWidth(getHeight());
+        image.setPreserveRatio(true);
+        b.setCenter(image);
+        this.scene = new Scene(b,width,height, Color.BLACK);
+        Utility.reveal(4000, b);
+        Utility.fader.setOnFinished(e -> startMenu());
         stage.setScene(this.scene);
     }
 
