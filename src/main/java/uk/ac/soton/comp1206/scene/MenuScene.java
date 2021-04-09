@@ -29,6 +29,7 @@ public class MenuScene extends BaseScene {
 
     /**
      * Create a new menu scene
+     * 
      * @param gameWindow the Game Window this will be displayed in
      */
     public MenuScene(GameWindow gameWindow) {
@@ -43,7 +44,7 @@ public class MenuScene extends BaseScene {
     public void build() {
         logger.info("Building " + this.getClass().getName());
 
-        root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
+        root = new GamePane(gameWindow.getWidth(), gameWindow.getHeight());
 
         Multimedia.startBackgroundMusic("/music/menu.mp3");
 
@@ -56,9 +57,6 @@ public class MenuScene extends BaseScene {
         var mainPane = new BorderPane();
         menuPane.getChildren().add(mainPane);
 
-        
-
-
         VBox b = new VBox();
         b.setAlignment(Pos.CENTER);
         Text single = new Text("Single Player");
@@ -66,16 +64,16 @@ public class MenuScene extends BaseScene {
         Text how = new Text("How to Play");
         Text exit = new Text("Exit");
 
-        for(Text i: new Text[] {single,multi,how,exit}){
+        for (Text i : new Text[] { single, multi, how, exit }) {
             i.getStyleClass().add("menuItem");
-        }   
+        }
         b.setStyle("-fx-padding: 0 0 60 0;");
-        b.getChildren().addAll(single,multi,how,exit);
+        b.getChildren().addAll(single, multi, how, exit);
         mainPane.setBottom(b);
 
-        single.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  gameWindow.startChallenge());
-        multi.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  gameWindow.startLobby());
-        how.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  gameWindow.startInstructions());
+        single.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startChallenge());
+        multi.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startLobby());
+        how.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startInstructions());
 
         final ImageView image = new ImageView(MenuScene.class.getResource("/images/TetrECS.png").toExternalForm());
         image.setFitWidth(this.gameWindow.getHeight());
@@ -86,8 +84,6 @@ public class MenuScene extends BaseScene {
         var pt = new ParallelTransition();
         var sst = new SequentialTransition();
         var rt2 = new RotateTransition(Duration.millis(1000), image);
-
-        
 
         st.setFromX(4f);
         st.setToX(1f);
@@ -101,13 +97,12 @@ public class MenuScene extends BaseScene {
         rt2.setCycleCount(-1);
         rt2.setAutoReverse(true);
 
-        pt.getChildren().addAll(rt,st);
-        
+        pt.getChildren().addAll(rt, st);
 
         mainPane.setCenter(image);
-        sst.getChildren().addAll(pt,rt2);
+        sst.getChildren().addAll(pt, rt2);
         sst.play();
-        
+
     }
 
     /**

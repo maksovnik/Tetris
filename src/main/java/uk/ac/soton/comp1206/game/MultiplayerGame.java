@@ -12,11 +12,10 @@ import org.apache.logging.log4j.Logger;
 import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.ui.GameWindow;
 
-
-public class MultiplayerGame extends Game{
+public class MultiplayerGame extends Game {
 
     Communicator communicator;
-    LinkedBlockingQueue<Integer> queue = new LinkedBlockingQueue<Integer> ();
+    LinkedBlockingQueue<Integer> queue = new LinkedBlockingQueue<Integer>();
     private static final Logger logger = LogManager.getLogger(MultiplayerGame.class);
     ScheduledExecutorService executor;
     ScheduledFuture<?> loop;
@@ -27,19 +26,17 @@ public class MultiplayerGame extends Game{
         super(cols, rows);
         this.communicator = g.getCommunicator();
 
+        // this.communicator.addListener(message -> Platform.runLater(() ->
+        // this.handleMessage(message)));
 
-        //this.communicator.addListener(message -> Platform.runLater(() -> this.handleMessage(message)));
-    
-        //requestPieces(5);
-
+        // requestPieces(5);
 
         this.executor = Executors.newSingleThreadScheduledExecutor();
-        
-        
+
     }
 
     @Override
-    public void end(){
+    public void end() {
         System.out.println("This one");
         this.executor.shutdownNow();
         this.communicator.send("DIE");
@@ -47,20 +44,19 @@ public class MultiplayerGame extends Game{
     }
 
     @Override
-    public void start(){
+    public void start() {
         super.start();
         requestLoop();
-        this.score.addListener((c,a,b) -> communicator.send("SCORE "+b.intValue()));
-        this.lives.addListener((c,a,b) -> communicator.send("LIVES "+b.intValue()));
+        this.score.addListener((c, a, b) -> communicator.send("SCORE " + b.intValue()));
+        this.lives.addListener((c, a, b) -> communicator.send("LIVES " + b.intValue()));
     }
-    
-    private void requestLoop(){
+
+    private void requestLoop() {
         this.communicator.send("SCORES");
         this.loop = executor.schedule(() -> requestLoop(), 2000, TimeUnit.MILLISECONDS);
     }
 
-
-    public void addToQueue(String c){
+    public void addToQueue(String c) {
         try {
             queue.put(Integer.parseInt(c));
         } catch (NumberFormatException e) {
@@ -70,18 +66,19 @@ public class MultiplayerGame extends Game{
         }
     }
 
-    public int getQueueSize(){
+    public int getQueueSize() {
         return queue.size();
     }
-    public void requestPieces(int num){
-        for(int i=0; i<num;i++){
+
+    public void requestPieces(int num) {
+        for (int i = 0; i < num; i++) {
             logger.info("Requesting piece from Server");
             communicator.send("PIECE");
         }
     }
 
     @Override
-    public GamePiece spawnPiece(){
+    public GamePiece spawnPiece() {
         int val;
         try {
             val = queue.take();
@@ -95,10 +92,8 @@ public class MultiplayerGame extends Game{
 
     }
 
-
-
     @Override
-    public void afterPiece(){
+    public void afterPiece() {
         super.afterPiece();
     }
 }

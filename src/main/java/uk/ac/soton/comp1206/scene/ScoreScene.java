@@ -28,7 +28,7 @@ import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Utility;
 
-public class ScoreScene extends BaseScene{
+public class ScoreScene extends BaseScene {
 
     private static final Logger logger = LogManager.getLogger(ScoreScene.class);
 
@@ -39,7 +39,6 @@ public class ScoreScene extends BaseScene{
     private ScoreBox remoteHiScoresBox;
 
     private ObservableList<Pair<String, Integer>> remoteScores;
-
 
     Game game;
     int score;
@@ -52,78 +51,74 @@ public class ScoreScene extends BaseScene{
 
     ObservableList<Pair<String, Integer>> localItems;
 
-
     private HBox scoreBoxes;
 
     private Text title;
 
-    public ScoreScene (GameWindow gameWindow, Game game, ObservableList<Pair<String, Integer>> localItems) {
+    public ScoreScene(GameWindow gameWindow, Game game, ObservableList<Pair<String, Integer>> localItems) {
         super(gameWindow);
         logger.info("Creating Score Scene");
-        this.game=game;
-        this.score=game.getScore();
+        this.game = game;
+        this.score = game.getScore();
         this.communicator = gameWindow.getCommunicator();
         this.localItems = localItems;
         this.remoteScores = FXCollections.observableArrayList();
     }
 
-    
     @Override
-    public void initialise() { 
+    public void initialise() {
         this.communicator.addListener(message -> Platform.runLater(() -> this.handleMessage(message.trim())));
         this.communicator.send("HISCORES");
     }
 
-    private void seth(handleHighscore h){
-        this.h=h;
+    private void seth(handleHighscore h) {
+        this.h = h;
     }
 
-    private void removeLowestItem(List<Pair<String, Integer>> x){
-        Pair<String,Integer> lowest = x.get(x.size() - 1);
+    private void removeLowestItem(List<Pair<String, Integer>> x) {
+        Pair<String, Integer> lowest = x.get(x.size() - 1);
         x.remove(lowest);
     }
 
-    private void sortListByScore(List<Pair<String, Integer>> x){
+    private void sortListByScore(List<Pair<String, Integer>> x) {
         x.sort((a, b) -> b.getValue().compareTo(a.getValue()));
     }
+
     private void handleMessage(final String message) {
 
         remoteScores = Utility.getScoreArrayList(message);
-        if(remoteScores==null){
+        if (remoteScores == null) {
             return;
         }
 
         title.setOpacity(1);
-
 
         remoteScores.sort((a, b) -> b.getValue().compareTo(a.getValue()));
         remoteScoreList.addAll(remoteScores);
 
         var lowestRemote = remoteScores.get(this.remoteScores.size() - 1).getValue();
         var lowestLocal = this.localScoreList.get(this.localScoreList.size() - 1).getValue();
-        
 
-        if(game instanceof MultiplayerGame){
+        if (game instanceof MultiplayerGame) {
             Utility.reveal(300, scoreBoxes);
 
             return;
         }
-        
 
-        if((score>lowestLocal)&&(score>lowestRemote)){
-            
+        if ((score > lowestLocal) && (score > lowestRemote)) {
+
             seth(() -> {
                 removeLowestItem(localScoreList);
                 removeLowestItem(remoteScoreList);
 
-                var newScore = new Pair<String, Integer>(name,score);
-                
+                var newScore = new Pair<String, Integer>(name, score);
+
                 remoteScoreList.add(newScore);
                 localScoreList.add(newScore);
 
-                String sendString = "HISCORE "+name+":"+score;
-                logger.info("The system would send '{}'",sendString);
-                //communicator.send("HISCORE "+name+":"+score);
+                String sendString = "HISCORE " + name + ":" + score;
+                logger.info("The system would send '{}'", sendString);
+                // communicator.send("HISCORE "+name+":"+score);
 
                 sortListByScore(remoteScoreList);
                 sortListByScore(localScoreList);
@@ -131,40 +126,37 @@ public class ScoreScene extends BaseScene{
 
             letEnterName();
 
-        }
-        else if(score>lowestLocal){
+        } else if (score > lowestLocal) {
             seth(() -> {
                 removeLowestItem(localScoreList);
-                var newScore = new Pair<String, Integer>(name,score);
+                var newScore = new Pair<String, Integer>(name, score);
                 localScoreList.add(newScore);
                 sortListByScore(localScoreList);
             });
             letEnterName();
-        }
-        else if(score>lowestRemote){
+        } else if (score > lowestRemote) {
             seth(() -> {
                 removeLowestItem(remoteScoreList);
 
-                var newScore = new Pair<String, Integer>(name,score);
+                var newScore = new Pair<String, Integer>(name, score);
                 remoteScoreList.add(newScore);
                 sortListByScore(localScoreList);
 
             });
             letEnterName();
-        }
-        else{
+        } else {
             Utility.reveal(300, scoreBoxes);
         }
 
     }
 
-    private void letEnterName(){
-        var name =  new TextField();
-        var enter =  new Button("Add");
+    private void letEnterName() {
+        var name = new TextField();
+        var enter = new Button("Add");
 
         enter.setOnAction(event -> {
             this.name = name.getText();
-            
+
             elements.getChildren().remove(name);
             elements.getChildren().remove(enter);
 
@@ -174,24 +166,24 @@ public class ScoreScene extends BaseScene{
             Utility.reveal(300, scoreBoxes);
 
         });
-        
-        elements.getChildren().addAll(name,enter);
+
+        elements.getChildren().addAll(name, enter);
     }
 
     @Override
     public void build() {
-        
-        root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
+
+        root = new GamePane(gameWindow.getWidth(), gameWindow.getHeight());
 
         var instructionsPane = new StackPane();
         instructionsPane.setMaxWidth(gameWindow.getWidth());
         instructionsPane.setMaxHeight(gameWindow.getHeight());
         instructionsPane.getStyleClass().add("scores-background");
-        //instructionsPane.getStyleClass().add("menu-background");
+        // instructionsPane.getStyleClass().add("menu-background");
         root.getChildren().add(instructionsPane);
 
         Platform.runLater(() -> scene.setOnKeyPressed(e -> {
-            if(e.getCode()==KeyCode.ESCAPE){
+            if (e.getCode() == KeyCode.ESCAPE) {
 
                 System.out.println("#3");
                 gameWindow.startMenu();
@@ -204,7 +196,7 @@ public class ScoreScene extends BaseScene{
         scoreBoxes = new HBox(12);
         scoreBoxes.setOpacity(0);
         scoreBoxes.setAlignment(Pos.CENTER);
-        
+
         elements = new VBox();
         elements.setAlignment(Pos.CENTER);
 
@@ -223,16 +215,11 @@ public class ScoreScene extends BaseScene{
         var wrapper2 = new SimpleListProperty<Pair<String, Integer>>(this.remoteScoreList);
         this.remoteHiScoresBox.getScoreProperty().bind(wrapper2);
 
-        
-        scoreBoxes.getChildren().addAll(localHiScoresBox,remoteHiScoresBox);
-                
-        elements.getChildren().addAll(title,scoreBoxes);
+        scoreBoxes.getChildren().addAll(localHiScoresBox, remoteHiScoresBox);
+
+        elements.getChildren().addAll(title, scoreBoxes);
         mainPane.setCenter(elements);
 
-        
     }
-
-
-
 
 }

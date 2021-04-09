@@ -13,44 +13,43 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 
-public class ScoreBox extends VBox{
+public class ScoreBox extends VBox {
 
     ObservableList<Pair<String, Integer>> scoreList;
     SimpleListProperty<Pair<String, Integer>> scores;
     StringProperty name;
     HBox scoreBox;
     ArrayList<String> lostPlayers;
-    
-    public ScoreBox(){
+
+    public ScoreBox() {
 
         lostPlayers = new ArrayList<String>();
-        this.scores=new SimpleListProperty<Pair<String, Integer>>();
+        this.scores = new SimpleListProperty<Pair<String, Integer>>();
 
-        scores.addListener((ListChangeListener<Pair<String,Integer>>)(c -> updateScores()));
+        scores.addListener((ListChangeListener<Pair<String, Integer>>) (c -> updateScores()));
     }
 
-    public void updateScores(){
+    public void updateScores() {
         this.getChildren().clear();
-        
-        for(Pair<String, Integer> i : scores){
+
+        for (Pair<String, Integer> i : scores) {
             this.scoreBox = makeScoreBox(i);
             this.getChildren().add(scoreBox);
         }
     }
 
-    public void addLostPlayer(String s){
+    public void addLostPlayer(String s) {
         lostPlayers.add(s);
     }
 
-    public HBox makeScoreBox(Pair<String, Integer> x){
+    public HBox makeScoreBox(Pair<String, Integer> x) {
         var h = new HBox(8);
 
         h.setAlignment(Pos.CENTER);
 
-        
         var n = new Text(x.getKey());
 
-        if(lostPlayers.contains(x.getKey())){
+        if (lostPlayers.contains(x.getKey())) {
             n.setStyle("-fx-strikethrough: true;");
         }
 
@@ -58,7 +57,7 @@ public class ScoreBox extends VBox{
 
         n.getStyleClass().add("scorelist");
         s.getStyleClass().add("scorelist");
-        h.getChildren().addAll(n,s);
+        h.getChildren().addAll(n, s);
 
         return h;
     }
@@ -66,7 +65,7 @@ public class ScoreBox extends VBox{
     public ListProperty<Pair<String, Integer>> getScoreProperty() {
         return this.scores;
     }
-    
+
     public StringProperty getNameProperty() {
         return this.name;
     }

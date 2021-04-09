@@ -18,13 +18,12 @@ import uk.ac.soton.comp1206.game.GamePiece;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 
-
 public class InstructionsScene extends BaseScene {
 
     private static final Logger logger = LogManager.getLogger(InstructionsScene.class);
-    
+
     public InstructionsScene(GameWindow gameWindow) {
-    
+
         super(gameWindow);
         logger.info("Creating Menu Scene");
     }
@@ -35,15 +34,12 @@ public class InstructionsScene extends BaseScene {
 
     @Override
     public void build() {
-        
-
 
         logger.info("Building " + this.getClass().getName());
 
-        root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
+        root = new GamePane(gameWindow.getWidth(), gameWindow.getHeight());
 
-        //gameWindow.setBGMusic("music/menu.mp3");
-
+        // gameWindow.setBGMusic("music/menu.mp3");
 
         var instructionsPane = new StackPane();
         instructionsPane.setMaxWidth(gameWindow.getWidth());
@@ -58,25 +54,24 @@ public class InstructionsScene extends BaseScene {
         Text title2 = new Text("Game Pieces");
 
         var elements = new VBox();
-        
+
         title.getStyleClass().add("instructions");
         title2.getStyleClass().add("instructions");
         elements.setAlignment(Pos.CENTER);
         final ImageView image = new ImageView(MenuScene.class.getResource("/images/Instructions.png").toExternalForm());
         image.setFitWidth(this.gameWindow.getHeight());
         image.setPreserveRatio(true);
-        
 
         GridPane gridpane = new GridPane();
-        int count=0;
-        
+        int count = 0;
+
         gridpane.setAlignment(Pos.CENTER);
-        for(int i=0;i<3;i++){
-            for(int j=0;j<5;j++){
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 5; j++) {
                 PieceBoard p = new PieceBoard(3, 3, 50, 50);
                 var b = GamePiece.createPiece(count);
                 p.SetPieceToDisplay(b);
-                gridpane.add(p,j,i);
+                gridpane.add(p, j, i);
                 count++;
             }
 
@@ -85,14 +80,14 @@ public class InstructionsScene extends BaseScene {
         Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
         gridpane.setHgap(6);
         gridpane.setVgap(6);
-        elements.getChildren().addAll(title,image,title2,gridpane);
+        elements.getChildren().addAll(title, image, title2, gridpane);
         mainPane.setCenter(elements);
-        
+
     }
 
-    private void handleKeyPress(KeyEvent e){
+    private void handleKeyPress(KeyEvent e) {
         KeyCode k = e.getCode();
-        if(k==KeyCode.ESCAPE){
+        if (k == KeyCode.ESCAPE) {
             gameWindow.loadScene(gameWindow.getMenu());
         }
     }

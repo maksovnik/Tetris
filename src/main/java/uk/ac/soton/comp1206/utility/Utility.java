@@ -22,84 +22,81 @@ public class Utility {
     static int highScore;
     public static FadeTransition fader;
 
-    public static ObservableList<Pair<String, Integer>> loadScores(){
+    public static ObservableList<Pair<String, Integer>> loadScores() {
         ObservableList<Pair<String, Integer>> x = FXCollections.observableArrayList();
-       // ObservableList<Pair<String, Integer>> x = new ArrayList<Pair<String, Integer>>();
+        // ObservableList<Pair<String, Integer>> x = new ArrayList<Pair<String,
+        // Integer>>();
         File f = new File("scores.txt");
 
         try {
             var q = f.createNewFile();
 
-            if(q){
-                for(int i=0;i<10;i++){
-                    x.add(new Pair<String,Integer>("Oli",5000));
+            if (q) {
+                for (int i = 0; i < 10; i++) {
+                    x.add(new Pair<String, Integer>("Oli", 5000));
                 }
                 writeScores(x);
-            }
-            else{
-    
+            } else {
+
                 BufferedReader reader = new BufferedReader(new FileReader(f));
-    
+
                 Scanner s = new Scanner(reader);
-                while (s.hasNext()){
+                while (s.hasNext()) {
                     String[] parts = s.next().split(":");
-                    var p = new Pair<String, Integer>(parts[0],Integer.parseInt(parts[1]));
+                    var p = new Pair<String, Integer>(parts[0], Integer.parseInt(parts[1]));
                     x.add(p);
                 }
                 s.close();
-                
+
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return x;
-       
+
     }
 
-    public static ObservableList<Pair<String, Integer>> getScoreArrayList(String scores){
+    public static ObservableList<Pair<String, Integer>> getScoreArrayList(String scores) {
         ObservableList<Pair<String, Integer>> x = FXCollections.observableArrayList();
-        
-        String[] w = scores.split(" ",2);
+
+        String[] w = scores.split(" ", 2);
         String header = w[0];
-        
-        if(!header.equals("HISCORES")){
+
+        if (!header.equals("HISCORES")) {
             return null;
         }
 
-        String[] parts = scores.split(" ",2);
-        
+        String[] parts = scores.split(" ", 2);
+
         String[] newScores = parts[1].split("\n");
-        for(String i: newScores){
+        for (String i : newScores) {
             String[] newParts = i.split(":");
-            var p = new Pair<String, Integer>(newParts[0],Integer.parseInt(newParts[1]));
+            var p = new Pair<String, Integer>(newParts[0], Integer.parseInt(newParts[1]));
             x.add(p);
         }
 
         return x;
     }
 
-    public static void reveal(double millis, Node node){
+    public static void reveal(double millis, Node node) {
         fader = new FadeTransition(new Duration(millis), node);
         fader.setFromValue(0.0);
         fader.setToValue(1.0);
-        
+
         fader.play();
     }
 
-
-
-
-    public static void writeScores(List<Pair<String, Integer>> x){
+    public static void writeScores(List<Pair<String, Integer>> x) {
         var file = new File("scores.txt");
         try {
-            file.createNewFile();   
+            file.createNewFile();
             FileWriter fw = new FileWriter(file);
 
-            var bw= new BufferedWriter(fw);
-        
-            for(Pair<String,Integer> i: x){
-                String s = i.getKey() + ":"+i.getValue()+"\n";
+            var bw = new BufferedWriter(fw);
+
+            for (Pair<String, Integer> i : x) {
+                String s = i.getKey() + ":" + i.getValue() + "\n";
                 bw.write(s);
             }
             bw.close();
@@ -108,20 +105,21 @@ public class Utility {
         } catch (IOException e) {
             e.printStackTrace();
         }
- 
+
     }
 
-    public static void fetchHighScore(){
+    public static void fetchHighScore() {
         var x = loadScores();
         x.sort((a, b) -> b.getValue().compareTo(a.getValue()));
         highName = x.get(0).getKey();
         highScore = x.get(0).getValue();
     }
 
-    public static String getHighName(){
+    public static String getHighName() {
         return highName;
     }
-    public static int getHighScore(){
+
+    public static int getHighScore() {
         return highScore;
     }
 }

@@ -24,7 +24,6 @@ import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 
-
 public class LobbyScene extends BaseScene {
 
     private static final Logger logger = LogManager.getLogger(LobbyScene.class);
@@ -38,16 +37,17 @@ public class LobbyScene extends BaseScene {
     ScheduledFuture<?> loop;
     private HBox main;
     boolean inChannel;
-    
+
     private ChannelChat channelChat;
-    
-    public void handleKeyPress(KeyEvent e){
+
+    public void handleKeyPress(KeyEvent e) {
         KeyCode k = e.getCode();
-        if(k==KeyCode.ESCAPE){
+        if (k == KeyCode.ESCAPE) {
             executor.shutdownNow();
             gameWindow.startMenu();
         }
     }
+
     public LobbyScene(GameWindow gameWindow) {
         super(gameWindow);
         this.communicator = gameWindow.getCommunicator();
@@ -56,8 +56,8 @@ public class LobbyScene extends BaseScene {
         x = new ArrayList<String>();
     }
 
-    private void requestChannels(){
-        if(inChannel){
+    private void requestChannels() {
+        if (inChannel) {
             this.communicator.send("USERS");
         }
         this.communicator.send("LIST");
@@ -70,98 +70,95 @@ public class LobbyScene extends BaseScene {
         requestChannels();
     }
 
-    private void handleMessage(String s){
-        String[] parts = s.split(" ",2);
+    private void handleMessage(String s) {
+        String[] parts = s.split(" ", 2);
         String header = parts[0];
 
-
-        if(header.equals("CHANNELS")){
-            if(parts.length==1){
+        if (header.equals("CHANNELS")) {
+            if (parts.length == 1) {
                 channelList.getChildren().clear();
                 return;
             }
             String message = parts[1];
             List<String> list = Arrays.asList(message.split("\\s+"));
 
-            if(!list.equals(x)){
+            if (!list.equals(x)) {
                 channelList.getChildren().clear();
 
-                for(String i: list){
+                for (String i : list) {
                     var q = new Text(i);
                     q.getStyleClass().add("channelItem");
-                    q.setOnMouseClicked(e -> this.communicator.send("JOIN "+i));
+                    q.setOnMouseClicked(e -> this.communicator.send("JOIN " + i));
                     channelList.getChildren().add(q);
-                    
+
                 }
                 x.clear();
                 x.addAll(list);
             }
         }
-        if(header.equals("JOIN")){
+        if (header.equals("JOIN")) {
             inChannel = true;
             String channelName = parts[1];
 
-            channelChat = new ChannelChat(gameWindow,channelName);
-
+            channelChat = new ChannelChat(gameWindow, channelName);
 
             main.getChildren().add(channelChat);
         }
-        if(header.equals("ERROR")){
+        if (header.equals("ERROR")) {
             String message = parts[1];
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText(message);
             logger.error(message);
             alert.showAndWait();
         }
-        if(header.equals("HOST")){
+        if (header.equals("HOST")) {
             channelChat.revealStartButton();
         }
-        if(header.equals("PARTED")){
+        if (header.equals("PARTED")) {
             main.getChildren().remove(channelChat);
             inChannel = false;
         }
-        if(header.equals("USERS")){
+        if (header.equals("USERS")) {
             String message = parts[1];
             List<String> list = Arrays.asList(message.split("\\s+"));
             channelChat.updateUsers(list);
         }
-        if(header.equals("NICK")){
+        if (header.equals("NICK")) {
             String message = parts[1];
         }
-        if(header.equals("START")){
+        if (header.equals("START")) {
             executor.shutdownNow();
             communicator.clearListeners();
             gameWindow.startMultiChallenge();
-            //start game
+            // start game
         }
-        if(header.equals("QUIT")){
-            //quit
+        if (header.equals("QUIT")) {
+            // quit
         }
-        if(header.equals("MSG")){
+        if (header.equals("MSG")) {
             String[] subParts = parts[1].split(":");
-            if(subParts.length ==2){
-                String sender=subParts[0];
-                String message=subParts[1];
-                channelChat.addMessage(sender,message);
+            if (subParts.length == 2) {
+                String sender = subParts[0];
+                String message = subParts[1];
+                channelChat.addMessage(sender, message);
             }
 
         }
-    
+
     }
+
     @Override
     public void build() {
-        
+
         logger.info("Building " + this.getClass().getName());
 
-        root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
-
+        root = new GamePane(gameWindow.getWidth(), gameWindow.getHeight());
 
         main = new HBox();
-        
+
         var leftPane = new VBox();
         channelList = new VBox();
 
-        
         var g = new TextField();
         var currentGames = new Text("Current Games");
         currentGames.getStyleClass().add("title");
@@ -169,7 +166,7 @@ public class LobbyScene extends BaseScene {
         hostNew.getStyleClass().add("heading");
 
         hostNew.setOnMousePressed(e -> g.setOpacity(1));
-        
+
         g.setOpacity(0);
 
         g.setOnKeyPressed(e -> {
@@ -177,11 +174,11 @@ public class LobbyScene extends BaseScene {
                 g.setOpacity(0);
                 String name = g.getText();
                 g.clear();
-                this.communicator.send("CREATE " +name);
+                this.communicator.send("CREATE " + name);
             }
         });
 
-        leftPane.getChildren().addAll(currentGames,hostNew,g,channelList);
+        leftPane.getChildren().addAll(currentGames, hostNew, g, channelList);
         main.getChildren().add(leftPane);
 
         main.setMaxWidth(gameWindow.getWidth());
@@ -189,7 +186,6 @@ public class LobbyScene extends BaseScene {
         main.getStyleClass().add("menu-background");
 
         root.getChildren().add(main);
-
 
         Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
     }

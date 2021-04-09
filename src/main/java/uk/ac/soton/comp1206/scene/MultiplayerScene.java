@@ -1,6 +1,5 @@
 package uk.ac.soton.comp1206.scene;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,9 +18,8 @@ import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Utility;
 
-public class MultiplayerScene extends ChallengeScene{
-    
-    
+public class MultiplayerScene extends ChallengeScene {
+
     private static final Logger logger = LogManager.getLogger(MultiplayerScene.class);
     private ObservableList<Pair<String, Integer>> localScoreList;
     Communicator communicator;
@@ -29,42 +27,38 @@ public class MultiplayerScene extends ChallengeScene{
     private Text message;
     private ScoreBox leaderboard;
 
-
     public MultiplayerScene(GameWindow gameWindow) {
         super(gameWindow);
         this.communicator = gameWindow.getCommunicator();
         this.localScoreList = FXCollections.observableArrayList();
     }
 
-
-
     @Override
-    public void setupGame(){
+    public void setupGame() {
         logger.info("Starting a new Multiplayer game");
 
-        //Start new game
-        game = new MultiplayerGame(5, 5,gameWindow);
+        // Start new game
+        game = new MultiplayerGame(5, 5, gameWindow);
     }
 
-
     @Override
-    public void handleKeyPress(KeyEvent e){
+    public void handleKeyPress(KeyEvent e) {
 
         KeyCode k = e.getCode();
         String keyName = k.getName();
 
         super.handleKeyPress(e);
 
-        if(keyName.equals("T")){
+        if (keyName.equals("T")) {
             sendBox.setDisable(false);
             sendBox.requestFocus();
             sendBox.setOpacity(1);
         }
-        
+
     }
-    
+
     @Override
-    public void startGame(){
+    public void startGame() {
     }
 
     @Override
@@ -81,76 +75,74 @@ public class MultiplayerScene extends ChallengeScene{
             if (e.getCode().equals(KeyCode.ENTER)) {
                 String text = sendBox.getText();
                 sendBox.clear();
-                this.communicator.send("MSG " +text);
+                this.communicator.send("MSG " + text);
                 sendBox.setOpacity(0);
                 sendBox.setDisable(true);
             }
 
             if (e.getCode() == KeyCode.ENTER) {
-                e.consume();           
+                e.consume();
             }
         });
 
     }
 
-    private void receiveMessage(String s){
-        String[] parts = s.split(" ",2);
+    private void receiveMessage(String s) {
+        String[] parts = s.split(" ", 2);
         String header = parts[0];
 
-        if(header.equals("PIECE")){
+        if (header.equals("PIECE")) {
 
             game.addToQueue(parts[1]);
 
-            if((game.getQueueSize()==5) && board.isDisabled()){
+            if ((game.getQueueSize() == 5) && board.isDisabled()) {
                 logger.info("Recieved All Good pieces, game starting.");
                 game.start();
                 board.setDisable(false);
             }
         }
 
-        if(header.equals("MSG")){
+        if (header.equals("MSG")) {
             var comps = parts[1].split(":");
             var sender = comps[0];
             var m = comps[1];
 
-            message.setText(sender+" "+m);
+            message.setText(sender + " " + m);
             message.setOpacity(1);
         }
 
-        if(header.equals("SCORES")){
-
+        if (header.equals("SCORES")) {
 
             var playerData = parts[1].split("\n");
 
-            //var t = new ArrayList<Pair<String,Integer>>();
+            // var t = new ArrayList<Pair<String,Integer>>();
             localScoreList.clear();
 
-            for(String i:playerData){
+            for (String i : playerData) {
                 var x = i.split(":");
-                var g = new Pair<String,Integer>(x[0],Integer.parseInt(x[1]));
-                
-                if(!localScoreList.contains(g))
-                localScoreList.add(g);
+                var g = new Pair<String, Integer>(x[0], Integer.parseInt(x[1]));
 
-                if(x[2].equals("DEAD")){
+                if (!localScoreList.contains(g))
+                    localScoreList.add(g);
+
+                if (x[2].equals("DEAD")) {
                     leaderboard.addLostPlayer(x[0]);
                 }
             }
-            
+
             localScoreList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
 
         }
 
     }
 
-
-    public void removeUnneeded(){
-        sidePanel.getChildren().remove(this.level);
-        sidePanel.getChildren().remove(this.levelTitle);
-        sidePanel.getChildren().remove(this.multiplier);
-        sidePanel.getChildren().remove(this.multiplierTitle);
-        sidePanel.getChildren().remove(this.hscore);
-        sidePanel.getChildren().remove(this.hscoreTitle);
+    public void removeUnneeded() {
+        sidePane.getChildren().remove(this.level);
+        sidePane.getChildren().remove(this.levelTitle);
+        sidePane.getChildren().remove(this.multiplier);
+        sidePane.getChildren().remove(this.multiplierTitle);
+        sidePane.getChildren().remove(this.highscore);
+        sidePane.getChildren().remove(this.hscoreTitle);
     }
 
     @Override
@@ -158,7 +150,6 @@ public class MultiplayerScene extends ChallengeScene{
         super.build();
 
         removeUnneeded();
-
 
         board.setDisable(true);
 
@@ -169,12 +160,10 @@ public class MultiplayerScene extends ChallengeScene{
 
         leaderboard.getScoreProperty().bind(wrapper);
 
-        
-        sidePanel.getChildren().add(leaderboard);
+        sidePane.getChildren().add(leaderboard);
 
-        game.setGameEndListener(() -> Platform.runLater(() -> gameWindow.startScores(game,localScoreList)));
+        game.setOnGameEnd(() -> Platform.runLater(() -> gameWindow.startScores(game, localScoreList)));
 
-        
         message.setOpacity(0);
         sendBox.setOpacity(0);
         sendBox.setDisable(true);
@@ -182,9 +171,8 @@ public class MultiplayerScene extends ChallengeScene{
         message.getStyleClass().add("messages");
         message.setStyle("-fx-font-size: 20px;");
 
-        y.getChildren().add(0,sendBox);
-        k.getChildren().add(1,message);
-
+        bottomPane.getChildren().add(0, sendBox);
+        centerPane.getChildren().add(1, message);
 
     }
 

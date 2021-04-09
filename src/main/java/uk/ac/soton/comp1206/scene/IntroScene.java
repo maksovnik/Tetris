@@ -6,7 +6,7 @@ import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Utility;
 
-public class IntroScene extends BaseScene{
+public class IntroScene extends BaseScene {
 
     public IntroScene(GameWindow gameWindow) {
         super(gameWindow);
@@ -18,16 +18,14 @@ public class IntroScene extends BaseScene{
             gameWindow.startMenu();
             Utility.fader.stop();
 
-
-        
-    });
-}
+        });
+    }
 
     @Override
     public void build() {
 
-        root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
-        
+        root = new GamePane(gameWindow.getWidth(), gameWindow.getHeight());
+
         final ImageView image = new ImageView(GameWindow.class.getResource("/images/ECSGames.png").toExternalForm());
         image.setFitWidth(gameWindow.getHeight());
         image.setPreserveRatio(true);
@@ -39,7 +37,6 @@ public class IntroScene extends BaseScene{
             gameWindow.startMenu();
         });
 
-        
     }
-    
+
 }
