@@ -3,6 +3,7 @@ package uk.ac.soton.comp1206.ui;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
+import com.neovisionaries.ws.client.WebSocketState;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +12,6 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -53,7 +53,7 @@ public class GameWindow {
     private Scene scene;
     private MenuScene menu;
 
-    final Communicator communicator;
+    Communicator communicator;
 
     /**
      * Create a new GameWindow attached to the given stage with the specified width
@@ -81,22 +81,30 @@ public class GameWindow {
         // Setup communicator
 
         // communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
-        communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
 
-        communicator.setOnError(new WebSocketAdapter(){
-            @Override
-            public void onConnectError(WebSocket arg0, WebSocketException arg1) throws Exception {
-                notifyFailedConnection();
-            }
-        });
-
+        initialiseCommunicator();
         // Go to menu
 
         startIntro();
 
     }
 
+    private void initialiseCommunicator(){
+        communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
+
+        communicator.setOnError(new WebSocketAdapter(){
+            @Override
+            public void onConnectError(WebSocket arg0, WebSocketException arg1) throws Exception {
+                Platform.runLater(() -> notifyFailedConnection());
+                
+            }
+        });
+    }
+
     private void notifyFailedConnection(){
+        var alert = new Alert(Alert.AlertType.ERROR);
+        alert.setContentText("Failed to connect - Multiplayer features are disabled");
+        alert.show();
     }
 
     /**
@@ -132,7 +140,13 @@ public class GameWindow {
     }
 
     public void startLobby() {
-        loadScene(new LobbyScene(this));
+        if(communicator.getState()==WebSocketState.OPEN){
+            loadScene(new LobbyScene(this));
+        }
+        else{
+            notifyFailedConnection();
+        }
+        
     }
 
     /**

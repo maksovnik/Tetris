@@ -49,6 +49,10 @@ public class Communicator {
     public void setOnError(WebSocketAdapter e){
         ws.addListener(e);
     }
+
+    public void connect(){
+        ws.connectAsynchronously();
+    }
     
     public Communicator(String server) {
 
@@ -60,7 +64,7 @@ public class Communicator {
             ws = socketFactory.createSocket(server);
 
             
-            ws.connectAsynchronously(); // remember to reenable :)
+            connect(); // remember to reenable :)
 
             // When a message is received, call the receive method
             ws.addListener(new WebSocketAdapter() {

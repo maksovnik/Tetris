@@ -94,6 +94,8 @@ public class ScoreScene extends BaseScene {
     }
 
     private void handleMessage(final String message) {
+
+
         remoteScores = Utility.getScoreArrayList(message);
         title.setOpacity(1);
 

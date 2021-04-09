@@ -1,5 +1,7 @@
 package uk.ac.soton.comp1206.scene;
 
+import com.neovisionaries.ws.client.WebSocketState;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,7 +10,9 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -35,6 +39,7 @@ public class MenuScene extends BaseScene {
     public MenuScene(GameWindow gameWindow) {
         super(gameWindow);
         logger.info("Creating Menu Scene");
+
 
         
     }
@@ -112,7 +117,6 @@ public class MenuScene extends BaseScene {
      */
     @Override
     public void initialise() {
-
     }
 
 }

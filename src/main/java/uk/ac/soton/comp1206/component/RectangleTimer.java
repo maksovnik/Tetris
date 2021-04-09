@@ -41,8 +41,9 @@ public class RectangleTimer extends Rectangle {
     }
 
     public void resetSpeed() {
-        speedMult = 1;
         speed = 4;
+        speedMult = 1;
+        timeline.setRate(1);
     }
 
     public void stopAnimation() {
