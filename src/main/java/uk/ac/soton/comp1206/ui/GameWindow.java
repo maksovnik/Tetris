@@ -104,7 +104,6 @@ public class GameWindow {
     public void startMenu() {
         scene.setOnKeyPressed(null);
         this.menu = new MenuScene(this);
-        System.out.println("#2");
         loadScene(this.menu);
     }
 

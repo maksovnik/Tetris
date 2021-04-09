@@ -37,7 +37,6 @@ public class MultiplayerGame extends Game {
 
     @Override
     public void end() {
-        System.out.println("This one");
         this.executor.shutdownNow();
         this.communicator.send("DIE");
         gel.endGame();

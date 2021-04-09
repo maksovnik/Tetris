@@ -269,17 +269,7 @@ public class ChallengeScene extends BaseScene {
 
         game.setOnLineCleared(x -> board.fadeOut(x));
 
-        board.setOnBlockClicked((e, g) -> {
-            if (e.getButton() == MouseButton.SECONDARY) {
-                game.rotateCurrentPiece(1);
-            }
-            if (e.getButton() == MouseButton.PRIMARY) {
-                game.blockClicked(g);
-            }
-        });
-
         rectangle.setOnAnimationEnd(e -> {
-            System.out.println("Here");
             game.gameLoop();
         });
 
@@ -292,12 +282,23 @@ public class ChallengeScene extends BaseScene {
 
         game.setHighScore(getHighScore());
 
-        nextPieceBoard.setOnBlockClicked((m, b) -> {
-            if (m.getButton() == MouseButton.PRIMARY) {
+        board.setOnBlockClicked((e, g) -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                game.blockClicked(g);
+            }
+            if (e.getButton() == MouseButton.SECONDARY) {
                 game.rotateCurrentPiece(1);
             }
-            if (m.getButton() == MouseButton.SECONDARY) {
+
+        });
+
+        nextPieceBoard.setOnBlockClicked((m, b) -> {
+            if (m.getButton() == MouseButton.PRIMARY) {
                 game.rotateCurrentPiece(-1);
+            }
+
+            if (m.getButton() == MouseButton.SECONDARY) {
+                game.rotateCurrentPiece(1);
             }
         });
 

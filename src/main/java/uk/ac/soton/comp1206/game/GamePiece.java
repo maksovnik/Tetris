@@ -209,10 +209,10 @@ public class GamePiece {
         int[][] rotated = new int[blocks.length][blocks[0].length];
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (direction == 1) {
+                if (direction == -1) {
                     rotated[i][j] = blocks[2 - j][i];
                 }
-                if (direction == -1) {
+                if (direction == 1) {
                     rotated[i][j] = blocks[j][2 - i];
                 }
             }

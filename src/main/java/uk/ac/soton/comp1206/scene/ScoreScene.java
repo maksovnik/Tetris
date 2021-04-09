@@ -184,8 +184,6 @@ public class ScoreScene extends BaseScene {
 
         Platform.runLater(() -> scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ESCAPE) {
-
-                System.out.println("#3");
                 gameWindow.startMenu();
             }
         }));

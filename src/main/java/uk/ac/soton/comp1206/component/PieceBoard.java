@@ -1,5 +1,6 @@
 package uk.ac.soton.comp1206.component;
 
+import uk.ac.soton.comp1206.event.BlockClickedListener;
 import uk.ac.soton.comp1206.game.GamePiece;
 
 public class PieceBoard extends GameBoard {
@@ -35,6 +36,10 @@ public class PieceBoard extends GameBoard {
 
     public void setDoCircle(boolean m) {
         doCircle = m;
+    }
+
+    public void disableClick() {
+        this.blockClickedListener = null;
     }
 
 }

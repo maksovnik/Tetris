@@ -55,7 +55,7 @@ public class GameBoard extends GridPane {
     /**
      * The listener to call when a specific block is clicked
      */
-    private BlockClickedListener blockClickedListener;
+    protected BlockClickedListener blockClickedListener;
     private int[] currentHoverCords = { 0, 0 };
 
     /**
@@ -199,7 +199,11 @@ public class GameBoard extends GridPane {
 
         // Add a mouse click handler to the block to trigger GameBoard blockClicked
         // method
-        block.setOnMouseClicked(e -> blockClickedListener.blockClicked(e, block)); // stops working
+        block.setOnMouseClicked(e -> {
+            if (blockClickedListener != null) {
+                blockClickedListener.blockClicked(e, block);
+            }
+        }); // stops working
 
         return block;
     }
