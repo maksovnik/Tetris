@@ -2,12 +2,16 @@ package uk.ac.soton.comp1206.network;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import com.neovisionaries.ws.client.ThreadType;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
+import com.neovisionaries.ws.client.WebSocketListener;
+import com.neovisionaries.ws.client.WebSocketState;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,19 +42,29 @@ public class Communicator {
      *
      * @param server server to connect to
      */
+    public WebSocketState getState(){
+        return ws.getState();
+    }
+
+    public void setOnError(WebSocketAdapter e){
+        ws.addListener(e);
+    }
+    
     public Communicator(String server) {
 
         try {
 
-            var socketFactory = new WebSocketFactory();
+            var socketFactory = new WebSocketFactory().setConnectionTimeout(2000);
 
             // Connect to the server
             ws = socketFactory.createSocket(server);
-            ws.connect(); // remember to reenable :))
-            logger.info("Connected to " + server);
+
+            
+            ws.connectAsynchronously(); // remember to reenable :)
 
             // When a message is received, call the receive method
             ws.addListener(new WebSocketAdapter() {
+
                 @Override
                 public void onTextMessage(WebSocket websocket, String message) throws Exception {
                     Communicator.this.receive(websocket, message);
@@ -74,13 +88,13 @@ public class Communicator {
                 @Override
                 public void handleCallbackError(WebSocket webSocket, Throwable throwable) throws Exception {
                     logger.error("Callback Error:" + throwable.getMessage());
-                    throwable.printStackTrace();
+                    //throwable.printStackTrace();
                 }
 
                 @Override
                 public void onError(WebSocket webSocket, WebSocketException e) throws Exception {
                     logger.error("Error:" + e.getMessage());
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
             });
 

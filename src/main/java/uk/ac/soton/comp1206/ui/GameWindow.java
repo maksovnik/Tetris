@@ -1,11 +1,17 @@
 package uk.ac.soton.comp1206.ui;
 
+import com.neovisionaries.ws.client.WebSocket;
+import com.neovisionaries.ws.client.WebSocketAdapter;
+import com.neovisionaries.ws.client.WebSocketException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -77,10 +83,20 @@ public class GameWindow {
         // communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
         communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
 
+        communicator.setOnError(new WebSocketAdapter(){
+            @Override
+            public void onConnectError(WebSocket arg0, WebSocketException arg1) throws Exception {
+                notifyFailedConnection();
+            }
+        });
+
         // Go to menu
 
         startIntro();
 
+    }
+
+    private void notifyFailedConnection(){
     }
 
     /**

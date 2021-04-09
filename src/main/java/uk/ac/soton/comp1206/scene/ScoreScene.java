@@ -2,6 +2,8 @@ package uk.ac.soton.comp1206.scene;
 
 import java.util.List;
 
+import com.neovisionaries.ws.client.WebSocketState;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -67,8 +69,15 @@ public class ScoreScene extends BaseScene {
 
     @Override
     public void initialise() {
-        this.communicator.addListener(message -> Platform.runLater(() -> this.handleMessage(message.trim())));
-        this.communicator.send("HISCORES");
+        
+        if(communicator.getState()==WebSocketState.OPEN){
+            this.communicator.addListener(message -> Platform.runLater(() -> this.handleMessage(message.trim())));
+            this.communicator.send("HISCORES");
+        }
+        else{
+            handleMessage("");
+        }
+
     }
 
     private void seth(handleHighscore h) {
@@ -85,18 +94,19 @@ public class ScoreScene extends BaseScene {
     }
 
     private void handleMessage(final String message) {
-
         remoteScores = Utility.getScoreArrayList(message);
-        if (remoteScores == null) {
-            return;
-        }
-
         title.setOpacity(1);
 
-        remoteScores.sort((a, b) -> b.getValue().compareTo(a.getValue()));
-        remoteScoreList.addAll(remoteScores);
+        var lowestRemote = Double.POSITIVE_INFINITY;
 
-        var lowestRemote = remoteScores.get(this.remoteScores.size() - 1).getValue();
+        if(remoteScores!= null){
+            remoteScores.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+            remoteScoreList.addAll(remoteScores);
+    
+            lowestRemote = remoteScores.get(this.remoteScores.size() - 1).getValue();
+        }
+
+
         var lowestLocal = this.localScoreList.get(this.localScoreList.size() - 1).getValue();
 
         if (game instanceof MultiplayerGame) {

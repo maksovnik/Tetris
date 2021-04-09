@@ -35,6 +35,8 @@ public class MenuScene extends BaseScene {
     public MenuScene(GameWindow gameWindow) {
         super(gameWindow);
         logger.info("Creating Menu Scene");
+
+        
     }
 
     /**

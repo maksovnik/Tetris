@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+
 import javafx.util.Pair;
 
 public class ScoreBox extends VBox {
