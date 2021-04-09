@@ -344,7 +344,6 @@ public class Game {
         score.set(newScore);
     }
 
-
     public void setLineClearedListener(LineClearedListener l){
         this.lcl = l;
     }

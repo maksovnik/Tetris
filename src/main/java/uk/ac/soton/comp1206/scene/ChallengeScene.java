@@ -65,6 +65,12 @@ public class ChallengeScene extends BaseScene{
 
     protected VBox k;
 
+    private PieceBoard p;
+
+    private PieceBoard f;
+
+    private RectangleTimer rectangle;
+
 
     /**
      * Create a new Single Player challenge scene
@@ -88,33 +94,34 @@ public class ChallengeScene extends BaseScene{
     public void build() {
         logger.info("Building " + this.getClass().getName());
 
-        
         Multimedia.startBackgroundMusic("/music/game.wav");
         
         setupGame();
         
-
         root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
         var challengePane = new StackPane();
+        var scoreT = new Text("Score");
+        var score = new Text("0");
+        hscoreT = new Text("High Score");
+        hscore = new Text();
+        levelT = new Text("Level");
+        level = new Text();
+        var livesT = new Text("Lives");
+        var lives = new Text();
+        multiplierT = new Text("Multiplier");
+        multiplier = new Text();
+        p = new PieceBoard(3, 3, 100, 100);
+        f = new PieceBoard(3, 3, 75, 75);
+        elements = new VBox(5);
+        var mainPane = new BorderPane();
+        board = new GameBoard(game.getGrid(),gameWindow.getWidth()/2,gameWindow.getWidth()/2);
+        rectangle = new RectangleTimer(gameWindow.getWidth(), 40);
+        k = new VBox(4);
+        y = new VBox(10);
+
         challengePane.setMaxWidth(gameWindow.getWidth());
         challengePane.setMaxHeight(gameWindow.getHeight());
         challengePane.getStyleClass().add("menu-background");
-        
-        
-        Text scoreT = new Text("Score");
-        Text score = new Text("0");
-
-        hscoreT = new Text("High Score");
-        hscore = new Text();
-
-        levelT = new Text("Level");
-        level = new Text();
-        
-        Text livesT = new Text("Lives");
-        Text lives = new Text();
-
-        multiplierT = new Text("Multiplier");
-        multiplier = new Text();
 
         for(Text i: new Text[] {scoreT,levelT,livesT,multiplierT,hscoreT}){
             i.getStyleClass().add("heading");
@@ -126,38 +133,8 @@ public class ChallengeScene extends BaseScene{
         lives.getStyleClass().add("lives");
         multiplier.getStyleClass().add("level");
 
-
-        PieceBoard p = new PieceBoard(3, 3, 100, 100);
-        PieceBoard f = new PieceBoard(3, 3, 75, 75);
         p.setDoCircle(true);
-
-        game.setNextPieceListener((piece, followingP) -> {
-            logger.info("Next Piece");
-            p.SetPieceToDisplay(piece);
-            f.SetPieceToDisplay(followingP);
-        });
-
-        game.setPieceEventListener(type -> {
-            if(type=="playPiece"){
-                Multimedia.playAudio("/sounds/explode.wav");
-                game.restartLoop();
-            }
-            if(type=="rotate"){
-                System.out.println("hahha");
-                Multimedia.playAudio("/sounds/rotate.wav");
-            }
-            if(type=="swap"){
-                Multimedia.playAudio("/sounds/rotate.wav");
-            }
-        });
-
-        game.setLineClearedListener(x -> board.fadeOut(x));
-
-        game.setGameEndListener(() -> Platform.runLater(() -> gameWindow.startScores(game,Utility.loadScores())));
-
-
-
-        elements = new VBox(5);
+        
         elements.setStyle("-fx-padding: 5;");
         elements.setAlignment(Pos.CENTER_RIGHT);
         
@@ -165,43 +142,9 @@ public class ChallengeScene extends BaseScene{
 
         root.getChildren().addAll(challengePane);
 
-        var mainPane = new BorderPane();
+        
         mainPane.setRight(elements);
         challengePane.getChildren().add(mainPane); //choose this but broken
-
-
-        this.board = new GameBoard(game.getGrid(),gameWindow.getWidth()/2,gameWindow.getWidth()/2);
-
-
-
-        p.setOnBlockClick((m,b) -> {
-            if(m.getButton()==MouseButton.PRIMARY){
-                game.rotateCurrentPiece(1);
-            }
-            if(m.getButton()==MouseButton.SECONDARY){
-                game.rotateCurrentPiece(-1);
-            }
-        });
-        
-        f.setOnBlockClick((m,b) -> {
-            if(m.getButton()==MouseButton.PRIMARY){
-                game.swapCurrentPiece();
-            }
-        });
-
-        // game.setScoreListener(scoreC -> {
-        //     score.setText(Integer.toString(scoreC));
-        //     if(Integer.parseInt(hscore.getText()) < scoreC){
-        //         hscore.setText(Integer.toString(scoreC));
-        //     }
-        // });
-
-
-        var rectangle = new RectangleTimer(gameWindow.getWidth(), 40);
-
-        game.setGameLoopListener(delay -> rectangle.shrink(delay));
-
-        game.setHScore(getHighScore());
     
         level.textProperty().bind(game.getLevelProperty().asString());
         lives.textProperty().bind(game.getLivesProperty().asString());
@@ -210,27 +153,17 @@ public class ChallengeScene extends BaseScene{
         
         multiplier.textProperty().bind(game.getMultiplierProperty().asString());
 
-        k = new VBox(4);
         k.getChildren().addAll(board);
         k.setAlignment(Pos.CENTER);
         mainPane.setCenter(k);
 
-        y = new VBox(10);
         y.getChildren().addAll(rectangle);
 
         mainPane.setBottom(y);
 
         BorderPane.setAlignment(rectangle, Pos.CENTER_LEFT);
         BorderPane.setMargin(rectangle, new Insets(5,5,5,5)); // optional
-        
-        board.setOnBlockClick((e,g) -> {
-            if(e.getButton()==MouseButton.SECONDARY){
-                game.rotateCurrentPiece(1);
-            }
-            if(e.getButton()==MouseButton.PRIMARY){
-                game.blockClicked(g);
-            }
-        });
+
         Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
     }
 
@@ -295,6 +228,60 @@ public class ChallengeScene extends BaseScene{
     @Override
     public void initialise() {
         logger.info("Initialising Challenge");
+        game.setNextPieceListener((piece, followingP) -> {
+            logger.info("Next Piece");
+            p.SetPieceToDisplay(piece);
+            f.SetPieceToDisplay(followingP);
+        });
+
+        game.setPieceEventListener(type -> {
+            if(type=="playPiece"){
+                Multimedia.playAudio("/sounds/explode.wav");
+                game.restartLoop();
+            }
+            if(type=="rotate"){
+                System.out.println("hahha");
+                Multimedia.playAudio("/sounds/rotate.wav");
+            }
+            if(type=="swap"){
+                Multimedia.playAudio("/sounds/rotate.wav");
+            }
+        });
+
+        game.setLineClearedListener(x -> board.fadeOut(x));
+
+        game.setGameEndListener(() -> Platform.runLater(() -> gameWindow.startScores(game,Utility.loadScores())));
+
+        board.setOnBlockClick((e,g) -> {
+            if(e.getButton()==MouseButton.SECONDARY){
+                game.rotateCurrentPiece(1);
+            }
+            if(e.getButton()==MouseButton.PRIMARY){
+                game.blockClicked(g);
+            }
+        });
+
+        game.setGameLoopListener(delay -> rectangle.shrink(delay));
+
+        game.setHScore(getHighScore());
+
+        
+        p.setOnBlockClick((m,b) -> {
+            if(m.getButton()==MouseButton.PRIMARY){
+                game.rotateCurrentPiece(1);
+            }
+            if(m.getButton()==MouseButton.SECONDARY){
+                game.rotateCurrentPiece(-1);
+            }
+        });
+        
+        f.setOnBlockClick((m,b) -> {
+            if(m.getButton()==MouseButton.PRIMARY){
+                game.swapCurrentPiece();
+            }
+        });
+        
+
         game.start();
     }
 
