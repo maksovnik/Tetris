@@ -2,7 +2,6 @@ package uk.ac.soton.comp1206.component;
 
 import java.util.ArrayList;
 
-import javafx.animation.FadeTransition;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.StringProperty;
@@ -12,7 +11,6 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import javafx.util.Pair;
 
 public class ScoreBox extends VBox{

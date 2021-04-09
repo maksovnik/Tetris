@@ -52,7 +52,6 @@ public class ScoreScene extends BaseScene{
 
     ObservableList<Pair<String, Integer>> localItems;
 
-    private Object multiGame;
 
     private HBox scoreBoxes;
 

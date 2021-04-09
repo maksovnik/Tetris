@@ -5,11 +5,9 @@ import org.apache.logging.log4j.Logger;
 
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
-import javafx.animation.PauseTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
-import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -21,7 +19,6 @@ import javafx.util.Duration;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Multimedia;
-import uk.ac.soton.comp1206.utility.Utility;
 
 /**
  * The main menu of the game. Provides a gateway to the rest of the game.

@@ -1,6 +1,5 @@
 package uk.ac.soton.comp1206.scene;
 
-import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

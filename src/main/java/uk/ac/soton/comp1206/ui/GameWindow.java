@@ -6,8 +6,6 @@ import org.apache.logging.log4j.Logger;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -24,7 +22,6 @@ import uk.ac.soton.comp1206.scene.LobbyScene;
 import uk.ac.soton.comp1206.scene.MenuScene;
 import uk.ac.soton.comp1206.scene.MultiplayerScene;
 import uk.ac.soton.comp1206.scene.ScoreScene;
-import uk.ac.soton.comp1206.utility.Utility;
 
 /**
  * The GameWindow is the single window for the game where everything takes place. To move between screens in the game,

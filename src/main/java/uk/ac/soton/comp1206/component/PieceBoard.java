@@ -1,5 +1,4 @@
 package uk.ac.soton.comp1206.component;
-import javafx.scene.input.MouseEvent;
 import uk.ac.soton.comp1206.game.GamePiece;
 
 

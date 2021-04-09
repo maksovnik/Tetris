@@ -43,8 +43,6 @@ public class LobbyScene extends BaseScene {
     
     public void handleKeyPress(KeyEvent e){
         KeyCode k = e.getCode();
-        String keyName = k.getName();
-
         if(k==KeyCode.ESCAPE){
             executor.shutdownNow();
             gameWindow.startMenu();
@@ -114,9 +112,6 @@ public class LobbyScene extends BaseScene {
             alert.setContentText(message);
             logger.error(message);
             alert.showAndWait();
-        }
-        if(header.equals("NICK")){
-            String message = parts[1];
         }
         if(header.equals("HOST")){
             channelChat.revealStartButton();
