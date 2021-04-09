@@ -264,8 +264,14 @@ public class ChallengeScene extends BaseScene{
             }
         });
 
-        rectangle.setOnAnimationEnd(e -> game.gameLoop());
+        rectangle.setOnAnimationEnd(e -> {
+            System.out.println("Here");
+            game.gameLoop();
+        });
+
+
         game.setGameLoopListener(delay -> rectangle.shrink(delay));
+        
         game.setGameEndListener(() -> Platform.runLater(() -> {
             rectangle.stopAnimation();
             gameWindow.startScores(game,Utility.loadScores());

@@ -48,6 +48,9 @@ public class RectangleTimer extends Rectangle{
 
     public void shrink(int delay){
  
+        if(timeline!=null){
+            timeline.stop();
+        }
 
         setWidth(initialWidth);
         KeyValue widthValue = new KeyValue(widthProperty(), 0);
