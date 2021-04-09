@@ -15,7 +15,6 @@ import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -41,34 +40,25 @@ import uk.ac.soton.comp1206.utility.Utility;
 
 public class ChallengeScene extends BaseScene{
 
-    private final Hashtable<String, String> keyMap = new Hashtable<String, String>();
+    private final Hashtable<String, String> keyMap;
 
     private static final Logger logger = LogManager.getLogger(ChallengeScene.class);
     protected Game game;
     protected GameBoard board;
 
-    VBox elements;
+    VBox sidePanel;
 
-	protected Text levelT;
-
+	protected Text levelTitle;
 	protected Text level;
-
 	protected Text hscore;
-
-	protected Text hscoreT;
-
-	protected Text multiplierT;
-
+	protected Text hscoreTitle;
+	protected Text multiplierTitle;
 	protected Text multiplier;
-
+    
     public VBox y;
-
     protected VBox k;
-
     private PieceBoard p;
-
     private PieceBoard f;
-
     private RectangleTimer rectangle;
 
 
@@ -78,6 +68,8 @@ public class ChallengeScene extends BaseScene{
      */
     public ChallengeScene(GameWindow gameWindow) {
         super(gameWindow);
+        
+        keyMap = new Hashtable<String, String>();
 
         keyMap.put("W", "Up");
         keyMap.put("A", "Left");
@@ -97,22 +89,22 @@ public class ChallengeScene extends BaseScene{
         Multimedia.startBackgroundMusic("/music/game.wav");
         
         setupGame();
-        
+
         root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
         var challengePane = new StackPane();
         var scoreT = new Text("Score");
         var score = new Text("0");
-        hscoreT = new Text("High Score");
+        hscoreTitle = new Text("High Score");
         hscore = new Text();
-        levelT = new Text("Level");
+        levelTitle = new Text("Level");
         level = new Text();
         var livesT = new Text("Lives");
         var lives = new Text();
-        multiplierT = new Text("Multiplier");
+        multiplierTitle = new Text("Multiplier");
         multiplier = new Text();
         p = new PieceBoard(3, 3, 100, 100);
         f = new PieceBoard(3, 3, 75, 75);
-        elements = new VBox(5);
+        sidePanel = new VBox(5);
         var mainPane = new BorderPane();
         board = new GameBoard(game.getGrid(),gameWindow.getWidth()/2,gameWindow.getWidth()/2);
         rectangle = new RectangleTimer(gameWindow.getWidth(), 40);
@@ -123,7 +115,7 @@ public class ChallengeScene extends BaseScene{
         challengePane.setMaxHeight(gameWindow.getHeight());
         challengePane.getStyleClass().add("menu-background");
 
-        for(Text i: new Text[] {scoreT,levelT,livesT,multiplierT,hscoreT}){
+        for(Text i: new Text[] {scoreT,levelTitle,livesT,multiplierTitle,hscoreTitle}){
             i.getStyleClass().add("heading");
         }
 
@@ -135,15 +127,15 @@ public class ChallengeScene extends BaseScene{
 
         p.setDoCircle(true);
         
-        elements.setStyle("-fx-padding: 5;");
-        elements.setAlignment(Pos.CENTER_RIGHT);
+        sidePanel.setStyle("-fx-padding: 5;");
+        sidePanel.setAlignment(Pos.CENTER_RIGHT);
         
-        elements.getChildren().addAll(hscoreT,hscore,scoreT,score,levelT,level,livesT,lives,multiplierT,multiplier,p,f);
+        sidePanel.getChildren().addAll(hscoreTitle,hscore,scoreT,score,levelTitle,level,livesT,lives,multiplierTitle,multiplier,p,f);
 
         root.getChildren().addAll(challengePane);
 
         
-        mainPane.setRight(elements);
+        mainPane.setRight(sidePanel);
         challengePane.getChildren().add(mainPane); //choose this but broken
     
         level.textProperty().bind(game.getLevelProperty().asString());
@@ -165,6 +157,13 @@ public class ChallengeScene extends BaseScene{
         BorderPane.setMargin(rectangle, new Insets(5,5,5,5)); // optional
 
         Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
+    }
+
+    public void setupGame(){
+        logger.info("Starting a new Multiplayer game");
+
+        //Start new game
+        game = new Game(5, 5);
     }
 
      
@@ -212,20 +211,11 @@ public class ChallengeScene extends BaseScene{
     
 
 
-    /**
-    * Setup the game object and model
-    */
-    public void setupGame() {
-        logger.info("Starting a new challenge");
-
-        //Start new game
-        game = new Game(5,5);
-    }
 
     /**
      * Initialise the scene and start the game
      */
-    @Override
+    
     public void initialise() {
         logger.info("Initialising Challenge");
         game.setNextPieceListener((piece, followingP) -> {
@@ -281,7 +271,11 @@ public class ChallengeScene extends BaseScene{
             }
         });
         
+        startGame();
+        
+    }
 
+    public void startGame(){
         game.start();
     }
 

@@ -28,12 +28,13 @@ public class MultiplayerScene extends ChallengeScene{
     Communicator communicator;
     private TextField sendBox;
     private Text message;
-    private ScoreBox r;
+    private ScoreBox leaderboard;
 
 
     public MultiplayerScene(GameWindow gameWindow) {
         super(gameWindow);
         this.communicator = gameWindow.getCommunicator();
+        this.localScoreList = FXCollections.observableArrayList();
         
     }
 
@@ -65,13 +66,34 @@ public class MultiplayerScene extends ChallengeScene{
         }
         
     }
+    
+    @Override
+    public void startGame(){
+    }
 
     @Override
     public void initialise() {
-        System.out.println("adfsdfsdflklhjflkjlshfklsjdfkjasdf");
-        
+
+        super.initialise();
+
+        Utility.reveal(300, leaderboard);
         game.requestPieces(5);
+
         this.communicator.addListener(message -> Platform.runLater(() -> receiveMessage(message.trim())));
+
+        sendBox.setOnKeyPressed(e -> {
+            if (e.getCode().equals(KeyCode.ENTER)) {
+                String text = sendBox.getText();
+                sendBox.clear();
+                this.communicator.send("MSG " +text);
+                sendBox.setOpacity(0);
+                sendBox.setDisable(true);
+            }
+
+            if (e.getCode() == KeyCode.ENTER) {
+                e.consume();           
+            }
+        });
 
     }
 
@@ -115,7 +137,7 @@ public class MultiplayerScene extends ChallengeScene{
                 localScoreList.add(g);
 
                 if(x[2].equals("DEAD")){
-                    r.addLostPlayer(x[0]);
+                    leaderboard.addLostPlayer(x[0]);
                 }
             }
             
@@ -125,57 +147,45 @@ public class MultiplayerScene extends ChallengeScene{
 
     }
 
+
+    public void removeUnneeded(){
+        sidePanel.getChildren().remove(this.level);
+        sidePanel.getChildren().remove(this.levelTitle);
+        sidePanel.getChildren().remove(this.multiplier);
+        sidePanel.getChildren().remove(this.multiplierTitle);
+        sidePanel.getChildren().remove(this.hscore);
+        sidePanel.getChildren().remove(this.hscoreTitle);
+    }
+
     @Override
     public void build() {
         super.build();
 
-        this.board.setDisable(true);
+        removeUnneeded();
 
+
+        board.setDisable(true);
+
+        leaderboard = new ScoreBox();
+        var wrapper = new SimpleListProperty<Pair<String, Integer>>(this.localScoreList);
+        message = new Text();
+        sendBox = new TextField();
+
+        leaderboard.getScoreProperty().bind(wrapper);
 
         
-        elements.getChildren().remove(this.level);
-        elements.getChildren().remove(this.levelT);
-        elements.getChildren().remove(this.multiplier);
-        elements.getChildren().remove(this.multiplierT);
-        elements.getChildren().remove(this.hscore);
-        elements.getChildren().remove(this.hscoreT);
-
-        r = new ScoreBox();
-
-        Utility.reveal(300, r);
-        elements.getChildren().add(r);
+        sidePanel.getChildren().add(leaderboard);
 
         game.setGameEndListener(() -> Platform.runLater(() -> gameWindow.startScores(game,localScoreList)));
 
-        this.localScoreList = FXCollections.observableArrayList();
-        var wrapper = new SimpleListProperty<Pair<String, Integer>>(this.localScoreList);
-        r.getScoreProperty().bind(wrapper);
         
-
-
-        
-        message = new Text();
-        sendBox = new TextField();
-        
-        sendBox.setOnKeyPressed(e -> {
-            if (e.getCode().equals(KeyCode.ENTER)) {
-                String text = sendBox.getText();
-                sendBox.clear();
-                this.communicator.send("MSG " +text);
-                sendBox.setOpacity(0);
-                sendBox.setDisable(true);
-            }
-
-            if (e.getCode() == KeyCode.ENTER) {
-                e.consume();           
-            }
-        });
         message.setOpacity(0);
         sendBox.setOpacity(0);
+        sendBox.setDisable(true);
+
         message.getStyleClass().add("messages");
         message.setStyle("-fx-font-size: 20px;");
 
-        sendBox.setDisable(true);
         y.getChildren().add(0,sendBox);
         k.getChildren().add(1,message);
 
