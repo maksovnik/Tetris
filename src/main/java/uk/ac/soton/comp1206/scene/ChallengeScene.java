@@ -91,7 +91,12 @@ public class ChallengeScene extends BaseScene{
         setupGame();
 
         root = new GamePane(gameWindow.getWidth(),gameWindow.getHeight());
+
         var challengePane = new StackPane();
+        challengePane.setMaxWidth(gameWindow.getWidth());
+        challengePane.setMaxHeight(gameWindow.getHeight());
+        challengePane.getStyleClass().add("challenge-background");
+
         var scoreT = new Text("Score");
         var score = new Text("0");
         hscoreTitle = new Text("High Score");
@@ -110,15 +115,13 @@ public class ChallengeScene extends BaseScene{
         rectangle = new RectangleTimer(gameWindow.getWidth(), 40);
         k = new VBox(4);
         y = new VBox(10);
+        
 
-        challengePane.setMaxWidth(gameWindow.getWidth());
-        challengePane.setMaxHeight(gameWindow.getHeight());
-        challengePane.getStyleClass().add("menu-background");
+        
 
         for(Text i: new Text[] {scoreT,levelTitle,livesT,multiplierTitle,hscoreTitle}){
             i.getStyleClass().add("heading");
         }
-
         hscore.getStyleClass().add("hiscore");
         score.getStyleClass().add("score");
         level.getStyleClass().add("level");
@@ -132,11 +135,14 @@ public class ChallengeScene extends BaseScene{
         
         sidePanel.getChildren().addAll(hscoreTitle,hscore,scoreT,score,levelTitle,level,livesT,lives,multiplierTitle,multiplier,p,f);
 
-        root.getChildren().addAll(challengePane);
+        //root.getChildren().addAll(root);
 
         
         mainPane.setRight(sidePanel);
-        challengePane.getChildren().add(mainPane); //choose this but broken
+        //root.getChildren().add(mainPane); //choose this but broken
+
+        root.getChildren().add(challengePane);
+        challengePane.getChildren().add(mainPane);
     
         level.textProperty().bind(game.getLevelProperty().asString());
         lives.textProperty().bind(game.getLivesProperty().asString());
@@ -152,11 +158,22 @@ public class ChallengeScene extends BaseScene{
         y.getChildren().addAll(rectangle);
 
         mainPane.setBottom(y);
-
+        
         BorderPane.setAlignment(rectangle, Pos.CENTER_LEFT);
         BorderPane.setMargin(rectangle, new Insets(5,5,5,5)); // optional
 
         Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
+        Platform.runLater(() -> scene.setOnKeyReleased(e -> handleKeyRelease(e)));
+    }
+
+    private void handleKeyRelease(KeyEvent e) {
+        KeyCode k = e.getCode();
+        String keyName = k.getName();
+
+        if(keyName.equals("U")){
+            rectangle.resetSpeedMult();
+            rectangle.setSpeed(1);
+        }
     }
 
     public void setupGame(){
@@ -181,7 +198,6 @@ public class ChallengeScene extends BaseScene{
     
     public void handleKeyPress(KeyEvent e){
 
-        System.out.println("nnono");
         KeyCode k = e.getCode();
         String keyName = k.getName();
 
@@ -189,6 +205,9 @@ public class ChallengeScene extends BaseScene{
             board.moveHover(keyMap.get(keyName));
         }
         
+        if(keyName.equals("U")){
+            rectangle.setSpeed(4);
+        }
         if(k.isArrowKey()){
             board.moveHover(keyName);
         }
@@ -210,7 +229,9 @@ public class ChallengeScene extends BaseScene{
     }
     
 
-
+    public void endGame(){
+        
+    }
 
     /**
      * Initialise the scene and start the game
@@ -227,10 +248,8 @@ public class ChallengeScene extends BaseScene{
         game.setPieceEventListener(type -> {
             if(type=="playPiece"){
                 Multimedia.playAudio("/sounds/explode.wav");
-                game.restartLoop();
             }
             if(type=="rotate"){
-                System.out.println("hahha");
                 Multimedia.playAudio("/sounds/rotate.wav");
             }
             if(type=="swap"){
@@ -240,7 +259,8 @@ public class ChallengeScene extends BaseScene{
 
         game.setLineClearedListener(x -> board.fadeOut(x));
 
-        game.setGameEndListener(() -> Platform.runLater(() -> gameWindow.startScores(game,Utility.loadScores())));
+
+
 
         board.setOnBlockClick((e,g) -> {
             if(e.getButton()==MouseButton.SECONDARY){
@@ -251,7 +271,12 @@ public class ChallengeScene extends BaseScene{
             }
         });
 
+        rectangle.setOnAnimationEnd(e -> game.gameLoop());
         game.setGameLoopListener(delay -> rectangle.shrink(delay));
+        game.setGameEndListener(() -> Platform.runLater(() -> {
+            rectangle.stopAnimation();
+            gameWindow.startScores(game,Utility.loadScores());
+        }));
 
         game.setHScore(getHighScore());
 

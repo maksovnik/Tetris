@@ -25,7 +25,6 @@ public class Multimedia{
     public static void startBackgroundMusic(String file) {
 
         if((Multimedia.file == file)&&fadeIn){
-            System.out.println("Run");
             return;
         }
         
@@ -58,7 +57,6 @@ public class Multimedia{
     }
 
     public static void loopBackground(String file){
-        System.out.println("Loop");
         fadeIn = false;
         startBackgroundMusic(file);
         fadeIn = true;

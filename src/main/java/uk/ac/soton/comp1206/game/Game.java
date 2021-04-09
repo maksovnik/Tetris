@@ -32,17 +32,12 @@ import uk.ac.soton.comp1206.event.pieceEventListener;
 public class Game {
 
     GamePiece currentPiece;
+
     NextPieceListener npl;
     pieceEventListener ppl;
     LineClearedListener lcl;
     GameEndListener gel;
     GameLoopListener gll;
-
-
-    ScheduledExecutorService executor;
-    Timer timer;
-    TimerTask task;
-
     GamePiece followingPiece;
     
     private static final Logger logger = LogManager.getLogger(Game.class);
@@ -61,10 +56,9 @@ public class Game {
 
         currentPiece.rotate(direction);
         npl.nextPiece(currentPiece,followingPiece);
-        ppl.playSound("rotate");
-        
-
+        ppl.eventTrigger("rotate");
     }
+
 
     private int getTimerDelay(){
         //return 500;
@@ -86,7 +80,6 @@ public class Game {
     protected final Grid grid;
 
     int[][] blocks = new int[5][5];
-    private ScheduledFuture<?> loop;
 
     /**
      * Create a new game with the specified rows and columns. Creates a corresponding grid model.
@@ -128,6 +121,14 @@ public class Game {
         return hscore;
     }
 
+    private void resetGameLoop(){
+        if(gll!=null){
+            int delay = getTimerDelay();
+            gll.timerEnd(delay);
+        }
+
+    }
+
     public void setHScore(int h){
         hscore.set(h);
     }
@@ -150,22 +151,7 @@ public class Game {
         this.rows = rows;
 
         //Create a new grid model to represent the game state
-        this.grid = new Grid(cols,rows);
-
-        this.executor = Executors.newSingleThreadScheduledExecutor();
-
-        
-    }
-
-    private void startGameLoop(){
-        int delay = getTimerDelay();
-        gll.timerEnd(delay);
-        this.loop = executor.schedule(() -> gameLoop(), delay, TimeUnit.MILLISECONDS);
-    }
-
-    public void endGameLoop(){
-        executor.shutdown();
-        executor.shutdownNow();
+        this.grid = new Grid(cols,rows);    
     }
 
     /**
@@ -177,16 +163,12 @@ public class Game {
         currentPiece = spawnPiece();
         this.followingPiece = spawnPiece();
         npl.nextPiece(currentPiece,followingPiece);
-        Platform.runLater(() -> startGameLoop());
+
+        resetGameLoop();
     
     }
 
-    public void restartLoop(){
-        this.loop.cancel(false);
-        this.startGameLoop();
-    }
-
-    private void gameLoop(){
+    public void gameLoop(){
         if(multiplier.get()>1){
             multiplier.set(1);
         }
@@ -195,17 +177,17 @@ public class Game {
             lives.set(lives.get()-1);
         }
         else{
+            logger.info("LIVES IS {}",lives.get());
             end();
             return;
         }
 
         nextPiece();
-        startGameLoop();
+        resetGameLoop();
 
     }
 
     public void end(){
-        endGameLoop();
         gel.endGame();
     }
 
@@ -225,14 +207,13 @@ public class Game {
         followingPiece = currentPiece;
         currentPiece = temp;
         npl.nextPiece(currentPiece,followingPiece);
-        ppl.playSound("swap");
+        ppl.eventTrigger("swap");
     }
 
     public void nextPiece(){
         currentPiece = followingPiece;
         followingPiece = spawnPiece();
         npl.nextPiece(currentPiece,followingPiece);
-        
     }
 
     public GamePiece spawnPiece(){
@@ -273,7 +254,8 @@ public class Game {
             logger.info("THIS PIECE IS ID:{}",currentPiece.getValue());
             afterPiece();
             nextPiece();
-            ppl.playSound("playPiece");
+            ppl.eventTrigger("playPiece");
+            resetGameLoop();
         }
         //grid.set(x,y,newValue);
 

@@ -35,7 +35,6 @@ public class MultiplayerScene extends ChallengeScene{
         super(gameWindow);
         this.communicator = gameWindow.getCommunicator();
         this.localScoreList = FXCollections.observableArrayList();
-        
     }
 
 
@@ -51,13 +50,11 @@ public class MultiplayerScene extends ChallengeScene{
 
     @Override
     public void handleKeyPress(KeyEvent e){
-        System.out.println("HAHAAHAHA");
 
         KeyCode k = e.getCode();
         String keyName = k.getName();
 
         super.handleKeyPress(e);
-        System.out.println(keyName);
 
         if(keyName.equals("T")){
             sendBox.setDisable(false);
@@ -191,4 +188,5 @@ public class MultiplayerScene extends ChallengeScene{
 
 
     }
+
 }

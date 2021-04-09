@@ -15,6 +15,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -40,6 +41,15 @@ public class LobbyScene extends BaseScene {
     
     private ChannelChat channelChat;
     
+    public void handleKeyPress(KeyEvent e){
+        KeyCode k = e.getCode();
+        String keyName = k.getName();
+
+        if(k==KeyCode.ESCAPE){
+            executor.shutdownNow();
+            gameWindow.startMenu();
+        }
+    }
     public LobbyScene(GameWindow gameWindow) {
         super(gameWindow);
         this.communicator = gameWindow.getCommunicator();
@@ -124,7 +134,6 @@ public class LobbyScene extends BaseScene {
             String message = parts[1];
         }
         if(header.equals("START")){
-            executor.shutdown();
             executor.shutdownNow();
             communicator.clearListeners();
             gameWindow.startMultiChallenge();
@@ -185,5 +194,8 @@ public class LobbyScene extends BaseScene {
         main.getStyleClass().add("menu-background");
 
         root.getChildren().add(main);
+
+
+        Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
     }
 }

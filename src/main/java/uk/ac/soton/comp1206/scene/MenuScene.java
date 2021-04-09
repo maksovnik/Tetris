@@ -60,6 +60,26 @@ public class MenuScene extends BaseScene {
         menuPane.getChildren().add(mainPane);
 
         
+
+
+        VBox b = new VBox();
+        b.setAlignment(Pos.CENTER);
+        Text single = new Text("Single Player");
+        Text multi = new Text("Multi Player");
+        Text how = new Text("How to Play");
+        Text exit = new Text("Exit");
+
+        for(Text i: new Text[] {single,multi,how,exit}){
+            i.getStyleClass().add("menuItem");
+        }   
+        b.setStyle("-fx-padding: 0 0 60 0;");
+        b.getChildren().addAll(single,multi,how,exit);
+        mainPane.setBottom(b);
+
+        single.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  gameWindow.startChallenge());
+        multi.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  gameWindow.startLobby());
+        how.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  gameWindow.startInstructions());
+
         final ImageView image = new ImageView(MenuScene.class.getResource("/images/TetrECS.png").toExternalForm());
         image.setFitWidth(this.gameWindow.getHeight());
         image.setPreserveRatio(true);
@@ -90,24 +110,6 @@ public class MenuScene extends BaseScene {
         mainPane.setCenter(image);
         sst.getChildren().addAll(pt,rt2);
         sst.play();
-
-        VBox b = new VBox();
-        b.setAlignment(Pos.CENTER);
-        Text single = new Text("Single Player");
-        Text multi = new Text("Multi Player");
-        Text how = new Text("How to Play");
-        Text exit = new Text("Exit");
-
-        for(Text i: new Text[] {single,multi,how,exit}){
-            i.getStyleClass().add("menuItem");
-        }   
-        b.setStyle("-fx-padding: 0 0 60 0;");
-        b.getChildren().addAll(single,multi,how,exit);
-        mainPane.setBottom(b);
-
-        single.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  gameWindow.startChallenge());
-        multi.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  gameWindow.startLobby());
-        how.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->  gameWindow.startInstructions());
         
     }
 

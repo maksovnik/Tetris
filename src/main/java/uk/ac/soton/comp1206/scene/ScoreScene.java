@@ -187,7 +187,7 @@ public class ScoreScene extends BaseScene{
         var instructionsPane = new StackPane();
         instructionsPane.setMaxWidth(gameWindow.getWidth());
         instructionsPane.setMaxHeight(gameWindow.getHeight());
-        instructionsPane.getStyleClass().add("menu-background");
+        instructionsPane.getStyleClass().add("scores-background");
         //instructionsPane.getStyleClass().add("menu-background");
         root.getChildren().add(instructionsPane);
 

@@ -41,12 +41,12 @@ public class MultiplayerGame extends Game{
         
     }
 
+    @Override
     public void end(){
-        this.communicator.send("DIE");
-        this.communicator.clearListeners();
-        this.executor.shutdown();
+        System.out.println("This one");
         this.executor.shutdownNow();
-        super.end();
+        this.communicator.send("DIE");
+        gel.endGame();
     }
 
     @Override
@@ -78,7 +78,7 @@ public class MultiplayerGame extends Game{
     }
     public void requestPieces(int num){
         for(int i=0; i<num;i++){
-            System.out.println("REQUESTING PIECE");
+            logger.info("Requesting piece from Server");
             communicator.send("PIECE");
         }
     }
