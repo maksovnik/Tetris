@@ -23,6 +23,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import uk.ac.soton.comp1206.component.Settings;
+import uk.ac.soton.comp1206.event.SettingsListener;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Multimedia;
@@ -129,6 +130,18 @@ public class MenuScene extends BaseScene {
                 settings.toggle();
             }
         }));
+
+        settings.setListener(new SettingsListener(){
+            @Override
+            public void onExit(){
+                gameWindow.close();
+            }
+            @Override
+            public void onHide() {};
+
+            @Override
+            public void onShow() {}
+        });
         
 
         

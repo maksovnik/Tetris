@@ -25,6 +25,7 @@ import uk.ac.soton.comp1206.component.GameBoard;
 import uk.ac.soton.comp1206.component.PieceBoard;
 import uk.ac.soton.comp1206.component.RectangleTimer;
 import uk.ac.soton.comp1206.component.Settings;
+import uk.ac.soton.comp1206.event.SettingsListener;
 import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
@@ -183,22 +184,26 @@ public class ChallengeScene extends BaseScene {
         challengePane.getChildren().add(settings);
         settings.setParent(mainPane);
 
-        settings.setOnHide(() -> {
-            Multimedia.play();
-            mainPane.setEffect(null);
-            mainPane.setDisable(false);
-            rectangle.playAnimation();
+        settings.setListener(new SettingsListener(){
+            @Override
+            public void onHide(){
+                Multimedia.play();
+                mainPane.setEffect(null);
+                mainPane.setDisable(false);
+                rectangle.playAnimation();
+            }
+            @Override
+            public void onShow(){
+                Multimedia.pause();
+                mainPane.setDisable(true);
+                rectangle.pauseAnimation();
+            }
+            @Override
+            public void onExit(){
+                game.end();
+            }
         });
 
-        settings.setOnShow(() -> {
-            Multimedia.pause();
-            mainPane.setDisable(true);
-            rectangle.pauseAnimation();
-        });   
-
-    
-        settings.setOnExit(() -> game.end());
-        
 
     }
 

@@ -13,9 +13,7 @@ import uk.ac.soton.comp1206.event.SettingsListener;
 import uk.ac.soton.comp1206.ui.GameWindow;
 
 public class Settings extends VBox{
-    SettingsListener onHide;
-    SettingsListener onShow;
-    SettingsListener onExit;
+    SettingsListener sl;
     boolean isVisible;
     Pane parent;
 
@@ -32,8 +30,8 @@ public class Settings extends VBox{
         getChildren().add(t1);
 
         t1.setOnMouseClicked(e -> {
-            if(onExit!= null){
-                onExit.action();
+            if(sl!=null){
+                sl.onExit();
             }
             hide();
         });
@@ -60,8 +58,8 @@ public class Settings extends VBox{
             parent.setEffect(null);
         }
         
-        if(onHide!=null){
-            onHide.action();
+        if(sl!=null){
+            sl.onHide();
         }
 
         setOpacity(0);
@@ -80,8 +78,8 @@ public class Settings extends VBox{
         parent.setEffect(blur);
 
 
-        if(onShow!=null){
-            onShow.action();
+        if(sl!=null){
+            sl.onShow();
         }
         
         setOpacity(1);
@@ -89,17 +87,10 @@ public class Settings extends VBox{
         setDisable(false);
     }
 
-    public void setOnHide(SettingsListener s){
-        this.onHide = s;
+    public void setListener(SettingsListener s){
+        this.sl = s;
     }
     
-    public void setOnShow(SettingsListener s){
-        this.onShow = s;
-    }
-
-    public void setOnExit(SettingsListener s){
-        this.onExit = s;
-    }
 
     
 }

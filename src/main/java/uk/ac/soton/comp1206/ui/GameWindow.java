@@ -198,6 +198,10 @@ public class GameWindow {
      * 
      * @param newScene new scene to load
      */
+
+    public void close(){
+        App.getInstance().shutdown();
+    }
     public void loadScene(BaseScene newScene) {
         // Cleanup remains of the previous scene
         cleanup();
