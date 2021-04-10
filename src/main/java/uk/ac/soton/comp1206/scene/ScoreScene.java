@@ -22,13 +22,15 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 import uk.ac.soton.comp1206.component.ScoreBox;
-import uk.ac.soton.comp1206.event.handleHighscore;
+import uk.ac.soton.comp1206.event.highScoreListener;
 import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.game.MultiplayerGame;
 import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Utility;
+
+
 
 public class ScoreScene extends BaseScene {
 
@@ -47,7 +49,7 @@ public class ScoreScene extends BaseScene {
     String name;
     Communicator communicator;
 
-    handleHighscore h;
+    highScoreListener HighScoreListener;
 
     private VBox elements;
 
@@ -80,8 +82,8 @@ public class ScoreScene extends BaseScene {
 
     }
 
-    private void seth(handleHighscore h) {
-        this.h = h;
+    private void seth(highScoreListener h) {
+        this.HighScoreListener = h;
     }
 
     private void removeLowestItem(List<Pair<String, Integer>> x) {
@@ -172,7 +174,7 @@ public class ScoreScene extends BaseScene {
             elements.getChildren().remove(name);
             elements.getChildren().remove(enter);
 
-            h.handleIt();
+            HighScoreListener.handleIt();
 
             Utility.writeScores(localScoreList);
             Utility.reveal(300, scoreBoxes);
@@ -233,3 +235,4 @@ public class ScoreScene extends BaseScene {
     }
 
 }
+

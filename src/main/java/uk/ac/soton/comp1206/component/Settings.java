@@ -1,6 +1,5 @@
 package uk.ac.soton.comp1206.component;
 
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Slider;
@@ -12,7 +11,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import uk.ac.soton.comp1206.event.SettingsListener;
-import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Multimedia;
 
 public class Settings extends BorderPane{

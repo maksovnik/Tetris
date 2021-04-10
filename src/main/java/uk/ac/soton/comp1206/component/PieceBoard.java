@@ -1,6 +1,5 @@
 package uk.ac.soton.comp1206.component;
 
-import uk.ac.soton.comp1206.event.BlockClickedListener;
 import uk.ac.soton.comp1206.game.GamePiece;
 
 public class PieceBoard extends GameBoard {

@@ -1,5 +1,5 @@
 package uk.ac.soton.comp1206.event;
 
-public interface handleHighscore {
+public interface highScoreListener {
     public void handleIt();
 }

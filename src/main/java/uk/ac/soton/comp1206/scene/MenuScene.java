@@ -1,7 +1,5 @@
 package uk.ac.soton.comp1206.scene;
 
-import com.neovisionaries.ws.client.WebSocketState;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,8 +10,6 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;

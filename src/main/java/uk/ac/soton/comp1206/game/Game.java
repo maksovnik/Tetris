@@ -12,8 +12,8 @@ import javafx.beans.property.SimpleIntegerProperty;
 import uk.ac.soton.comp1206.component.GameBlock;
 import uk.ac.soton.comp1206.component.GameBlockCoordinate;
 import uk.ac.soton.comp1206.event.GameEndListener;
-import uk.ac.soton.comp1206.event.TimerFinishedListener;
 import uk.ac.soton.comp1206.event.LineClearedListener;
+import uk.ac.soton.comp1206.event.TimerFinishedListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
 
 /**
