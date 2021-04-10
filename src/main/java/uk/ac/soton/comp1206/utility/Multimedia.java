@@ -20,6 +20,8 @@ public class Multimedia {
     static String file;
 
     private static boolean fadeIn = true;
+    private static double effectVolume = 0.5;
+    private static double backgroundVolume = 0.5;
 
     public static void startBackgroundMusic(String file) {
 
@@ -40,7 +42,8 @@ public class Multimedia {
         backgroundPlayer = new MediaPlayer(play);
         backgroundPlayer.setOnEndOfMedia(() -> loopBackground(file));
 
-        backgroundPlayer.setVolume(0.2);
+        //backgroundPlayer.setVolume(0.5);
+        backgroundPlayer.setVolume(backgroundVolume);
 
         if (fadeIn) {
             backgroundPlayer.setVolume(0);
@@ -51,6 +54,15 @@ public class Multimedia {
         backgroundPlayer.play();
 
         audioEnabled = true;
+    }
+
+    public static void setMusicVolume(double newAmount){
+        backgroundPlayer.setVolume(newAmount);
+        backgroundVolume = newAmount;
+    }
+
+    public static void setEffectsVolume(double newAmount){
+        effectVolume = newAmount;
     }
 
     public static void loopBackground(String file) {
@@ -65,7 +77,7 @@ public class Multimedia {
         logger.info("Playing Sound: " + toPlay);
         Media play = new Media(toPlay);
         mediaPlayer = new MediaPlayer(play);
-        mediaPlayer.setVolume(0.25);
+        mediaPlayer.setVolume(effectVolume);
         mediaPlayer.play();
     }
 

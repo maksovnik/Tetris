@@ -2,9 +2,9 @@ Maks:2560
 Maks:1490
 Max:730
 Maxccxc:300
+Maxxxxxx:230
 kll:200
 asdas:200
 bobbbb:180
 James:100
 max:50
-Mac:40

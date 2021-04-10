@@ -90,6 +90,7 @@ public class MenuScene extends BaseScene {
         single.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startChallenge());
         multi.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startLobby());
         how.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startInstructions());
+        exit.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.close());
 
         final ImageView image = new ImageView(MenuScene.class.getResource("/images/TetrECS.png").toExternalForm());
         image.setFitWidth(this.gameWindow.getHeight());
