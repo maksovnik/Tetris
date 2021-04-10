@@ -13,13 +13,16 @@ import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import uk.ac.soton.comp1206.component.Settings;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Multimedia;
@@ -30,7 +33,7 @@ import uk.ac.soton.comp1206.utility.Multimedia;
 public class MenuScene extends BaseScene {
 
     private static final Logger logger = LogManager.getLogger(MenuScene.class);
-
+    Settings settings;
     /**
      * Create a new menu scene
      * 
@@ -39,6 +42,8 @@ public class MenuScene extends BaseScene {
     public MenuScene(GameWindow gameWindow) {
         super(gameWindow);
         logger.info("Creating Menu Scene");
+
+        settings = gameWindow.getSettings();
 
 
         
@@ -53,9 +58,12 @@ public class MenuScene extends BaseScene {
 
         root = new GamePane(gameWindow.getWidth(), gameWindow.getHeight());
 
+        
+
         Multimedia.startBackgroundMusic("/music/menu.mp3");
 
         var menuPane = new StackPane();
+        
         menuPane.setMaxWidth(gameWindow.getWidth());
         menuPane.setMaxHeight(gameWindow.getHeight());
         menuPane.getStyleClass().add("menu-background");
@@ -71,7 +79,7 @@ public class MenuScene extends BaseScene {
         Text how = new Text("How to Play");
         Text exit = new Text("Exit");
 
-        for (Text i : new Text[] { single, multi, how, exit }) {
+        for (Text i : new Text[] {single, multi, how, exit }) {
             i.getStyleClass().add("menuItem");
         }
         b.setStyle("-fx-padding: 0 0 60 0;");
@@ -85,6 +93,8 @@ public class MenuScene extends BaseScene {
         final ImageView image = new ImageView(MenuScene.class.getResource("/images/TetrECS.png").toExternalForm());
         image.setFitWidth(this.gameWindow.getHeight());
         image.setPreserveRatio(true);
+
+        image.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,1.5), 30, 0, 0, 0);");
 
         var rt = new RotateTransition(Duration.millis(1000), image);
         var st = new ScaleTransition(Duration.millis(1000), image);
@@ -110,7 +120,21 @@ public class MenuScene extends BaseScene {
         sst.getChildren().addAll(pt, rt2);
         sst.play();
 
+        settings.setParent(mainPane);
+
+        menuPane.getChildren().add(settings);
+
+        Platform.runLater(() -> scene.setOnKeyPressed(e -> {
+            if(e.getCode()==KeyCode.ESCAPE){
+                settings.toggle();
+            }
+        }));
+        
+
+        
     }
+
+    
 
     /**
      * Initialise the menu

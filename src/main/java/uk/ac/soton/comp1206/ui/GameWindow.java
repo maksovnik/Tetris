@@ -12,12 +12,14 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import uk.ac.soton.comp1206.App;
+import uk.ac.soton.comp1206.component.Settings;
 import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.scene.BaseScene;
@@ -55,6 +57,8 @@ public class GameWindow {
 
     Communicator communicator;
 
+    private Settings settings;
+
     /**
      * Create a new GameWindow attached to the given stage with the specified width
      * and height
@@ -82,11 +86,18 @@ public class GameWindow {
 
         // communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
 
+        //
         initialiseCommunicator();
-        // Go to menu
+        settings = new Settings(500,400);
+        
+
 
         startIntro();
 
+    }
+
+    public Settings getSettings(){
+        return settings;
     }
 
     private void initialiseCommunicator(){

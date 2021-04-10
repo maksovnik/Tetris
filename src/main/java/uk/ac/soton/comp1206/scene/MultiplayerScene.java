@@ -85,6 +85,14 @@ public class MultiplayerScene extends ChallengeScene {
             }
         });
 
+        
+        System.out.println("Multiscnee");
+        game.setOnGameEnd(() -> Platform.runLater(() -> {
+            System.out.println("helloo");
+            rectangle.stopAnimation();
+            gameWindow.startScores(game, localScoreList);
+        }));
+
     }
 
     private void receiveMessage(String s) {
@@ -162,7 +170,6 @@ public class MultiplayerScene extends ChallengeScene {
 
         sidePane.getChildren().add(leaderboard);
 
-        game.setOnGameEnd(() -> Platform.runLater(() -> gameWindow.startScores(game, localScoreList)));
 
         message.setOpacity(0);
         sendBox.setOpacity(0);

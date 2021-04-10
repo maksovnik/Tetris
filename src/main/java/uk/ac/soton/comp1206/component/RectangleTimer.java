@@ -40,6 +40,20 @@ public class RectangleTimer extends Rectangle {
         return 0;
     }
 
+    public void pauseAnimation(){
+        if(timeline!=null){
+            timeline.pause();
+        }
+        
+    }
+
+    public void playAnimation(){
+        if(timeline!=null){
+            timeline.play();
+        }
+        
+    }
+    
     public void resetSpeed() {
         speed = 4;
         speedMult = 1;

@@ -9,16 +9,22 @@ import org.apache.logging.log4j.Logger;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import uk.ac.soton.comp1206.component.GameBoard;
 import uk.ac.soton.comp1206.component.PieceBoard;
 import uk.ac.soton.comp1206.component.RectangleTimer;
+import uk.ac.soton.comp1206.component.Settings;
 import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
@@ -51,7 +57,7 @@ public class ChallengeScene extends BaseScene {
     protected VBox centerPane;
     private PieceBoard nextPieceBoard;
     private PieceBoard followingPieceBoard;
-    private RectangleTimer rectangle;
+    protected RectangleTimer rectangle;
 
     private Text livesTitle;
 
@@ -65,6 +71,8 @@ public class ChallengeScene extends BaseScene {
 
     private BorderPane mainPane;
 
+    private Settings settings;
+
     /**
      * Create a new Single Player challenge scene
      * 
@@ -72,6 +80,8 @@ public class ChallengeScene extends BaseScene {
      */
     public ChallengeScene(GameWindow gameWindow) {
         super(gameWindow);
+
+        settings=gameWindow.getSettings();
 
         keyMap = new Hashtable<String, String>();
 
@@ -144,9 +154,11 @@ public class ChallengeScene extends BaseScene {
         BorderPane.setAlignment(rectangle, Pos.CENTER_LEFT);
 
         root.getChildren().add(challengePane);
-        challengePane.getChildren().add(mainPane);
+        
         centerPane.getChildren().add(board);
         bottomPane.getChildren().addAll(rectangle);
+
+        challengePane.getChildren().add(mainPane);
 
         BorderPane.setMargin(rectangle, new Insets(5, 5, 5, 5));
     }
@@ -164,6 +176,29 @@ public class ChallengeScene extends BaseScene {
         styleElements();
 
         positionElements();
+
+
+        StackPane.setAlignment(settings, Pos.CENTER);
+        
+        challengePane.getChildren().add(settings);
+        settings.setParent(mainPane);
+
+        settings.setOnHide(() -> {
+            Multimedia.play();
+            mainPane.setEffect(null);
+            mainPane.setDisable(false);
+            rectangle.playAnimation();
+        });
+
+        settings.setOnShow(() -> {
+            Multimedia.pause();
+            mainPane.setDisable(true);
+            rectangle.pauseAnimation();
+        });   
+
+    
+        settings.setOnExit(() -> game.end());
+        
 
     }
 
@@ -212,7 +247,8 @@ public class ChallengeScene extends BaseScene {
             board.moveHover(keyName);
         }
         if (code == KeyCode.ESCAPE) {
-            game.end();
+            System.out.println("Helllo");
+            settings.toggle();
         }
         if (Arrays.asList("Enter", "X").contains(keyName)) {
             game.blockClicked(board.getCurrentHoverPiece());
@@ -275,7 +311,9 @@ public class ChallengeScene extends BaseScene {
 
         game.setOnTimerFinished(newDelay -> rectangle.shrink(newDelay));
 
+        System.out.println("Challgen");
         game.setOnGameEnd(() -> Platform.runLater(() -> {
+            System.out.println("wrong page");
             rectangle.stopAnimation();
             gameWindow.startScores(game, Utility.loadScores());
         }));

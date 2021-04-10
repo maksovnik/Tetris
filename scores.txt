@@ -1,10 +1,10 @@
+Maks:2560
 Maks:1490
 Max:730
+Maxccxc:300
 kll:200
 James:100
 max:50
 Mac:40
 maks:30
 John:20
-Oli:0
-test:0

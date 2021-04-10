@@ -39,6 +39,11 @@
     -fx-fill: yellow;
 }
 
+.settings{
+    -fx-background-color: #1a1a1a;
+    -fx-border-width: 3 3 3 3;
+    -fx-border-color:black;
+}
 .menuItem.selected {
     -fx-fill: yellow;
 }

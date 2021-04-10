@@ -67,7 +67,14 @@ public class Multimedia {
         mediaPlayer = new MediaPlayer(play);
         mediaPlayer.setVolume(0.25);
         mediaPlayer.play();
+    }
 
+    public static void pause(){
+        backgroundPlayer.pause();
+    }
+
+    public static void play(){
+        backgroundPlayer.play();
     }
 
 }
