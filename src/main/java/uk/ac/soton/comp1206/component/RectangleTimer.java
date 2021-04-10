@@ -64,7 +64,7 @@ public class RectangleTimer extends Rectangle {
         timeline.stop();
     }
 
-    public void shrink(int delay) {
+    public void newLoop(int delay) {
 
         if (timeline != null) {
             timeline.stop();
@@ -88,7 +88,7 @@ public class RectangleTimer extends Rectangle {
         timeline.setOnFinished(e -> gcl.setTimerToFull(0));
     }
 
-    public void setOnAnimationEnd(TimerFinishedListener g) {
+    public void setOnTimerReachZero(TimerFinishedListener g) {
         this.gcl = g;
     }
 

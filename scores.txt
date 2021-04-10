@@ -5,6 +5,6 @@ Maxccxc:300
 Maxxxxxx:230
 kll:200
 asdas:200
+ik:200
 bobbbb:180
 James:100
-new:100

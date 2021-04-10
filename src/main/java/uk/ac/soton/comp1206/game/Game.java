@@ -49,7 +49,7 @@ public class Game {
         ppl.rotatePiece();
     }
 
-    private int getTimerDelay() {
+    public int getTimerDelay() {
         // return 500;
         return Math.max(2500, 12000 - 500 * (level.get()));
     }
@@ -80,7 +80,7 @@ public class Game {
      */
 
 
-    public void setOnTimerFinished(TimerFinishedListener gll) {
+    public void setOnTimerReachZero(TimerFinishedListener gll) {
         this.gll = gll;
     }
 
@@ -113,13 +113,6 @@ public class Game {
         return highScore;
     }
 
-    private void resetGameTimer() {
-        if (gll != null) {
-            int delay = getTimerDelay();
-            gll.setTimerToFull(delay);
-        }
-
-    }
 
     public void setHighScore(int h) {
         highScore.set(h);
@@ -165,11 +158,10 @@ public class Game {
         this.followingPiece = spawnPiece();
         ppl.nextPiece(currentPiece, followingPiece);
 
-        resetGameTimer();
 
     }
 
-    public void newGameLoop() {
+    public void punish() {
         if (multiplier.get() > 1) {
             multiplier.set(1);
         }
@@ -181,9 +173,6 @@ public class Game {
             end();
             return;
         }
-
-        nextPiece();
-        resetGameTimer();
 
     }
 
@@ -257,7 +246,7 @@ public class Game {
             afterPiece();
             nextPiece();
             ppl.playPiece();
-            resetGameTimer();
+
         }
         // grid.set(x,y,newValue);
 

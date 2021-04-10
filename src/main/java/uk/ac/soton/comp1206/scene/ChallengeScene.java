@@ -292,6 +292,7 @@ public class ChallengeScene extends BaseScene {
             @Override
             public void playPiece() {
                 Multimedia.playAudio("/sounds/explode.wav");
+                rectangle.newLoop(game.getTimerDelay());
             }
 
             @Override
@@ -315,11 +316,15 @@ public class ChallengeScene extends BaseScene {
 
         game.setOnLineCleared(x -> board.fadeOut(x));
 
-        rectangle.setOnAnimationEnd(e -> {
-            game.newGameLoop();
-        });
 
-        game.setOnTimerFinished(newDelay -> rectangle.shrink(newDelay));
+        rectangle.newLoop(game.getTimerDelay()); //starts initial loop
+
+        rectangle.setOnTimerReachZero(x -> {
+            int delay = game.getTimerDelay(); //gets next loop time
+            rectangle.newLoop(delay); //restarts
+            game.nextPiece(); //next piece
+            game.punish(); //reduce lives... sets mult to 1
+        });
 
         System.out.println("Challgen");
         game.setOnGameEnd(() -> Platform.runLater(() -> {
