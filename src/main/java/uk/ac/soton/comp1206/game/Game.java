@@ -7,13 +7,19 @@ import java.util.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.util.Duration;
 import uk.ac.soton.comp1206.component.GameBlock;
 import uk.ac.soton.comp1206.component.GameBlockCoordinate;
 import uk.ac.soton.comp1206.event.GameEndListener;
 import uk.ac.soton.comp1206.event.LineClearedListener;
-import uk.ac.soton.comp1206.event.TimerFinishedListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
 
 /**
@@ -28,7 +34,6 @@ public class Game {
     pieceEventListener ppl;
     LineClearedListener lcl;
     GameEndListener gel;
-    TimerFinishedListener gll;
     GamePiece followingPiece;
 
     private static final Logger logger = LogManager.getLogger(Game.class);
@@ -39,6 +44,50 @@ public class Game {
     protected SimpleIntegerProperty lives = new SimpleIntegerProperty(3);
     private SimpleIntegerProperty multiplier = new SimpleIntegerProperty(1);
 
+    ChangeListener<Number> changeListener;
+
+    private SimpleDoubleProperty time = new SimpleDoubleProperty(1);
+    Timeline timeline;
+
+    public Game(int cols, int rows) {
+        this.cols = cols;
+        this.rows = rows;
+
+        // Create a new grid model to represent the game state
+        this.grid = new Grid(cols, rows);
+
+        newLoop(getTimerDelay());
+
+        changeListener = (a,b,c) -> onChange(c);
+        time.addListener(changeListener);
+    }
+
+    private void onChange(Number newValue){
+        var delay = getTimerDelay();
+        if(newValue.doubleValue()==0){
+            punish();
+            newLoop(delay);
+         }
+    }
+
+    public void newLoop(int delay) {
+
+        if (timeline != null) {
+            timeline.stop();
+        }
+
+        time.set(1);
+        KeyValue widthValue = new KeyValue(time, 0);
+        KeyFrame frame = new KeyFrame(Duration.millis(delay), widthValue);
+
+        timeline = new Timeline(frame);
+        timeline.play();
+    }
+    
+
+    public DoubleProperty getTimeProperty(){
+        return time;
+    }
     public void rotateCurrentPiece(int direction) {
         if (currentPiece == null) {
             return;
@@ -79,11 +128,6 @@ public class Game {
      * @param rows number of rows
      */
 
-
-    public void setOnTimerReachZero(TimerFinishedListener gll) {
-        this.gll = gll;
-    }
-
     public void setOnPieceEvent(pieceEventListener ppl) {
         this.ppl = ppl;
     }
@@ -104,6 +148,9 @@ public class Game {
         return multiplier.get();
     }
 
+    public int testCos(){
+        return 3;
+    }
     // Define a getter for the property itself
     public IntegerProperty getScoreProperty() {
         return score;
@@ -140,13 +187,7 @@ public class Game {
         return multiplier;
     }
 
-    public Game(int cols, int rows) {
-        this.cols = cols;
-        this.rows = rows;
 
-        // Create a new grid model to represent the game state
-        this.grid = new Grid(cols, rows);
-    }
 
     /**
      * Start the game
@@ -177,6 +218,7 @@ public class Game {
     }
 
     public void end() {
+        time.removeListener(changeListener);
         gel.endGame();
     }
 
@@ -246,6 +288,7 @@ public class Game {
             afterPiece();
             nextPiece();
             ppl.playPiece();
+            newLoop(getTimerDelay());
 
         }
         // grid.set(x,y,newValue);

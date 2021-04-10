@@ -15,10 +15,11 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import uk.ac.soton.comp1206.component.GameBoard;
 import uk.ac.soton.comp1206.component.PieceBoard;
-import uk.ac.soton.comp1206.component.RectangleTimer;
 import uk.ac.soton.comp1206.component.Settings;
 import uk.ac.soton.comp1206.event.SettingsListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
@@ -55,7 +56,6 @@ public class ChallengeScene extends BaseScene {
     protected VBox centerPane;
     private PieceBoard nextPieceBoard;
     private PieceBoard followingPieceBoard;
-    protected RectangleTimer rectangle;
 
     private Text livesTitle;
 
@@ -70,6 +70,7 @@ public class ChallengeScene extends BaseScene {
     private BorderPane mainPane;
 
     private Settings settings;
+    private Rectangle rectangle;
 
     /**
      * Create a new Single Player challenge scene
@@ -120,7 +121,11 @@ public class ChallengeScene extends BaseScene {
 
         mainPane = new BorderPane();
         board = new GameBoard(game.getGrid(), gameWindow.getWidth() / 2, gameWindow.getWidth() / 2);
-        rectangle = new RectangleTimer(gameWindow.getWidth(), 40);
+
+        rectangle = new Rectangle(gameWindow.getWidth(),20);
+
+        rectangle.setFill(Color.GREEN);
+
     }
 
     private void styleElements() {
@@ -186,14 +191,14 @@ public class ChallengeScene extends BaseScene {
                 Multimedia.play();
                 mainPane.setEffect(null);
                 mainPane.setDisable(false);
-                rectangle.playAnimation();
+                //rectangle.playAnimation();
             }
 
             @Override
             public void onShow() {
                 Multimedia.pause();
                 mainPane.setDisable(true);
-                rectangle.pauseAnimation();
+                //rectangle.pauseAnimation();
             }
 
             @Override
@@ -209,7 +214,7 @@ public class ChallengeScene extends BaseScene {
         String keyName = k.getName();
 
         if (keyName.equals("U")) {
-            rectangle.resetSpeed();
+            //rectangle.resetSpeed();
         }
     }
 
@@ -243,7 +248,7 @@ public class ChallengeScene extends BaseScene {
         }
 
         if (keyName.equals("U")) {
-            rectangle.fastSpeed();
+            //rectangle.fastSpeed();
         }
         if (code.isArrowKey()) {
             board.moveHover(keyName);
@@ -282,6 +287,13 @@ public class ChallengeScene extends BaseScene {
         score.textProperty().bind(game.getScoreProperty().asString());
         highscore.textProperty().bind(game.getHScoreProperty().asString());
 
+        //rectangle.setWidth(gameWindow.getWidth());
+
+        System.out.println("Width is :"+gameWindow.getWidth());
+
+
+        rectangle.widthProperty().bind(game.getTimeProperty().multiply(gameWindow.getWidth()));
+
         multiplier.textProperty().bind(game.getMultiplierProperty().asString());
 
         Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
@@ -292,7 +304,6 @@ public class ChallengeScene extends BaseScene {
             @Override
             public void playPiece() {
                 Multimedia.playAudio("/sounds/explode.wav");
-                rectangle.newLoop(game.getTimerDelay());
             }
 
             @Override
@@ -316,22 +327,7 @@ public class ChallengeScene extends BaseScene {
 
         game.setOnLineCleared(x -> board.fadeOut(x));
 
-
-        rectangle.newLoop(game.getTimerDelay()); //starts initial loop
-
-        rectangle.setOnTimerReachZero(x -> {
-            int delay = game.getTimerDelay(); //gets next loop time
-            rectangle.newLoop(delay); //restarts
-            game.nextPiece(); //next piece
-            game.punish(); //reduce lives... sets mult to 1
-        });
-
-        System.out.println("Challgen");
-        game.setOnGameEnd(() -> Platform.runLater(() -> {
-            System.out.println("wrong page");
-            rectangle.stopAnimation();
-            gameWindow.startScores(game, Utility.loadScores());
-        }));
+        game.setOnGameEnd(() -> Platform.runLater(() -> gameWindow.startScores(game, Utility.loadScores())));
 
         game.setHighScore(getHighScore());
 

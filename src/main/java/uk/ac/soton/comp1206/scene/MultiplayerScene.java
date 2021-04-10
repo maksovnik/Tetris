@@ -89,7 +89,7 @@ public class MultiplayerScene extends ChallengeScene {
         System.out.println("Multiscnee");
         game.setOnGameEnd(() -> Platform.runLater(() -> {
             System.out.println("helloo");
-            rectangle.stopAnimation();
+            //rectangle.stopAnimation();
             gameWindow.startScores(game, localScoreList);
         }));
 
