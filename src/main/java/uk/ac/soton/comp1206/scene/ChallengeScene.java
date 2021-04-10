@@ -26,7 +26,9 @@ import uk.ac.soton.comp1206.component.PieceBoard;
 import uk.ac.soton.comp1206.component.RectangleTimer;
 import uk.ac.soton.comp1206.component.Settings;
 import uk.ac.soton.comp1206.event.SettingsListener;
+import uk.ac.soton.comp1206.event.pieceEventListener;
 import uk.ac.soton.comp1206.game.Game;
+import uk.ac.soton.comp1206.game.GamePiece;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Multimedia;
@@ -82,7 +84,7 @@ public class ChallengeScene extends BaseScene {
     public ChallengeScene(GameWindow gameWindow) {
         super(gameWindow);
 
-        settings=gameWindow.getSettings();
+        settings = gameWindow.getSettings();
 
         keyMap = new Hashtable<String, String>();
 
@@ -155,7 +157,7 @@ public class ChallengeScene extends BaseScene {
         BorderPane.setAlignment(rectangle, Pos.CENTER_LEFT);
 
         root.getChildren().add(challengePane);
-        
+
         centerPane.getChildren().add(board);
         bottomPane.getChildren().addAll(rectangle);
 
@@ -178,32 +180,32 @@ public class ChallengeScene extends BaseScene {
 
         positionElements();
 
-
         StackPane.setAlignment(settings, Pos.CENTER);
-        
+
         challengePane.getChildren().add(settings);
         settings.setParent(mainPane);
 
-        settings.setListener(new SettingsListener(){
+        settings.setListener(new SettingsListener() {
             @Override
-            public void onHide(){
+            public void onHide() {
                 Multimedia.play();
                 mainPane.setEffect(null);
                 mainPane.setDisable(false);
                 rectangle.playAnimation();
             }
+
             @Override
-            public void onShow(){
+            public void onShow() {
                 Multimedia.pause();
                 mainPane.setDisable(true);
                 rectangle.pauseAnimation();
             }
+
             @Override
-            public void onExit(){
+            public void onExit() {
                 game.end();
             }
         });
-
 
     }
 
@@ -290,22 +292,30 @@ public class ChallengeScene extends BaseScene {
         Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
         Platform.runLater(() -> scene.setOnKeyReleased(e -> handleKeyRelease(e)));
 
-        game.setOnNextPiece((nextP, followingP) -> {
-            logger.info("Next Piece");
-            nextPieceBoard.SetPieceToDisplay(nextP);
-            followingPieceBoard.SetPieceToDisplay(followingP);
-        });
+        game.setOnPieceEvent(new pieceEventListener() {
 
-        game.setOnPieceEvent(type -> {
-            if (type == "playPiece") {
+            @Override
+            public void playPiece() {
                 Multimedia.playAudio("/sounds/explode.wav");
             }
-            if (type == "rotate") {
+
+            @Override
+            public void rotatePiece() {
                 Multimedia.playAudio("/sounds/rotate.wav");
             }
-            if (type == "swap") {
+
+            @Override
+            public void swapPiece() {
                 Multimedia.playAudio("/sounds/rotate.wav");
             }
+
+            @Override
+            public void nextPiece(GamePiece a, GamePiece b){
+                logger.info("Next Piece");
+                nextPieceBoard.SetPieceToDisplay(a);
+                followingPieceBoard.SetPieceToDisplay(b);
+            }
+
         });
 
         game.setOnLineCleared(x -> board.fadeOut(x));

@@ -14,7 +14,6 @@ import uk.ac.soton.comp1206.component.GameBlockCoordinate;
 import uk.ac.soton.comp1206.event.GameEndListener;
 import uk.ac.soton.comp1206.event.TimerFinishedListener;
 import uk.ac.soton.comp1206.event.LineClearedListener;
-import uk.ac.soton.comp1206.event.NextPieceListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
 
 /**
@@ -26,7 +25,6 @@ public class Game {
 
     GamePiece currentPiece;
 
-    NextPieceListener npl;
     pieceEventListener ppl;
     LineClearedListener lcl;
     GameEndListener gel;
@@ -47,8 +45,8 @@ public class Game {
         }
 
         currentPiece.rotate(direction);
-        npl.nextPiece(currentPiece, followingPiece);
-        ppl.eventTrigger("rotate");
+        ppl.nextPiece(currentPiece, followingPiece);
+        ppl.rotatePiece();
     }
 
     private int getTimerDelay() {
@@ -81,9 +79,6 @@ public class Game {
      * @param rows number of rows
      */
 
-    public void setOnNextPiece(NextPieceListener npl) {
-        this.npl = npl;
-    }
 
     public void setOnTimerFinished(TimerFinishedListener gll) {
         this.gll = gll;
@@ -168,7 +163,7 @@ public class Game {
         initialiseGame();
         currentPiece = spawnPiece();
         this.followingPiece = spawnPiece();
-        npl.nextPiece(currentPiece, followingPiece);
+        ppl.nextPiece(currentPiece, followingPiece);
 
         resetGameTimer();
 
@@ -212,14 +207,14 @@ public class Game {
         GamePiece temp = followingPiece;
         followingPiece = currentPiece;
         currentPiece = temp;
-        npl.nextPiece(currentPiece, followingPiece);
-        ppl.eventTrigger("swap");
+        ppl.nextPiece(currentPiece, followingPiece);
+        ppl.swapPiece();
     }
 
     public void nextPiece() {
         currentPiece = followingPiece;
         followingPiece = spawnPiece();
-        npl.nextPiece(currentPiece, followingPiece);
+        ppl.nextPiece(currentPiece, followingPiece);
     }
 
     public GamePiece spawnPiece() {
@@ -261,7 +256,7 @@ public class Game {
             logger.info("THIS PIECE IS ID:{}", currentPiece.getValue());
             afterPiece();
             nextPiece();
-            ppl.eventTrigger("playPiece");
+            ppl.playPiece();
             resetGameTimer();
         }
         // grid.set(x,y,newValue);
