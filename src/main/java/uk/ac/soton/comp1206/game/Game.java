@@ -169,7 +169,7 @@ public class Game {
 
     }
 
-    public void gameLoop() {
+    public void newGameLoop() {
         if (multiplier.get() > 1) {
             multiplier.set(1);
         }

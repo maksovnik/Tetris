@@ -22,7 +22,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 import uk.ac.soton.comp1206.component.ScoreBox;
-import uk.ac.soton.comp1206.event.highScoreListener;
 import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.game.MultiplayerGame;
 import uk.ac.soton.comp1206.network.Communicator;
@@ -48,8 +47,6 @@ public class ScoreScene extends BaseScene {
     int score;
     String name;
     Communicator communicator;
-
-    highScoreListener HighScoreListener;
 
     private VBox elements;
 
@@ -86,9 +83,6 @@ public class ScoreScene extends BaseScene {
 
     }
 
-    private void seth(highScoreListener h) {
-        this.HighScoreListener = h;
-    }
 
     private void removeLowestItem(List<Pair<String, Integer>> x) {
         Pair<String, Integer> lowest = x.get(x.size() - 1);

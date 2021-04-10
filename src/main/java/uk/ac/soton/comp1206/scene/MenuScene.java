@@ -1,10 +1,5 @@
 package uk.ac.soton.comp1206.scene;
 
-import com.neovisionaries.ws.client.WebSocket;
-import com.neovisionaries.ws.client.WebSocketAdapter;
-import com.neovisionaries.ws.client.WebSocketException;
-import com.neovisionaries.ws.client.WebSocketState;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +10,6 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
@@ -39,7 +33,6 @@ public class MenuScene extends BaseScene {
     private static final Logger logger = LogManager.getLogger(MenuScene.class);
     Settings settings;
     private Text error;
-    private boolean notConnected = false;
 
     /**
      * Create a new menu scene
@@ -169,7 +162,6 @@ public class MenuScene extends BaseScene {
 
     public void checkConnected(){
         Platform.runLater(() -> Utility.reveal(2000,error));
-        
     }
 
     /**

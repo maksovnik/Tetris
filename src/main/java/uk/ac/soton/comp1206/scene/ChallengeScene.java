@@ -316,7 +316,7 @@ public class ChallengeScene extends BaseScene {
         game.setOnLineCleared(x -> board.fadeOut(x));
 
         rectangle.setOnAnimationEnd(e -> {
-            game.gameLoop();
+            game.newGameLoop();
         });
 
         game.setOnTimerFinished(newDelay -> rectangle.shrink(newDelay));

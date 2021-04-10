@@ -3,7 +3,6 @@ package uk.ac.soton.comp1206.ui;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
-import com.neovisionaries.ws.client.WebSocketState;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -110,7 +108,7 @@ public class GameWindow {
             @Override
             public void onConnectError(WebSocket arg0, WebSocketException arg1) throws Exception {
                 setNotConnected(true);
-                //menu.checkConnected();
+                menu.checkConnected();
                 
             }
         });
