@@ -20,6 +20,7 @@ import uk.ac.soton.comp1206.component.GameBlock;
 import uk.ac.soton.comp1206.component.GameBlockCoordinate;
 import uk.ac.soton.comp1206.event.GameEndListener;
 import uk.ac.soton.comp1206.event.LineClearedListener;
+import uk.ac.soton.comp1206.event.TimerEventListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
 
 /**
@@ -46,8 +47,11 @@ public class Game {
 
     ChangeListener<Number> changeListener;
 
+    TimerEventListener tel;
     private SimpleDoubleProperty time = new SimpleDoubleProperty(1);
     Timeline timeline;
+
+    double speed = 1;
 
     public Game(int cols, int rows) {
         this.cols = cols;
@@ -64,6 +68,11 @@ public class Game {
 
     private void onChange(Number newValue){
         var delay = getTimerDelay();
+        
+        if(tel!=null){
+            tel.onTimer(newValue.doubleValue());
+        }
+        
         if(newValue.doubleValue()==0){
             punish();
             newLoop(delay);
@@ -150,6 +159,10 @@ public class Game {
 
     public int testCos(){
         return 3;
+    }
+
+    public void setTimerEventListener(TimerEventListener t){
+        this.tel = t;
     }
     // Define a getter for the property itself
     public IntegerProperty getScoreProperty() {
@@ -293,6 +306,23 @@ public class Game {
         }
         // grid.set(x,y,newValue);
 
+    }
+
+    public int speedUp() {
+        if (timeline != null) {
+            if (speed < 6) {
+                speed = speed + 0.5;
+            }
+            timeline.setRate(speed);
+
+            logger.info("Speedmult is: '{}'", speed);
+        }
+        return 0;
+    }
+
+    public void resetSpeed(){
+        timeline.setRate(1);
+        speed=1;
     }
 
     public void afterPiece() {

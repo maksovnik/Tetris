@@ -6,6 +6,9 @@ import java.util.Hashtable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,6 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import uk.ac.soton.comp1206.component.GameBoard;
 import uk.ac.soton.comp1206.component.PieceBoard;
 import uk.ac.soton.comp1206.component.Settings;
@@ -52,7 +56,7 @@ public class ChallengeScene extends BaseScene {
     protected Text multiplierTitle;
     protected Text multiplier;
 
-    public VBox bottomPane;
+    protected VBox bottomPane;
     protected VBox centerPane;
     private PieceBoard nextPieceBoard;
     private PieceBoard followingPieceBoard;
@@ -71,6 +75,8 @@ public class ChallengeScene extends BaseScene {
 
     private Settings settings;
     private Rectangle rectangle;
+
+    private Timeline g;
 
     /**
      * Create a new Single Player challenge scene
@@ -92,7 +98,7 @@ public class ChallengeScene extends BaseScene {
         logger.info("Creating Challenge Scene");
     }
 
-    public void createElements() {
+    private void createElements() {
         root = new GamePane(gameWindow.getWidth(), gameWindow.getHeight());
 
         challengePane = new StackPane();
@@ -214,11 +220,11 @@ public class ChallengeScene extends BaseScene {
         String keyName = k.getName();
 
         if (keyName.equals("U")) {
-            //rectangle.resetSpeed();
+            game.resetSpeed();
         }
     }
 
-    public void setupGame() {
+    protected void setupGame() {
         logger.info("Starting a new Multiplayer game");
 
         // Start new game
@@ -238,7 +244,7 @@ public class ChallengeScene extends BaseScene {
      * @param gameBlock the Game Block that was clocked
      */
 
-    public void handleKeyPress(KeyEvent e) {
+    protected void handleKeyPress(KeyEvent e) {
 
         KeyCode code = e.getCode();
         String keyName = code.getName();
@@ -248,7 +254,7 @@ public class ChallengeScene extends BaseScene {
         }
 
         if (keyName.equals("U")) {
-            //rectangle.fastSpeed();
+            game.speedUp();
         }
         if (code.isArrowKey()) {
             board.moveHover(keyName);
@@ -271,14 +277,10 @@ public class ChallengeScene extends BaseScene {
         }
     }
 
-    public void endGame() {
-
-    }
 
     /**
      * Initialise the scene and start the game
      */
-
     public void initialise() {
         logger.info("Initialising Challenge");
 
@@ -287,10 +289,12 @@ public class ChallengeScene extends BaseScene {
         score.textProperty().bind(game.getScoreProperty().asString());
         highscore.textProperty().bind(game.getHScoreProperty().asString());
 
-        //rectangle.setWidth(gameWindow.getWidth());
 
-        System.out.println("Width is :"+gameWindow.getWidth());
-
+        game.setTimerEventListener(delay -> {
+            int x1 = (int) Math.min(-510*delay*delay + 255*delay + 255,255);
+            int x2 = (int) Math.min(765*delay - 510*delay*delay,255);
+            rectangle.setFill(Color.rgb(x1,x2,0));
+        });
 
         rectangle.widthProperty().bind(game.getTimeProperty().multiply(gameWindow.getWidth()));
 
@@ -361,7 +365,7 @@ public class ChallengeScene extends BaseScene {
 
     }
 
-    public void startGame() {
+    protected void startGame() {
         game.start();
     }
 
