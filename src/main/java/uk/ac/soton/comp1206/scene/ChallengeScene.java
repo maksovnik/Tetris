@@ -128,7 +128,7 @@ public class ChallengeScene extends BaseScene {
         mainPane = new BorderPane();
         board = new GameBoard(game.getGrid(), gameWindow.getWidth() / 2, gameWindow.getWidth() / 2);
 
-        rectangle = new Rectangle(gameWindow.getWidth(),20);
+        rectangle = new Rectangle(gameWindow.getWidth(), 20);
 
         rectangle.setFill(Color.GREEN);
 
@@ -197,14 +197,14 @@ public class ChallengeScene extends BaseScene {
                 Multimedia.play();
                 mainPane.setEffect(null);
                 mainPane.setDisable(false);
-                //rectangle.playAnimation();
+                // rectangle.playAnimation();
             }
 
             @Override
             public void onShow() {
                 Multimedia.pause();
                 mainPane.setDisable(true);
-                //rectangle.pauseAnimation();
+                // rectangle.pauseAnimation();
             }
 
             @Override
@@ -277,7 +277,6 @@ public class ChallengeScene extends BaseScene {
         }
     }
 
-
     /**
      * Initialise the scene and start the game
      */
@@ -289,13 +288,7 @@ public class ChallengeScene extends BaseScene {
         score.textProperty().bind(game.getScoreProperty().asString());
         highscore.textProperty().bind(game.getHScoreProperty().asString());
 
-
-        game.setTimerEventListener(delay -> {
-            int x1 = (int) Math.min(-510*delay*delay + 255*delay + 255,255);
-            int x2 = (int) Math.min(765*delay - 510*delay*delay,255);
-            rectangle.setFill(Color.rgb(x1,x2,0));
-        });
-
+        game.setTimerEventListener(delay -> rectangle.setFill(Color.hsb(120 * delay, 1, 1)));
         rectangle.widthProperty().bind(game.getTimeProperty().multiply(gameWindow.getWidth()));
 
         multiplier.textProperty().bind(game.getMultiplierProperty().asString());
@@ -321,7 +314,7 @@ public class ChallengeScene extends BaseScene {
             }
 
             @Override
-            public void nextPiece(GamePiece a, GamePiece b){
+            public void nextPiece(GamePiece a, GamePiece b) {
                 logger.info("Next Piece");
                 nextPieceBoard.SetPieceToDisplay(a);
                 followingPieceBoard.SetPieceToDisplay(b);
