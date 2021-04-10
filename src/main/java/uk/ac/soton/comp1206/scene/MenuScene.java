@@ -1,5 +1,10 @@
 package uk.ac.soton.comp1206.scene;
 
+import com.neovisionaries.ws.client.WebSocket;
+import com.neovisionaries.ws.client.WebSocketAdapter;
+import com.neovisionaries.ws.client.WebSocketException;
+import com.neovisionaries.ws.client.WebSocketState;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,6 +15,7 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
@@ -23,6 +29,7 @@ import uk.ac.soton.comp1206.event.SettingsListener;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Multimedia;
+import uk.ac.soton.comp1206.utility.Utility;
 
 /**
  * The main menu of the game. Provides a gateway to the rest of the game.
@@ -31,6 +38,9 @@ public class MenuScene extends BaseScene {
 
     private static final Logger logger = LogManager.getLogger(MenuScene.class);
     Settings settings;
+    private Text error;
+    private boolean notConnected = false;
+
     /**
      * Create a new menu scene
      * 
@@ -41,9 +51,6 @@ public class MenuScene extends BaseScene {
         logger.info("Creating Menu Scene");
 
         settings = gameWindow.getSettings();
-
-
-        
     }
 
     /**
@@ -55,12 +62,10 @@ public class MenuScene extends BaseScene {
 
         root = new GamePane(gameWindow.getWidth(), gameWindow.getHeight());
 
-        
-
         Multimedia.startBackgroundMusic("/music/menu.mp3");
 
         var menuPane = new StackPane();
-        
+
         menuPane.setMaxWidth(gameWindow.getWidth());
         menuPane.setMaxHeight(gameWindow.getHeight());
         menuPane.getStyleClass().add("menu-background");
@@ -75,18 +80,24 @@ public class MenuScene extends BaseScene {
         Text multi = new Text("Multi Player");
         Text how = new Text("How to Play");
         Text exit = new Text("Exit");
+        Text error = new Text("No connection to server");
 
-        for (Text i : new Text[] {single, multi, how, exit }) {
+        error.setOpacity(0);
+        for (Text i : new Text[] { single, multi, how, exit}) {
             i.getStyleClass().add("menuItem");
         }
+        error.getStyleClass().add("error");
         b.setStyle("-fx-padding: 0 0 60 0;");
-        b.getChildren().addAll(single, multi, how, exit);
+        b.setOpacity(0);
+        b.getChildren().addAll(single, multi, how, exit,error);
+        Platform.runLater(() -> Utility.reveal(3000,b));
         mainPane.setBottom(b);
-
+        
         single.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startChallenge());
         multi.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startLobby());
         how.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startInstructions());
         exit.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.close());
+
 
         final ImageView image = new ImageView(MenuScene.class.getResource("/images/TetrECS.png").toExternalForm());
         image.setFitWidth(this.gameWindow.getHeight());
@@ -123,34 +134,50 @@ public class MenuScene extends BaseScene {
         menuPane.getChildren().add(settings);
 
         Platform.runLater(() -> scene.setOnKeyPressed(e -> {
-            if(e.getCode()==KeyCode.ESCAPE){
+            if (e.getCode() == KeyCode.ESCAPE) {
                 settings.toggle();
             }
         }));
+        
+        if(gameWindow.isNotConnected()){
+            Platform.runLater(() -> Utility.reveal(2000,error));
+        }
+        else{
+            error.setOpacity(0);
+        }
+        
 
-        settings.setListener(new SettingsListener(){
+        
+
+        settings.setListener(new SettingsListener() {
             @Override
-            public void onExit(){
+            public void onExit() {
                 gameWindow.close();
             }
-            @Override
-            public void onHide() {};
 
             @Override
-            public void onShow() {}
+            public void onHide() {
+            };
+
+            @Override
+            public void onShow() {
+            }
         });
-        
 
+    }   
+
+
+    public void checkConnected(){
+        Platform.runLater(() -> Utility.reveal(2000,error));
         
     }
-
-    
 
     /**
      * Initialise the menu
      */
     @Override
     public void initialise() {
+        //Platform.runLater(() -> checkConnected());
     }
 
 }

@@ -57,7 +57,7 @@ public class Utility {
 
     }
 
-    public static ObservableList<Pair<String, Integer>> getScoreArrayList(String scores) {
+    public static ObservableList<Pair<String, Integer>> getScoreList(String scores) {
         ObservableList<Pair<String, Integer>> x = FXCollections.observableArrayList();
 
         String[] w = scores.split(" ", 2);
@@ -80,6 +80,12 @@ public class Utility {
     }
 
     public static void reveal(double millis, Node node) {
+        if(node==null){
+            return;
+        }
+        if(node.getOpacity()==1){
+             return;
+        }
         fader = new FadeTransition(new Duration(millis), node);
         fader.setFromValue(0.0);
         fader.setToValue(1.0);

@@ -7,4 +7,4 @@ kll:200
 asdas:200
 bobbbb:180
 James:100
-max:50
+new:100

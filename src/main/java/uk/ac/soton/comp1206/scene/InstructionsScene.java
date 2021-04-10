@@ -25,7 +25,7 @@ public class InstructionsScene extends BaseScene {
     public InstructionsScene(GameWindow gameWindow) {
 
         super(gameWindow);
-        logger.info("Creating Menu Scene");
+        logger.info("Creating Instructions Scene");
     }
 
     @Override

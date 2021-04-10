@@ -59,6 +59,10 @@ public class ScoreScene extends BaseScene {
 
     private Text title;
 
+    private double lowestLocal;
+
+    private double lowestRemote = Double.POSITIVE_INFINITY;
+
     public ScoreScene(GameWindow gameWindow, Game game, ObservableList<Pair<String, Integer>> localItems) {
         super(gameWindow);
         logger.info("Creating Score Scene");
@@ -77,7 +81,7 @@ public class ScoreScene extends BaseScene {
             this.communicator.send("HISCORES");
         }
         else{
-            handleMessage("");
+            handleMessage("bypass");
         }
 
     }
@@ -95,106 +99,79 @@ public class ScoreScene extends BaseScene {
         x.sort((a, b) -> b.getValue().compareTo(a.getValue()));
     }
 
+    private void addScoreToScoreBox(List<Pair<String,Integer>> x){
+        removeLowestItem(x);
+        var newScore = new Pair<String, Integer>(name, score);
+        x.add(newScore);
+        sortListByScore(x);
+    }
+    
+    private void completed(){
+        if(score>lowestLocal &&!(game instanceof MultiplayerGame)){
+            addScoreToScoreBox(localScoreList);
+            Utility.writeScores(localScoreList);
+        }
+        if(score>lowestRemote){
+            addScoreToScoreBox(remoteScoreList);
+        }
+        Utility.reveal(300, scoreBoxes);
+    }
     private void handleMessage(final String message) {
 
+        String[] parts = message.split(" ", 2);
+        String header = parts[0];
 
-        remoteScores = Utility.getScoreArrayList(message);
-        title.setOpacity(1);
+        System.out.println(header);
+        if(!(header.equals("HISCORES")||(header.equals("bypass")))){
+            return;
+        }
+        System.out.println("Haha");
 
-        var lowestRemote = Double.POSITIVE_INFINITY;
-
-        if(remoteScores!= null){
+        remoteScores = Utility.getScoreList(message);
+        if(remoteScores!=null){
             remoteScores.sort((a, b) -> b.getValue().compareTo(a.getValue()));
             remoteScoreList.addAll(remoteScores);
-    
             lowestRemote = remoteScores.get(this.remoteScores.size() - 1).getValue();
         }
 
+        lowestLocal = localScoreList.get(this.localScoreList.size() - 1).getValue();
 
-        var lowestLocal = this.localScoreList.get(this.localScoreList.size() - 1).getValue();
+        if((score>lowestRemote)||(score>lowestLocal)){
+            var name = new TextField();
+            var enter = new Button("Add");
+    
+            enter.setOnAction(event -> {
+    
+                this.name = name.getText();
+    
+                elements.getChildren().remove(name);
+                elements.getChildren().remove(enter);
+    
+                completed();
 
-        if (game instanceof MultiplayerGame) {
-            Utility.reveal(300, scoreBoxes);
-
-            return;
+            });
+    
+            elements.getChildren().addAll(name, enter);
+        }
+        else{
+            completed();
         }
 
-        if ((score > lowestLocal) && (score > lowestRemote)) {
-
-            seth(() -> {
-                removeLowestItem(localScoreList);
-                removeLowestItem(remoteScoreList);
-
-                var newScore = new Pair<String, Integer>(name, score);
-
-                remoteScoreList.add(newScore);
-                localScoreList.add(newScore);
-
-                String sendString = "HISCORE " + name + ":" + score;
-                logger.info("The system would send '{}'", sendString);
-                // communicator.send("HISCORE "+name+":"+score);
-
-                sortListByScore(remoteScoreList);
-                sortListByScore(localScoreList);
-            });
-
-            letEnterName();
-
-        } else if (score > lowestLocal) {
-            seth(() -> {
-                removeLowestItem(localScoreList);
-                var newScore = new Pair<String, Integer>(name, score);
-                localScoreList.add(newScore);
-                sortListByScore(localScoreList);
-            });
-            letEnterName();
-        } else if (score > lowestRemote) {
-            seth(() -> {
-                removeLowestItem(remoteScoreList);
-
-                var newScore = new Pair<String, Integer>(name, score);
-                remoteScoreList.add(newScore);
-                sortListByScore(localScoreList);
-
-            });
-            letEnterName();
-        } else {
-            Utility.reveal(300, scoreBoxes);
-        }
-
+        title.setOpacity(1);
     }
 
-    private void letEnterName() {
-        var name = new TextField();
-        var enter = new Button("Add");
-
-        enter.setOnAction(event -> {
-            this.name = name.getText();
-
-            elements.getChildren().remove(name);
-            elements.getChildren().remove(enter);
-
-            HighScoreListener.handleIt();
-
-            Utility.writeScores(localScoreList);
-            Utility.reveal(300, scoreBoxes);
-
-        });
-
-        elements.getChildren().addAll(name, enter);
-    }
 
     @Override
     public void build() {
 
         root = new GamePane(gameWindow.getWidth(), gameWindow.getHeight());
 
-        var instructionsPane = new StackPane();
-        instructionsPane.setMaxWidth(gameWindow.getWidth());
-        instructionsPane.setMaxHeight(gameWindow.getHeight());
-        instructionsPane.getStyleClass().add("scores-background");
-        // instructionsPane.getStyleClass().add("menu-background");
-        root.getChildren().add(instructionsPane);
+        var scoresPane = new StackPane();
+        scoresPane.setMaxWidth(gameWindow.getWidth());
+        scoresPane.setMaxHeight(gameWindow.getHeight());
+        scoresPane.getStyleClass().add("scores-background");
+
+        root.getChildren().add(scoresPane);
 
         Platform.runLater(() -> scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ESCAPE) {
@@ -203,7 +180,7 @@ public class ScoreScene extends BaseScene {
         }));
 
         var mainPane = new BorderPane();
-        instructionsPane.getChildren().add(mainPane);
+        scoresPane.getChildren().add(mainPane);
 
         scoreBoxes = new HBox(12);
         scoreBoxes.setOpacity(0);

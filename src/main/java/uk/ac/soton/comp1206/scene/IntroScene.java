@@ -31,7 +31,7 @@ public class IntroScene extends BaseScene {
         image.setPreserveRatio(true);
         root.setAlignment(Pos.CENTER);
         root.getChildren().addAll(image);
-
+        image.setOpacity(0);
         Utility.reveal(4000, image);
         Utility.fader.setOnFinished(e -> {
             gameWindow.startMenu();

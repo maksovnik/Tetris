@@ -55,7 +55,7 @@ public class Communicator {
 
         try {
 
-            var socketFactory = new WebSocketFactory().setConnectionTimeout(2000);
+            var socketFactory = new WebSocketFactory().setConnectionTimeout(1000);
 
             // Connect to the server
             ws = socketFactory.createSocket(server);

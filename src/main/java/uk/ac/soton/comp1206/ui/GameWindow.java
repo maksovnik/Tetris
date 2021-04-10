@@ -58,6 +58,8 @@ public class GameWindow {
 
     private Settings settings;
 
+    public boolean notConnected;
+
     /**
      * Create a new GameWindow attached to the given stage with the specified width
      * and height
@@ -73,6 +75,8 @@ public class GameWindow {
         this.stage = stage;
 
         // Setup window
+        initialiseCommunicator();
+
         setupStage();
 
         // Setup resources
@@ -86,7 +90,7 @@ public class GameWindow {
         // communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
 
         //
-        initialiseCommunicator();
+        
         settings = new Settings(500,400);
         
 
@@ -99,23 +103,27 @@ public class GameWindow {
         return settings;
     }
 
-    private void initialiseCommunicator(){
+    public void initialiseCommunicator(){
         communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
 
         communicator.setOnError(new WebSocketAdapter(){
             @Override
             public void onConnectError(WebSocket arg0, WebSocketException arg1) throws Exception {
-                Platform.runLater(() -> notifyFailedConnection());
+                setNotConnected(true);
+                //menu.checkConnected();
                 
             }
         });
     }
 
-    private void notifyFailedConnection(){
-        var alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("Failed to connect - Multiplayer features are disabled");
-        alert.show();
+    public boolean isNotConnected() {
+        return notConnected;
     }
+    
+    public void setNotConnected(boolean c){
+        notConnected = c;
+    }
+
 
     /**
      * Setup the font and any other resources we need
@@ -150,12 +158,13 @@ public class GameWindow {
     }
 
     public void startLobby() {
-        if(communicator.getState()==WebSocketState.OPEN){
-            loadScene(new LobbyScene(this));
-        }
-        else{
-            notifyFailedConnection();
-        }
+        loadScene(new LobbyScene(this));
+        // if(communicator.getState()==WebSocketState.OPEN){
+            
+        // }
+        // else{
+        //     notifyFailedConnection();
+        // }
         
     }
 
@@ -272,4 +281,6 @@ public class GameWindow {
     public Communicator getCommunicator() {
         return communicator;
     }
+
+
 }
