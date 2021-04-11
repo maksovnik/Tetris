@@ -76,6 +76,7 @@ public class Game {
         if(newValue.doubleValue()==0){
             punish();
             newLoop(delay);
+            nextPiece();
          }
     }
 

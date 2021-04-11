@@ -1,10 +1,10 @@
+Maks:3950
+max:3440
 Maks:2560
+Test:1700
+sad:1680
 Maks:1490
+sadddd:950
 Max:730
 Maxccxc:300
 Maxxxxxx:230
-kll:200
-asdas:200
-ik:200
-bobbbb:180
-test:150

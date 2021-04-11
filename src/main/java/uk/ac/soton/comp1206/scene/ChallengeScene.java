@@ -230,7 +230,7 @@ public class ChallengeScene extends BaseScene {
         logger.info("Starting a new Multiplayer game");
 
         // Start new game
-        game = new Game(5, 5);
+        game = new Game(5,5);
     }
 
     private int getHighScore() {

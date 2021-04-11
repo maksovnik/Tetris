@@ -8,7 +8,12 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
+import javafx.animation.StrokeTransition;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -16,6 +21,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import uk.ac.soton.comp1206.component.Settings;
@@ -87,7 +93,27 @@ public class MenuScene extends BaseScene {
         mainPane.setBottom(b);
         
         single.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startChallenge());
-        multi.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startLobby());
+
+        error.setStrokeWidth(1);  
+
+        multi.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            if(error.getOpacity()==0){
+                gameWindow.startLobby();
+            }
+            else{
+                System.out.println("HAHA");
+                var st = new ScaleTransition(Duration.millis(175), error);
+                st.setFromX(1);
+                st.setFromY(1);
+                st.setToX(1.2);
+                st.setToY(1.2);
+                st.setAutoReverse(true);
+                st.setCycleCount(2);
+            
+                st.play();
+            }
+        });
+
         how.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startInstructions());
         exit.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.close());
 
