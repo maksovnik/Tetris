@@ -3,6 +3,7 @@ package uk.ac.soton.comp1206.utility;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -130,15 +131,17 @@ public class Utility {
         return highScore;
     }
 
-    public static void writeSettings(double bgVol, double fxVol){
+    public static void writeSettings(String ip, String port, double bgVol, double fxVol){
         var file = new File("settings.txt");
 
         FileWriter fw;
         try {
+            file.createNewFile();
             fw = new FileWriter(file);
-
+            
             var bw = new BufferedWriter(fw);
-
+            bw.write("ip "+ ip + "\n");
+            bw.write("serverPort "+ port + "\n");
             bw.write("musicVol "+ String.valueOf(bgVol) + "\n");
             bw.write("soundFXVol "+ String.valueOf(fxVol) + "\n");
             bw.close();
@@ -165,9 +168,9 @@ public class Utility {
             s.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
         }
-        System.out.println(x.toString());
+
+        System.out.println(x);
         return x;
     }
 }

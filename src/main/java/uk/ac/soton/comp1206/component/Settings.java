@@ -74,10 +74,20 @@ public class Settings extends BorderPane{
         });
 
         var b = Utility.loadSettings();
-        this.ip = b.get(0)[1];
-        this.port = b.get(1)[1];
-        slider1.setValue(Double.parseDouble(b.get(2)[1]));
-        slider2.setValue(Double.parseDouble(b.get(3)[1]));
+        if(!b.isEmpty()){
+            this.ip = b.get(0)[1];
+            this.port = b.get(1)[1];
+            slider1.setValue(Double.parseDouble(b.get(2)[1]));
+            slider2.setValue(Double.parseDouble(b.get(3)[1]));
+        }
+        else{
+            this.ip= "discord.ecs.soton.ac.uk";
+            this.port = "9700";
+            slider1.setValue(0.5);
+            slider2.setValue(0.5);
+            Utility.writeSettings(this.ip, this.port,0.5,0.5);
+        }
+
     }
 
     public String getIp(){
@@ -108,7 +118,7 @@ public class Settings extends BorderPane{
             var first = slider1.getValue();
             var second = slider2.getValue();
             logger.info("First:{}  Second:{}",first,second);
-            Utility.writeSettings(first,second);
+            Utility.writeSettings("discord.ecs.soton.ac.uk","9700",first,second);
         }
 
         
