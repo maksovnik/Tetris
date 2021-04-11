@@ -174,8 +174,6 @@ public class MenuScene extends BaseScene {
         }
         
 
-        
-
         settings.setListener(new SettingsListener() {
             @Override
             public void onExit() {

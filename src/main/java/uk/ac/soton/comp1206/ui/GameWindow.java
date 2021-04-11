@@ -40,8 +40,8 @@ public class GameWindow {
 
     private static final Logger logger = LogManager.getLogger(GameWindow.class);
 
-    private final int width;
-    private final int height;
+    private int width;
+    private int height;
 
     // private Multimedia bgPlayer = new Multimedia(true);
     // private Multimedia soundPlayer = new Multimedia(false);
@@ -67,9 +67,8 @@ public class GameWindow {
      * @param height height
      */
 
-    public GameWindow(Stage stage, int width, int height) {
-        this.width = width;
-        this.height = height;
+    public GameWindow(Stage stage) {
+
 
         this.stage = stage;
 
@@ -85,6 +84,11 @@ public class GameWindow {
 
         var ip = settings.getIp();
         var port = settings.getPort();
+
+        this.width = settings.getWidthS();
+        this.height = settings.getHeightS();
+        stage.setMinHeight(height);
+        stage.setMinWidth(width);
 
         communicator = new Communicator("ws://"+ip+":"+port);
         communicator.setOnError(new WebSocketAdapter(){
@@ -205,12 +209,6 @@ public class GameWindow {
         stage.setOnCloseRequest(ev -> App.getInstance().shutdown());
     }
 
-    // public void setBGMusic(String f){
-    // bgPlayer.put(f);
-    // }
-    // public void setSound(String f){
-    // soundPlayer.put(f);
-    // }
     /**
      * Load a given scene which extends BaseScene and switch over.
      * 

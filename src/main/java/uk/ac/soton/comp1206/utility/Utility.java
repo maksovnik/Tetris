@@ -144,7 +144,7 @@ public class Utility {
         st.play();
     }
 
-    public static void writeSettings(String ip, String port, double bgVol, double fxVol){
+    public static void writeSettings(String ip, String port, double bgVol, double fxVol, String width, String height){
         var file = new File("settings.txt");
 
         FileWriter fw;
@@ -157,6 +157,8 @@ public class Utility {
             bw.write("serverPort "+ port + "\n");
             bw.write("musicVol "+ String.valueOf(bgVol) + "\n");
             bw.write("soundFXVol "+ String.valueOf(fxVol) + "\n");
+            bw.write("width "+ String.valueOf(width) + "\n");
+            bw.write("height "+ String.valueOf(height) + "\n");
             bw.close();
             fw.close();
         } 

@@ -12,15 +12,6 @@ import uk.ac.soton.comp1206.ui.GameWindow;
  */
 public class App extends Application {
 
-    /**
-     * Base resolution width
-     */
-    private final int width = 800;
-
-    /**
-     * Base resolution height
-     */
-    private final int height = 600;
 
     private static App instance;
     private static final Logger logger = LogManager.getLogger(App.class);
@@ -60,7 +51,7 @@ public class App extends Application {
 
         // Change the width and height in this class to change the base rendering
         // resolution for all game parts
-        this.gameWindow = new GameWindow(stage, width, height);
+        this.gameWindow = new GameWindow(stage);
 
         // Display the GameWindow
         stage.show();

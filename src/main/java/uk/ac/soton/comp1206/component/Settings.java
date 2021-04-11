@@ -31,6 +31,9 @@ public class Settings extends BorderPane{
     private TextField g1;
     private TextField g2;
     private Node t7;
+    private String widthS;
+    private String heightS;
+    private TextField g3;
 
     public Settings(int i, int j){
         hide();
@@ -39,10 +42,6 @@ public class Settings extends BorderPane{
         setMaxWidth(j);
         getStyleClass().add("settings");
 
-
-        
-        
-
         var inner = new VBox();
 
         var t1 = new Text("Music Volume");
@@ -50,12 +49,16 @@ public class Settings extends BorderPane{
         var t3 = new Text("Exit");
         var t4 = new Text("Server IP");
         var t5 = new Text("Server Port");
+        var t8 = new Text("Width");
+        var t9 = new Text("Height");
         var t6 = new Text("Reset Settings");
         t7 = new Text("Settings will be applied after restart");
 
 
         g1 = new TextField();
         g2 = new TextField();
+
+        g3 = new TextField();
 
         //setAlignment(Pos.BOTTOM_CENTER);
         
@@ -68,16 +71,18 @@ public class Settings extends BorderPane{
         t4.getStyleClass().add("menuItem");
         t5.getStyleClass().add("menuItem");
         t6.getStyleClass().add("menuItem");
+        t8.getStyleClass().add("menuItem");
         t7.getStyleClass().add("error");
 
         g1.textProperty().addListener((a,b,c) -> Utility.reveal(200, t7));
 
         g2.textProperty().addListener((a,b,c) -> Utility.reveal(200, t7));
+        g3.textProperty().addListener((a,b,c) -> Utility.reveal(200, t7));
 
         Multimedia.getMusicVolumeProperty().bind(slider1.valueProperty());
         Multimedia.getFXVolumeProperty().bind(slider2.valueProperty());
         
-        inner.getChildren().addAll(t1,slider1,t2,slider2,t4,g1,t5,g2,t6);
+        inner.getChildren().addAll(t1,slider1,t2,slider2,t4,g1,t5,g2,t8,g3,t6);
         inner.setAlignment(Pos.CENTER);
         setAlignment(t3, Pos.CENTER);
         setCenter(inner);
@@ -100,29 +105,37 @@ public class Settings extends BorderPane{
         var b = Utility.loadSettings();
         if(!b.isEmpty()){
             this.ip = b.get(0)[1];
-            
             this.port = b.get(1)[1];
             slider1.setValue(Double.parseDouble(b.get(2)[1]));
             slider2.setValue(Double.parseDouble(b.get(3)[1]));
+            widthS = b.get(4)[1];
+            heightS = b.get(5)[1];
+
         }
         else{
             resetSettings();
         }
         g1.setText(this.ip);
         g2.setText(this.port);
+        g3.setText(widthS+"x"+heightS);
 
         t7.setOpacity(0);
+        
 
     }
+
 
     public void resetSettings(){
         this.ip= "discord.ecs.soton.ac.uk";
         this.port = "9700";
+        this.widthS = "800";
+        this.heightS = "800";
         slider1.setValue(0.5);
         slider2.setValue(0.5);
         g1.setText(this.ip);
         g2.setText(this.port);
-        Utility.writeSettings(this.ip, this.port,0.5,0.5);
+        g3.setText(widthS+"x"+heightS);
+        Utility.writeSettings(this.ip, this.port,0.5,0.5,"800","800");
     }
     public String getIp(){
         return ip;
@@ -131,6 +144,13 @@ public class Settings extends BorderPane{
         return port;
     }
 
+    public Integer getWidthS(){
+        return Integer.parseInt(widthS);
+    }
+
+    public Integer getHeightS(){
+        return Integer.parseInt(heightS);
+    }
     public void toggle(){
         if(isVisible){
             hide();
@@ -153,8 +173,10 @@ public class Settings extends BorderPane{
             var second = slider2.getValue();
             var th = g1.getText();
             var th1 = g2.getText();
+
+            var c = g3.getText().split("x");
             logger.info("First:{}  Second:{}",first,second);
-            Utility.writeSettings(th,th1,first,second);
+            Utility.writeSettings(th,th1,first,second,c[0],c[1]);
         }
 
         
