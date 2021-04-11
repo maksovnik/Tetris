@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.ScaleTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -129,6 +130,18 @@ public class Utility {
 
     public static int getHighScore() {
         return highScore;
+    }
+
+    public static void bounce(int duration, Node node, double amountX,double amountY){
+        var st = new ScaleTransition(Duration.millis(duration), node);
+        st.setFromX(1);
+        st.setFromY(1);
+        st.setToX(amountX);
+        st.setToY(amountY);
+        st.setAutoReverse(true);
+        st.setCycleCount(2);
+    
+        st.play();
     }
 
     public static void writeSettings(String ip, String port, double bgVol, double fxVol){

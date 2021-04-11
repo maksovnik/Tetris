@@ -7,4 +7,4 @@ Maks:1490
 sadddd:950
 Max:730
 Maxccxc:300
-Maxxxxxx:230
+maks:300

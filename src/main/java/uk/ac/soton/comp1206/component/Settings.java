@@ -2,7 +2,9 @@ package uk.ac.soton.comp1206.component;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.GaussianBlur;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +28,9 @@ public class Settings extends BorderPane{
     private String ip;
     private String port;
     private static final Logger logger = LogManager.getLogger(Settings.class);
+    private TextField g1;
+    private TextField g2;
+    private Node t7;
 
     public Settings(int i, int j){
         hide();
@@ -43,32 +48,51 @@ public class Settings extends BorderPane{
         var t1 = new Text("Music Volume");
         var t2 = new Text("Sound Effect Volume");
         var t3 = new Text("Exit");
+        var t4 = new Text("Server IP");
+        var t5 = new Text("Server Port");
+        var t6 = new Text("Reset Settings");
+        t7 = new Text("Settings will be applied after restart");
 
 
+        g1 = new TextField();
+        g2 = new TextField();
 
         //setAlignment(Pos.BOTTOM_CENTER);
-
+        
 
         slider1 = new Slider(0, 1, 0.5);
         slider2 = new Slider(0, 1, 0.5);
         t1.getStyleClass().add("menuItem");
         t2.getStyleClass().add("menuItem");
         t3.getStyleClass().add("menuItem");
+        t4.getStyleClass().add("menuItem");
+        t5.getStyleClass().add("menuItem");
+        t6.getStyleClass().add("menuItem");
+        t7.getStyleClass().add("error");
+
+        g1.textProperty().addListener((a,b,c) -> Utility.reveal(200, t7));
+
+        g2.textProperty().addListener((a,b,c) -> Utility.reveal(200, t7));
 
         Multimedia.getMusicVolumeProperty().bind(slider1.valueProperty());
         Multimedia.getFXVolumeProperty().bind(slider2.valueProperty());
         
-        inner.getChildren().addAll(t1,slider1,t2,slider2);
+        inner.getChildren().addAll(t1,slider1,t2,slider2,t4,g1,t5,g2,t6);
         inner.setAlignment(Pos.CENTER);
         setAlignment(t3, Pos.CENTER);
         setCenter(inner);
 
-        setBottom(t3);
+        var g = new VBox(3);
+        g.setAlignment(Pos.CENTER);
+        
+        g.getChildren().addAll(t7,t3);
+        setBottom(g);
 
+        t6.setOnMouseClicked(e -> resetSettings());
         t3.setOnMouseClicked(e -> {
 
             if(sl!=null){
-                sl.onExit();
+                //sl.onExit();
             }
             hide();
         });
@@ -76,20 +100,30 @@ public class Settings extends BorderPane{
         var b = Utility.loadSettings();
         if(!b.isEmpty()){
             this.ip = b.get(0)[1];
+            
             this.port = b.get(1)[1];
             slider1.setValue(Double.parseDouble(b.get(2)[1]));
             slider2.setValue(Double.parseDouble(b.get(3)[1]));
         }
         else{
-            this.ip= "discord.ecs.soton.ac.uk";
-            this.port = "9700";
-            slider1.setValue(0.5);
-            slider2.setValue(0.5);
-            Utility.writeSettings(this.ip, this.port,0.5,0.5);
+            resetSettings();
         }
+        g1.setText(this.ip);
+        g2.setText(this.port);
+
+        t7.setOpacity(0);
 
     }
 
+    public void resetSettings(){
+        this.ip= "discord.ecs.soton.ac.uk";
+        this.port = "9700";
+        slider1.setValue(0.5);
+        slider2.setValue(0.5);
+        g1.setText(this.ip);
+        g2.setText(this.port);
+        Utility.writeSettings(this.ip, this.port,0.5,0.5);
+    }
     public String getIp(){
         return ip;
     }
@@ -117,8 +151,10 @@ public class Settings extends BorderPane{
             
             var first = slider1.getValue();
             var second = slider2.getValue();
+            var th = g1.getText();
+            var th1 = g2.getText();
             logger.info("First:{}  Second:{}",first,second);
-            Utility.writeSettings("discord.ecs.soton.ac.uk","9700",first,second);
+            Utility.writeSettings(th,th1,first,second);
         }
 
         

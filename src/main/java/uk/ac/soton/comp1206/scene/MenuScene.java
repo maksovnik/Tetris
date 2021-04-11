@@ -77,7 +77,7 @@ public class MenuScene extends BaseScene {
         var mainPane = new BorderPane();
         menuPane.getChildren().add(mainPane);
 
-        VBox b = new VBox();
+        VBox b = new VBox(5);
         b.setAlignment(Pos.CENTER);
         Text single = new Text("Single Player");
         Text multi = new Text("Multi Player");
@@ -90,7 +90,7 @@ public class MenuScene extends BaseScene {
             i.getStyleClass().add("menuItem");
         }
         error.getStyleClass().add("error");
-        b.setStyle("-fx-padding: 0 0 60 0;");
+        b.setStyle("-fx-padding: 0 0 40 0;-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,1.5), 50, 0, 0, 0);");
         b.setOpacity(0);
         b.getChildren().addAll(single, multi, how, exit,error);
         Platform.runLater(() -> Utility.reveal(3000,b));
@@ -105,18 +105,15 @@ public class MenuScene extends BaseScene {
                 gameWindow.startLobby();
             }
             else{
-                System.out.println("HAHA");
-                var st = new ScaleTransition(Duration.millis(175), error);
-                st.setFromX(1);
-                st.setFromY(1);
-                st.setToX(1.2);
-                st.setToY(1.2);
-                st.setAutoReverse(true);
-                st.setCycleCount(2);
-            
-                st.play();
+                Utility.bounce(175, error,1.2,1.2);
             }
         });
+
+        single.setOnMouseEntered(e -> Utility.bounce(100, single,1.1,1.1));
+
+        multi.setOnMouseEntered(e -> Utility.bounce(100, multi,1.1,1.1));
+        how.setOnMouseEntered(e -> Utility.bounce(100, how,1.1,1.1));
+        exit.setOnMouseEntered(e -> Utility.bounce(100, exit,1.1,1.1));
 
         how.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startInstructions());
         exit.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.close());
