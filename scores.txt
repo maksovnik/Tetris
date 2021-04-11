@@ -7,4 +7,4 @@ kll:200
 asdas:200
 ik:200
 bobbbb:180
-James:100
+test:150

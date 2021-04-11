@@ -1,0 +1,2 @@
+musicVol 0.0
+soundFXVol 0.0

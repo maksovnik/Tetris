@@ -137,6 +137,14 @@ public class Game {
      * @param rows number of rows
      */
 
+    public void pause(){
+        timeline.pause();
+    }
+
+    public void play(){
+        timeline.play();
+    }
+
     public void setOnPieceEvent(pieceEventListener ppl) {
         this.ppl = ppl;
     }
@@ -161,7 +169,7 @@ public class Game {
         return 3;
     }
 
-    public void setTimerEventListener(TimerEventListener t){
+    public void setOnSingleLoop(TimerEventListener t){
         this.tel = t;
     }
     // Define a getter for the property itself
@@ -232,7 +240,10 @@ public class Game {
 
     public void end() {
         time.removeListener(changeListener);
-        gel.endGame();
+        if(gel!=null){
+            gel.endGame();
+        }
+        
     }
 
     public void setOnGameEnd(GameEndListener g) {

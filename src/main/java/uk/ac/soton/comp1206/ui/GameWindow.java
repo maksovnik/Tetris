@@ -73,7 +73,26 @@ public class GameWindow {
         this.stage = stage;
 
         // Setup window
-        initialiseCommunicator();
+
+
+        
+
+        //communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
+
+
+        settings = new Settings(500,400);
+
+        var ip = settings.getIp();
+        var port = settings.getPort();
+
+        communicator = new Communicator("ws://"+ip+":"+port);
+        communicator.setOnError(new WebSocketAdapter(){
+            @Override
+            public void onConnectError(WebSocket arg0, WebSocketException arg1) throws Exception {
+                setNotConnected(true);
+                menu.checkConnected();
+            }
+        });
 
         setupStage();
 
@@ -89,7 +108,7 @@ public class GameWindow {
 
         //
         
-        settings = new Settings(500,400);
+        
         
 
 
@@ -101,18 +120,6 @@ public class GameWindow {
         return settings;
     }
 
-    public void initialiseCommunicator(){
-        communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
-
-        communicator.setOnError(new WebSocketAdapter(){
-            @Override
-            public void onConnectError(WebSocket arg0, WebSocketException arg1) throws Exception {
-                setNotConnected(true);
-                menu.checkConnected();
-                
-            }
-        });
-    }
 
     public boolean isNotConnected() {
         return notConnected;

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -128,4 +129,46 @@ public class Utility {
     public static int getHighScore() {
         return highScore;
     }
+
+    public static void writeSettings(double bgVol, double fxVol){
+        var file = new File("settings.txt");
+
+        FileWriter fw;
+        try {
+            fw = new FileWriter(file);
+
+            var bw = new BufferedWriter(fw);
+
+            bw.write("musicVol "+ String.valueOf(bgVol) + "\n");
+            bw.write("soundFXVol "+ String.valueOf(fxVol) + "\n");
+            bw.close();
+            fw.close();
+        } 
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public static ArrayList<String[]> loadSettings(){
+        File f = new File("settings.txt");
+        var x = new ArrayList<String[]>();
+        try {
+
+            BufferedReader reader = new BufferedReader(new FileReader(f));
+
+            Scanner s = new Scanner(reader);
+            while (s.hasNext()) {
+                String y = s.nextLine();
+                System.out.println(y);
+                String[] parts = y.split(" ");
+                x.add(parts);
+            }
+            s.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(x.toString());
+        return x;
+    }
 }
+

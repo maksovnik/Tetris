@@ -197,6 +197,7 @@ public class ChallengeScene extends BaseScene {
                 Multimedia.play();
                 mainPane.setEffect(null);
                 mainPane.setDisable(false);
+                game.play();
                 // rectangle.playAnimation();
             }
 
@@ -204,6 +205,7 @@ public class ChallengeScene extends BaseScene {
             public void onShow() {
                 Multimedia.pause();
                 mainPane.setDisable(true);
+                game.pause();
                 // rectangle.pauseAnimation();
             }
 
@@ -288,7 +290,7 @@ public class ChallengeScene extends BaseScene {
         score.textProperty().bind(game.getScoreProperty().asString());
         highscore.textProperty().bind(game.getHScoreProperty().asString());
 
-        game.setTimerEventListener(delay -> rectangle.setFill(Color.hsb(120 * delay, 1, 1)));
+        game.setOnSingleLoop(delay -> rectangle.setFill(Color.hsb(120 * delay, 1, 1)));
         rectangle.widthProperty().bind(game.getTimeProperty().multiply(gameWindow.getWidth()));
 
         multiplier.textProperty().bind(game.getMultiplierProperty().asString());

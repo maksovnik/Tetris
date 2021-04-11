@@ -6,6 +6,9 @@ import org.apache.logging.log4j.Logger;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
@@ -20,8 +23,10 @@ public class Multimedia {
     static String file;
 
     private static boolean fadeIn = true;
-    private static double effectVolume = 0.5;
-    private static double backgroundVolume = 0.5;
+
+    private static DoubleProperty effectVolume = new SimpleDoubleProperty(0.5);
+    private static DoubleProperty backgroundVolume = new SimpleDoubleProperty(0.5);
+
 
     public static void startBackgroundMusic(String file) {
 
@@ -42,29 +47,27 @@ public class Multimedia {
         backgroundPlayer = new MediaPlayer(play);
         backgroundPlayer.setOnEndOfMedia(() -> loopBackground(file));
 
-        //backgroundPlayer.setVolume(0.5);
-        backgroundPlayer.setVolume(backgroundVolume);
+        backgroundPlayer.volumeProperty().bind(backgroundVolume);
 
-        if (fadeIn) {
-            backgroundPlayer.setVolume(0);
-            Timeline timeline = new Timeline(
-                    new KeyFrame(Duration.seconds(4), new KeyValue(backgroundPlayer.volumeProperty(), 0.2)));
-            timeline.play();
-        }
+        // if (fadeIn) {
+        //     //backgroundPlayer.setVolume(0);
+        //     Timeline timeline = new Timeline(
+        //             new KeyFrame(Duration.seconds(4), new KeyValue(backgroundPlayer.volumeProperty(), 0.2)));
+        //     timeline.play();
+        // }
+
         backgroundPlayer.play();
 
         audioEnabled = true;
     }
 
-    public static void setMusicVolume(double newAmount){
-        backgroundPlayer.setVolume(newAmount);
-        backgroundVolume = newAmount;
+    public static DoubleProperty getMusicVolumeProperty(){
+        return backgroundVolume;
     }
 
-    public static void setEffectsVolume(double newAmount){
-        effectVolume = newAmount;
+    public static DoubleProperty getFXVolumeProperty(){
+        return effectVolume;
     }
-
     public static void loopBackground(String file) {
         fadeIn = false;
         startBackgroundMusic(file);
@@ -77,7 +80,7 @@ public class Multimedia {
         logger.info("Playing Sound: " + toPlay);
         Media play = new Media(toPlay);
         mediaPlayer = new MediaPlayer(play);
-        mediaPlayer.setVolume(effectVolume);
+        mediaPlayer.volumeProperty().bind(effectVolume);
         mediaPlayer.play();
     }
 
