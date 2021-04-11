@@ -66,6 +66,7 @@ public class GameWindow {
      * @param width  width
      * @param height height
      */
+
     public GameWindow(Stage stage, int width, int height) {
         this.width = width;
         this.height = height;
@@ -118,6 +119,10 @@ public class GameWindow {
 
     public Settings getSettings(){
         return settings;
+    }
+
+    public void addListener(WebSocketAdapter e){
+        communicator.setOnError(e);
     }
 
 

@@ -1,5 +1,9 @@
 package uk.ac.soton.comp1206.scene;
 
+import com.neovisionaries.ws.client.WebSocket;
+import com.neovisionaries.ws.client.WebSocketAdapter;
+import com.neovisionaries.ws.client.WebSocketException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -162,6 +166,13 @@ public class MenuScene extends BaseScene {
             Platform.runLater(() -> Utility.reveal(2000,error));
         }
         else{
+            gameWindow.addListener(new WebSocketAdapter(){
+                @Override
+                public void onConnectError(WebSocket arg0, WebSocketException arg1) throws Exception {
+                    Platform.runLater(() -> Utility.reveal(2000,error));
+                }
+            });
+            
             error.setOpacity(0);
         }
         
