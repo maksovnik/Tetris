@@ -2,7 +2,9 @@ package uk.ac.soton.comp1206.game;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -364,10 +366,12 @@ public class Game {
             }
         }
 
-        var c = new ArrayList<GameBlockCoordinate>();
+        Set<GameBlockCoordinate> c = new HashSet<>();
+        //var c = new ArrayList<GameBlockCoordinate>();
 
         for (int i : rowsToClear) {
             c.addAll(setRowZero(i));
+            //c.addAll(setRowZero(i));
         }
 
         for (int i : colsToClear) {
@@ -390,7 +394,7 @@ public class Game {
 
         var coords = new ArrayList<GameBlockCoordinate>();
 
-        lcl.linesCleared(c.toArray(new GameBlockCoordinate[coords.size()]));
+        lcl.linesCleared(c);
 
     }
 

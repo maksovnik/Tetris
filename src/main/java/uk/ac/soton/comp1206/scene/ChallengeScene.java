@@ -21,6 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
 import javafx.util.Duration;
 import uk.ac.soton.comp1206.component.GameBoard;
 import uk.ac.soton.comp1206.component.PieceBoard;
@@ -130,6 +131,7 @@ public class ChallengeScene extends BaseScene {
 
         rectangle = new Rectangle(gameWindow.getWidth(), 20);
 
+
         rectangle.setFill(Color.GREEN);
 
     }
@@ -154,9 +156,7 @@ public class ChallengeScene extends BaseScene {
         sidePane.getChildren().addAll(hscoreTitle, highscore, scoreTitle, score, levelTitle, level, livesTitle, lives,
                 multiplierTitle, multiplier, nextPieceBoard, followingPieceBoard);
 
-        mainPane.setCenter(centerPane);
-        mainPane.setRight(sidePane);
-        mainPane.setBottom(bottomPane);
+
 
         sidePane.setAlignment(Pos.CENTER_RIGHT);
         centerPane.setAlignment(Pos.CENTER);
@@ -165,9 +165,13 @@ public class ChallengeScene extends BaseScene {
         root.getChildren().add(challengePane);
 
         centerPane.getChildren().add(board);
-        bottomPane.getChildren().addAll(rectangle);
+        bottomPane.getChildren().add(rectangle);
 
         challengePane.getChildren().add(mainPane);
+
+        mainPane.setCenter(centerPane);
+        mainPane.setRight(sidePane);
+        mainPane.setBottom(bottomPane);
 
         BorderPane.setMargin(rectangle, new Insets(5, 5, 5, 5));
     }

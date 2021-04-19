@@ -1,5 +1,8 @@
 package uk.ac.soton.comp1206.component;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -114,8 +117,8 @@ public class GameBoard extends GridPane {
         return blocks[x][y];
     }
 
-    public void fadeOut(GameBlockCoordinate[] cords) {
-        for (GameBlockCoordinate i : cords) {
+    public void fadeOut(Set<GameBlockCoordinate> x) {
+        for (GameBlockCoordinate i : x) {
             getBlock(i.getX(), i.getY()).fadeOut();
         }
     }

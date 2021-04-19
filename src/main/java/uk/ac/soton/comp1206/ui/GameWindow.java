@@ -86,7 +86,7 @@ public class GameWindow {
         var port = settings.getPort();
 
         this.width = settings.getWidthS();
-        this.height = settings.getHeightS();
+        this.height = settings.getHeightS()-100;
         stage.setMinHeight(height);
         stage.setMinWidth(width);
 
@@ -114,8 +114,6 @@ public class GameWindow {
         //
         
         
-        
-
 
         startIntro();
 

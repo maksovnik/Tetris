@@ -1,10 +1,10 @@
+hya:5120
 Maks:3950
 max:3440
 Maks:2560
+qwer:2410
 Test:1700
 sad:1680
 Maks:1490
-sadddd:950
-Max:730
-Maxccxc:300
-maks:300
+qwer:1460
+qwer:1260
