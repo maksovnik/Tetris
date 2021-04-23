@@ -104,6 +104,7 @@ public class Game {
         if (currentPiece == null) {
             return;
         }
+        
 
         currentPiece.rotate(direction);
         ppl.nextPiece(currentPiece, followingPiece);
@@ -334,6 +335,10 @@ public class Game {
         return 0;
     }
 
+
+    public GamePiece getCurrentPiece(){
+        return currentPiece;
+    }
     public void resetSpeed(){
         timeline.setRate(1);
         speed=1;
@@ -391,8 +396,6 @@ public class Game {
 
         level.set((int) this.score.get() / 1000); // Sets level
         multiplier.set(multiplier.get() + 1); // Increases multiplier
-
-        var coords = new ArrayList<GameBlockCoordinate>();
 
         lcl.linesCleared(c);
 

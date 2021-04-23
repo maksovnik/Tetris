@@ -49,8 +49,7 @@ public class Settings extends BorderPane{
         var t3 = new Text("Exit");
         var t4 = new Text("Server IP");
         var t5 = new Text("Server Port");
-        var t8 = new Text("Width");
-        var t9 = new Text("Height");
+        var t8 = new Text("Resolution");
         var t6 = new Text("Reset Settings");
         t7 = new Text("Settings will be applied after restart");
 

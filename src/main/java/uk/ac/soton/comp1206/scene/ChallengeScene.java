@@ -6,8 +6,6 @@ import java.util.Hashtable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -21,8 +19,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.scene.transform.Scale;
-import javafx.util.Duration;
 import uk.ac.soton.comp1206.component.GameBoard;
 import uk.ac.soton.comp1206.component.PieceBoard;
 import uk.ac.soton.comp1206.component.Settings;
@@ -76,8 +72,6 @@ public class ChallengeScene extends BaseScene {
 
     private Settings settings;
     private Rectangle rectangle;
-
-    private Timeline g;
 
     /**
      * Create a new Single Player challenge scene
@@ -133,8 +127,8 @@ public class ChallengeScene extends BaseScene {
 
 
         rectangle.setFill(Color.GREEN);
-
     }
+
 
     private void styleElements() {
         for (Text i : new Text[] { scoreTitle, levelTitle, livesTitle, multiplierTitle, hscoreTitle }) {
@@ -256,21 +250,37 @@ public class ChallengeScene extends BaseScene {
         String keyName = code.getName();
 
         if (Arrays.asList("W", "A", "S", "D").contains(keyName)) {
-            board.moveHover(keyMap.get(keyName));
+            //board.moveHover(keyMap.get(keyName));
         }
 
         if (keyName.equals("U")) {
             game.speedUp();
         }
         if (code.isArrowKey()) {
-            board.moveHover(keyName);
+            System.out.println(keyName);
+            var coords = board.getCurrentHoverCoords();
+            if(keyName.equals("Up")){
+                board.hover(coords[0]-1, coords[1]);
+            }
+            if(keyName.equals("Down")){
+                board.hover(coords[0]+1, coords[1]);
+            }
+            if(keyName.equals("Left")){
+                board.hover(coords[0], coords[1]-1);
+            }
+            if(keyName.equals("Right")){
+                board.hover(coords[0], coords[1]+1);
+            }
+            
+            //board.hover(game.getCurrentPiece().getBlocks(), x, y);
+           // board.moveHover(keyName);
         }
         if (code == KeyCode.ESCAPE) {
             System.out.println("Helllo");
             settings.toggle();
         }
         if (Arrays.asList("Enter", "X").contains(keyName)) {
-            game.blockClicked(board.getCurrentHoverPiece());
+            //game.blockClicked(board.getCurrentHoverPiece());
         }
         if (Arrays.asList("Q", "Z", "Open Bracket").contains(keyName)) {
             game.rotateCurrentPiece(-1);
@@ -324,6 +334,8 @@ public class ChallengeScene extends BaseScene {
                 logger.info("Next Piece");
                 nextPieceBoard.SetPieceToDisplay(a);
                 followingPieceBoard.SetPieceToDisplay(b);
+                board.setCurrentPiece(a);
+                board.updateHover();
             }
 
         });
@@ -340,6 +352,8 @@ public class ChallengeScene extends BaseScene {
             }
             if (e.getButton() == MouseButton.SECONDARY) {
                 game.rotateCurrentPiece(1);
+                var coords = board.getCurrentHoverCoords();
+                board.hover(coords[0], coords[1]);
             }
 
         });

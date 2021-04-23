@@ -56,6 +56,8 @@ public class GameBlock extends Canvas {
 
     private boolean showCenter;
 
+    private static Color hoverColor =  Color.color(1.0, 1.0, 1.0, 0.5);
+
     /**
      * Create a new single Game Block
      * 
@@ -82,6 +84,11 @@ public class GameBlock extends Canvas {
         value.addListener(this::updateValue);
     }
 
+    public static void setHoverColor(Color m){
+        hoverColor =  m;
+    }
+
+    
     public void setShowCenter(boolean m) {
         showCenter = m;
         paint();
@@ -100,13 +107,15 @@ public class GameBlock extends Canvas {
 
     public void paintHover() {
         final GraphicsContext gc = this.getGraphicsContext2D();
-        gc.setFill(Color.color(1.0, 1.0, 1.0, 0.5));
+        gc.setFill(hoverColor);
         gc.fillRect(0.0, 0.0, this.width, this.height);
     }
 
     public void setHoverX(boolean m) {
-        hover = m;
-        paint();
+        if(hover!=m){
+            hover = m;
+            paint();
+        }
     }
 
     public void fadeOut() {

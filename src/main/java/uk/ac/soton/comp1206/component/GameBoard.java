@@ -1,13 +1,14 @@
 package uk.ac.soton.comp1206.component;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import uk.ac.soton.comp1206.event.BlockClickedListener;
+import uk.ac.soton.comp1206.game.GamePiece;
 import uk.ac.soton.comp1206.game.Grid;
 
 /**
@@ -55,11 +56,17 @@ public class GameBoard extends GridPane {
      */
     GameBlock[][] blocks;
 
+
+    Color notPossibleToPlace = Color.color(0.5, 1.0, 1.0, 0.5);
+    Color possibleToPlace = Color.color(1.0, 0, 0, 0.5);
+    
     /**
      * The listener to call when a specific block is clicked
      */
     protected BlockClickedListener blockClickedListener;
     private int[] currentHoverCords = { 0, 0 };
+
+    protected GamePiece currentPiece;
 
     /**
      * Create a new GameBoard, based off a given grid, with a visual width and
@@ -80,11 +87,14 @@ public class GameBoard extends GridPane {
         build();
     }
 
-    public GameBlock getCurrentHoverPiece() {
-        int cx = currentHoverCords[0];
-        int cy = currentHoverCords[1];
-        return blocks[cx][cy];
+    public void setCurrentPiece(GamePiece g){
+        this.currentPiece = g;
     }
+
+    public int[] getCurrentHoverCoords() {
+        return currentHoverCords;
+    }
+
 
     /**
      * Create a new GameBoard with it's own internal grid, specifying the number of
@@ -139,49 +149,28 @@ public class GameBoard extends GridPane {
         for (var x = 0; x < rows; x++) {
             for (var y = 0; y < cols; y++) {
                 GameBlock b = createBlock(x, y);
-                b.setOnMouseEntered(e -> this.hover(b));
-                b.setOnMouseExited(e -> this.unhover());
-                // b.setOnMouseClicked(e -> blockClickedListener.blockClicked(e,b));
-            }
-        }
 
-    }
+                final var  c=x;
+                final var  d=y;
+                b.setOnMouseEntered(e -> hover(c, d));
 
-    public void moveHover(String direction) {
-        int cx = currentHoverCords[0];
-        int cy = currentHoverCords[1];
-        unhover();
-        try {
-            if (direction == "Left") {
-                hover(blocks[cx][cy - 1]);
+                b.setOnMouseExited(e -> clearHover());
             }
-            if (direction == "Right") {
-                hover(blocks[cx][cy + 1]);
-            }
-            if (direction == "Up") {
-                hover(blocks[cx - 1][cy]);
-            }
-            if (direction == "Down") {
-                hover(blocks[cx + 1][cy]);
-            }
-        } catch (ArrayIndexOutOfBoundsException ignored) {
-            hover(blocks[cx][cy]);
         }
     }
 
-    private void hover(GameBlock b) {
-        unhover();
-        b.setHoverX(true);
-        currentHoverCords[0] = b.getX();
-        currentHoverCords[1] = b.getY();
+
+    public GameBlock[][] getBlocks(){
+        return blocks;
     }
 
-    private void unhover() {
-        int cx = currentHoverCords[0];
-        int cy = currentHoverCords[1];
-        blocks[cx][cy].setHoverX(false);
-        currentHoverCords[0] = 0;
-        currentHoverCords[1] = 0;
+
+    public void clearHover() {
+        for(GameBlock[] q : blocks){
+            for(GameBlock l : q){
+                l.setHoverX(false);
+            }
+        }
     }
 
     protected GameBlock createBlock(int x, int y) {
@@ -220,11 +209,37 @@ public class GameBoard extends GridPane {
         this.blockClickedListener = listener;
     }
 
-    /**
-     * Triggered when a block is clicked. Call the attached listener.
-     * 
-     * @param event mouse event
-     * @param block block clicked on //
-     */
+    public void updateHover(){
+        var coords = getCurrentHoverCoords();
+        hover(coords[0], coords[1]);
+    }
 
+    public void hover(int x, int y) {
+
+        var pieceBlocks = currentPiece.getBlocks();
+        var canPlayPiece = grid.canPlayPiece(currentPiece, x, y);
+        
+        clearHover();
+        
+        if(canPlayPiece){
+            GameBlock.setHoverColor(notPossibleToPlace);
+        }
+        else{
+            GameBlock.setHoverColor(possibleToPlace);
+        }
+
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (pieceBlocks[i + 1][j + 1] > 0) {
+                    if((x+i>=0)&&(x+i<rows)&&(y+j>=0)&&(y+j < cols)){
+                        getBlock(x+i,y+j).setHoverX(true);
+                    }
+                    
+                }
+            }
+        }
+
+        currentHoverCords[0]=x;
+        currentHoverCords[1]=y;
+    }
 }

@@ -1,10 +1,11 @@
 package uk.ac.soton.comp1206.component;
 
+import javafx.scene.paint.Color;
 import uk.ac.soton.comp1206.game.GamePiece;
 
 public class PieceBoard extends GameBoard {
     private boolean doCircle;
-
+    
     public PieceBoard(int cols, int rows, double width, double height) {
         super(cols, rows, width, height);
 
@@ -39,6 +40,11 @@ public class PieceBoard extends GameBoard {
 
     public void disableClick() {
         this.blockClickedListener = null;
+    }
+
+    public void hover(int x, int y){
+        GameBlock.setHoverColor(Color.color(0.0, 0.0, 0.0, 0.5));
+        getBlock(x,y).setHoverX(true);
     }
 
 }
