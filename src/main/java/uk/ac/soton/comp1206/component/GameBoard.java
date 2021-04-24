@@ -216,6 +216,10 @@ public class GameBoard extends GridPane {
 
     public void hover(int x, int y) {
 
+        if(currentPiece==null){
+            return;
+        }
+        
         var pieceBlocks = currentPiece.getBlocks();
         var canPlayPiece = grid.canPlayPiece(currentPiece, x, y);
         

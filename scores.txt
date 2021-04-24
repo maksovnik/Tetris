@@ -7,4 +7,4 @@ Test:1700
 sad:1680
 Maks:1490
 qwer:1460
-qwer:1260
+mak:100

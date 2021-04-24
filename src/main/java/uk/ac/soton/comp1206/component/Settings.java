@@ -72,7 +72,6 @@ public class Settings extends BorderPane{
         t7.getStyleClass().add("error");
 
         g1.textProperty().addListener((a,b,c) -> Utility.reveal(200, t7));
-
         g2.textProperty().addListener((a,b,c) -> Utility.reveal(200, t7));
         g3.textProperty().addListener((a,b,c) -> Utility.reveal(200, t7));
 
@@ -99,6 +98,12 @@ public class Settings extends BorderPane{
             hide();
         });
 
+        
+
+    }
+    
+    public void hideError(){
+        t7.setOpacity(0);
     }
 
     public void setSettings(String ip, String port, String bgVol, String fxVol, String width, String height){
@@ -109,7 +114,6 @@ public class Settings extends BorderPane{
         g2.setText(port);
         g3.setText(width+"x"+height);
 
-        t7.setOpacity(0);
     }
 
     public void toggle(){

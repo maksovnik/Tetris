@@ -83,12 +83,11 @@ public class Utility {
     }
 
     public static void reveal(double millis, Node node) {
-        if(node==null){
+        
+        if(node==null || node.getOpacity()!=0){
             return;
         }
-        if(node.getOpacity()==1){
-             return;
-        }
+ 
         fader = new FadeTransition(new Duration(millis), node);
         fader.setFromValue(0.0);
         fader.setToValue(1.0);

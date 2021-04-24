@@ -174,7 +174,7 @@ public class ChallengeScene extends BaseScene {
     public void build() {
         logger.info("Building " + this.getClass().getName());
 
-        Multimedia.startBackgroundMusic("/music/space.mp3");
+        Multimedia.startBackgroundMusic("/music/game.mp3");
 
         setupGame();
 

@@ -1,6 +1,6 @@
 ip discord.ecs.soton.ac.uk
 serverPort 9700
-musicVol 0.0
-soundFXVol 0.5
+musicVol 0.20556745182012848
+soundFXVol 0.034261241970021415
 width 800
 height 800

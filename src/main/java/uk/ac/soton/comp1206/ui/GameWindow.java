@@ -100,6 +100,7 @@ public class GameWindow {
             settings.setSettings(ip,port,bgVol,fxVol,width,height);
         }
 
+        settings.hideError();
 
         stage.setMinHeight(Double.parseDouble(height));
         stage.setMinWidth(Double.parseDouble(width));

@@ -108,6 +108,7 @@ public class ScoreScene extends BaseScene {
         if(score>lowestRemote){
             addScoreToScoreBox(remoteScoreList);
         }
+        elements.getChildren().addAll(title, scoreBoxes);
         Utility.reveal(300, scoreBoxes);
     }
     private void handleMessage(final String message) {
@@ -133,23 +134,28 @@ public class ScoreScene extends BaseScene {
         if((score>lowestRemote)||(score>lowestLocal)){
             var name = new TextField();
             var enter = new Button("Add");
-    
+            var hint = new Text("Well done, you set a high score!, please enter your name.");
+            hint.getStyleClass().add("scorelist");
+            name.setMaxWidth(400);
             enter.setOnAction(event -> {
     
                 this.name = name.getText();
     
                 elements.getChildren().remove(name);
                 elements.getChildren().remove(enter);
+                elements.getChildren().remove(hint);
     
                 completed();
 
+
             });
     
-            elements.getChildren().addAll(name, enter);
+            elements.getChildren().addAll(hint,name, enter);
         }
         else{
             completed();
         }
+        
 
         title.setOpacity(1);
     }
@@ -200,7 +206,7 @@ public class ScoreScene extends BaseScene {
 
         scoreBoxes.getChildren().addAll(localHiScoresBox, remoteHiScoresBox);
 
-        elements.getChildren().addAll(title, scoreBoxes);
+        //elements.getChildren().addAll(title, scoreBoxes);
         mainPane.setCenter(elements);
 
     }
