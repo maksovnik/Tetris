@@ -16,6 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import uk.ac.soton.comp1206.event.SettingsListener;
+import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Multimedia;
 import uk.ac.soton.comp1206.utility.Utility;
 
@@ -25,15 +26,14 @@ public class Settings extends BorderPane{
     Pane parent;
     private Slider slider1;
     private Slider slider2;
-    private String ip;
-    private String port;
+
     private static final Logger logger = LogManager.getLogger(Settings.class);
     private TextField g1;
     private TextField g2;
     private Node t7;
-    private String widthS;
-    private String heightS;
+
     private TextField g3;
+
 
     public Settings(int i, int j){
         hide();
@@ -52,8 +52,6 @@ public class Settings extends BorderPane{
         var t8 = new Text("Resolution");
         var t6 = new Text("Reset Settings");
         t7 = new Text("Settings will be applied after restart");
-
-
         g1 = new TextField();
         g2 = new TextField();
 
@@ -92,7 +90,7 @@ public class Settings extends BorderPane{
         g.getChildren().addAll(t7,t3);
         setBottom(g);
 
-        t6.setOnMouseClicked(e -> resetSettings());
+        t6.setOnMouseClicked(e -> setSettings(GameWindow.ip, GameWindow.port, GameWindow.bgVol, GameWindow.fxVol, GameWindow.width, GameWindow.height));
         t3.setOnMouseClicked(e -> {
 
             if(sl!=null){
@@ -101,55 +99,19 @@ public class Settings extends BorderPane{
             hide();
         });
 
-        var b = Utility.loadSettings();
-        if(!b.isEmpty()){
-            this.ip = b.get(0)[1];
-            this.port = b.get(1)[1];
-            slider1.setValue(Double.parseDouble(b.get(2)[1]));
-            slider2.setValue(Double.parseDouble(b.get(3)[1]));
-            widthS = b.get(4)[1];
-            heightS = b.get(5)[1];
+    }
 
-        }
-        else{
-            resetSettings();
-        }
-        g1.setText(this.ip);
-        g2.setText(this.port);
-        g3.setText(widthS+"x"+heightS);
+    public void setSettings(String ip, String port, String bgVol, String fxVol, String width, String height){
+        slider1.setValue(Double.parseDouble(bgVol));
+        slider2.setValue(Double.parseDouble(fxVol));
+
+        g1.setText(ip);
+        g2.setText(port);
+        g3.setText(width+"x"+height);
 
         t7.setOpacity(0);
-        
-
     }
 
-
-    public void resetSettings(){
-        this.ip= "discord.ecs.soton.ac.uk";
-        this.port = "9700";
-        this.widthS = "800";
-        this.heightS = "800";
-        slider1.setValue(0.5);
-        slider2.setValue(0.5);
-        g1.setText(this.ip);
-        g2.setText(this.port);
-        g3.setText(widthS+"x"+heightS);
-        Utility.writeSettings(this.ip, this.port,0.5,0.5,"800","800");
-    }
-    public String getIp(){
-        return ip;
-    }
-    public String getPort(){
-        return port;
-    }
-
-    public Integer getWidthS(){
-        return Integer.parseInt(widthS);
-    }
-
-    public Integer getHeightS(){
-        return Integer.parseInt(heightS);
-    }
     public void toggle(){
         if(isVisible){
             hide();
@@ -167,7 +129,6 @@ public class Settings extends BorderPane{
     public void hide(){
         System.out.println("fg");
         if((slider1!=null)&&(slider2!=null)){
-            
             var first = slider1.getValue();
             var second = slider2.getValue();
             var th = g1.getText();

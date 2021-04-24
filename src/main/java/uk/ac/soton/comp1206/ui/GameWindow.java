@@ -27,6 +27,7 @@ import uk.ac.soton.comp1206.scene.LobbyScene;
 import uk.ac.soton.comp1206.scene.MenuScene;
 import uk.ac.soton.comp1206.scene.MultiplayerScene;
 import uk.ac.soton.comp1206.scene.ScoreScene;
+import uk.ac.soton.comp1206.utility.Utility;
 
 /**
  * The GameWindow is the single window for the game where everything takes
@@ -39,9 +40,6 @@ import uk.ac.soton.comp1206.scene.ScoreScene;
 public class GameWindow {
 
     private static final Logger logger = LogManager.getLogger(GameWindow.class);
-
-    private int width;
-    private int height;
 
     // private Multimedia bgPlayer = new Multimedia(true);
     // private Multimedia soundPlayer = new Multimedia(false);
@@ -58,6 +56,14 @@ public class GameWindow {
 
     public boolean notConnected;
 
+    public static final String ip = "discord.ecs.soton.ac.uk";
+    public static final String port = "9700";
+    public static final String width = "800";
+
+    public static final String height = "800";
+    public static final String bgVol = "0.5";
+    public static final String fxVol = "0.5";
+
     /**
      * Create a new GameWindow attached to the given stage with the specified width
      * and height
@@ -72,23 +78,31 @@ public class GameWindow {
 
         this.stage = stage;
 
-        // Setup window
 
-
-        
-
+        // Setup windo
         //communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
 
 
+        var b = Utility.loadSettings();
         settings = new Settings(500,400);
+        if(!b.isEmpty()){
+            var ip = b.get("ip");
+            var port = b.get("serverPort");
+            var bgVol = b.get("musicVol");
+            var fxVol = b.get("soundFXVol");
+            var width = b.get("width");
+            var height = b.get("height");
+            Utility.writeSettings(ip, port, Double.parseDouble(bgVol), Double.parseDouble(fxVol), width, height);
+            settings.setSettings(ip,port,bgVol,fxVol,width,height);
+        }
+        else{
+            Utility.writeSettings(ip, port, Double.parseDouble(bgVol), Double.parseDouble(fxVol), width, height);
+            settings.setSettings(ip,port,bgVol,fxVol,width,height);
+        }
 
-        var ip = settings.getIp();
-        var port = settings.getPort();
 
-        this.width = settings.getWidthS();
-        this.height = settings.getHeightS()-100;
-        stage.setMinHeight(height);
-        stage.setMinWidth(width);
+        stage.setMinHeight(Double.parseDouble(height));
+        stage.setMinWidth(Double.parseDouble(width));
 
         communicator = new Communicator("ws://"+ip+":"+port);
         communicator.setOnError(new WebSocketAdapter(){
@@ -107,17 +121,10 @@ public class GameWindow {
         // Setup default scene
         setupDefaultScene();
 
-        // Setup communicator
-
-        // communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
-
-        //
-        
-        
-
         startIntro();
 
     }
+    
 
     public Settings getSettings(){
         return settings;
@@ -202,8 +209,8 @@ public class GameWindow {
      */
     public void setupStage() {
         stage.setTitle("TetrECS");
-        stage.setMinWidth(width);
-        stage.setMinHeight(height + 20);
+        stage.setMinWidth(Double.parseDouble(width));
+        stage.setMinHeight(Double.parseDouble(height));
         stage.setOnCloseRequest(ev -> App.getInstance().shutdown());
     }
 
@@ -235,7 +242,7 @@ public class GameWindow {
      */
 
     public void setupDefaultScene() {
-        this.scene = new Scene(new Pane(), width, height, Color.BLACK);
+        this.scene = new Scene(new Pane(), Double.parseDouble(width), Double.parseDouble(height), Color.BLACK);
         stage.setScene(this.scene);
     }
 
@@ -267,7 +274,7 @@ public class GameWindow {
      * @return width
      */
     public int getWidth() {
-        return this.width;
+        return Integer.parseInt(this.width);
     }
 
     /**
@@ -276,7 +283,7 @@ public class GameWindow {
      * @return height
      */
     public int getHeight() {
-        return this.height;
+        return Integer.parseInt(this.height);
     }
 
     /**

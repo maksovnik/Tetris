@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -165,7 +166,9 @@ public class Utility {
             e.printStackTrace();
         }
     }
-    public static ArrayList<String[]> loadSettings(){
+    public static HashMap<String,String> loadSettings(){
+
+        HashMap<String,String> hmap = new HashMap<String,String>();
         File f = new File("settings.txt");
         var x = new ArrayList<String[]>();
         try {
@@ -176,7 +179,8 @@ public class Utility {
             while (s.hasNext()) {
                 String y = s.nextLine();
                 System.out.println(y);
-                String[] parts = y.split(" ");
+                String[] parts = y.split(" ",2);
+                hmap.put(parts[0], parts[1]);
                 x.add(parts);
             }
             s.close();
@@ -185,7 +189,7 @@ public class Utility {
         }
 
         System.out.println(x);
-        return x;
+        return hmap;
     }
 }
 
