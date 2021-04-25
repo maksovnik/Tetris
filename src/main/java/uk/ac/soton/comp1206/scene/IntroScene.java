@@ -4,6 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
+import uk.ac.soton.comp1206.utility.Multimedia;
 import uk.ac.soton.comp1206.utility.Utility;
 
 public class IntroScene extends BaseScene {
@@ -15,6 +16,7 @@ public class IntroScene extends BaseScene {
     @Override
     public void initialise() {
         this.scene.setOnKeyPressed(e -> {
+            
             gameWindow.startMenu();
             Utility.fader.stop();
 
@@ -36,6 +38,7 @@ public class IntroScene extends BaseScene {
         Utility.fader.setOnFinished(e -> {
             gameWindow.startMenu();
         });
+        Multimedia.playAudio("/sounds/intro.mp3");
 
     }
 

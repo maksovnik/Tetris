@@ -35,6 +35,7 @@ target
 !.vscode/extensions.json
 .vscode/
 
+.VSCodeCounter/
 
 ### Maven ###
 target/

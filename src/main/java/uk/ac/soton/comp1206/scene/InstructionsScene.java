@@ -58,7 +58,7 @@ public class InstructionsScene extends BaseScene {
         title.getStyleClass().add("instructions");
         title2.getStyleClass().add("instructions");
         elements.setAlignment(Pos.CENTER);
-        final ImageView image = new ImageView(MenuScene.class.getResource("/images/Instructions.png").toExternalForm());
+        final ImageView image = new ImageView(MenuScene.class.getResource("/images/Instructions2.png").toExternalForm());
         image.setFitWidth(this.gameWindow.getHeight());
         image.setPreserveRatio(true);
 

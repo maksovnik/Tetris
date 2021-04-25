@@ -212,7 +212,7 @@ TextField {
 }
 
 .instructions {
-    -fx-font-size: 10px;
+    -fx-font-size: 30px;
     -fx-font-family: 'Orbitron';
     -fx-fill: white;
 }

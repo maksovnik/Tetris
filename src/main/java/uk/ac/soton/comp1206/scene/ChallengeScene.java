@@ -249,38 +249,34 @@ public class ChallengeScene extends BaseScene {
         KeyCode code = e.getCode();
         String keyName = code.getName();
 
-        if (Arrays.asList("W", "A", "S", "D").contains(keyName)) {
-            //board.moveHover(keyMap.get(keyName));
-        }
 
         if (keyName.equals("U")) {
             game.speedUp();
         }
-        if (code.isArrowKey()) {
+        if (Arrays.asList("W", "A", "S", "D","Up","Down","Left","Right").contains(keyName)) {
+
             System.out.println(keyName);
             var coords = board.getCurrentHoverCoords();
-            if(keyName.equals("Up")){
+            if(keyName.equals("Up")||keyName.equals("W")){
                 board.hover(coords[0]-1, coords[1]);
             }
-            if(keyName.equals("Down")){
+            if(keyName.equals("Down")||keyName.equals("S")){
                 board.hover(coords[0]+1, coords[1]);
             }
-            if(keyName.equals("Left")){
+            if(keyName.equals("Left")||keyName.equals("A")){
                 board.hover(coords[0], coords[1]-1);
             }
-            if(keyName.equals("Right")){
+            if(keyName.equals("Right")||keyName.equals("D")){
                 board.hover(coords[0], coords[1]+1);
             }
-            
-            //board.hover(game.getCurrentPiece().getBlocks(), x, y);
-           // board.moveHover(keyName);
+        
         }
         if (code == KeyCode.ESCAPE) {
-            System.out.println("Helllo");
             settings.toggle();
         }
         if (Arrays.asList("Enter", "X").contains(keyName)) {
-            //game.blockClicked(board.getCurrentHoverPiece());
+            var c =board.getCurrentHoverCoords();
+            game.blockClicked(board.getBlock(c[0],c[1]));
         }
         if (Arrays.asList("Q", "Z", "Open Bracket").contains(keyName)) {
             game.rotateCurrentPiece(-1);
@@ -316,7 +312,7 @@ public class ChallengeScene extends BaseScene {
 
             @Override
             public void playPiece() {
-                Multimedia.playAudio("/sounds/explode.wav");
+                Multimedia.playAudio("/sounds/place.wav");
             }
 
             @Override
@@ -326,7 +322,7 @@ public class ChallengeScene extends BaseScene {
 
             @Override
             public void swapPiece() {
-                Multimedia.playAudio("/sounds/rotate.wav");
+                Multimedia.playAudio("/sounds/transition.wav");
             }
 
             @Override
@@ -340,7 +336,10 @@ public class ChallengeScene extends BaseScene {
 
         });
 
-        game.setOnLineCleared(x -> board.fadeOut(x));
+        game.setOnLineCleared(x -> {
+            Multimedia.playAudio("/sounds/clear.wav");
+            board.fadeOut(x);
+        });
 
         game.setOnGameEnd(() -> Platform.runLater(() -> gameWindow.startScores(game, Utility.loadScores())));
 
