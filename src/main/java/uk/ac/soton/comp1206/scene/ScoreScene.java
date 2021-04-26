@@ -29,10 +29,9 @@ import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Utility;
 
-
 /**
- * The Score scene is shown when the game ends in order
- * to show the player theirs and others players' scores'
+ * The Score scene is shown when the game ends in order to show the player
+ * theirs and others players' scores'
  */
 public class ScoreScene extends BaseScene {
 
@@ -67,9 +66,11 @@ public class ScoreScene extends BaseScene {
 
     /**
      * Makes a new Score Scene
+     * 
      * @param gameWindow the game Window
-     * @param game the game instance that was just played
-     * @param localitems the list of items to show on the left side of the score scene
+     * @param game       the game instance that was just played
+     * @param localitems the list of items to show on the left side of the score
+     *                   scene
      */
     public ScoreScene(GameWindow gameWindow, Game game, ObservableList<Pair<String, Integer>> localItems) {
         super(gameWindow);
@@ -86,12 +87,11 @@ public class ScoreScene extends BaseScene {
      */
     @Override
     public void initialise() {
-        
-        if(communicator.getState()==WebSocketState.OPEN){
+
+        if (communicator.getState() == WebSocketState.OPEN) {
             this.communicator.addListener(message -> Platform.runLater(() -> this.handleMessage(message.trim())));
             this.communicator.send("HISCORES");
-        }
-        else{
+        } else {
             handleMessage("bypass");
         }
 
@@ -99,6 +99,7 @@ public class ScoreScene extends BaseScene {
 
     /**
      * Removes the lowest item from a given sorted list
+     * 
      * @param x sorted list
      */
     private void removeLowestItem(List<Pair<String, Integer>> x) {
@@ -108,6 +109,7 @@ public class ScoreScene extends BaseScene {
 
     /**
      * Sorts a given list by player score
+     * 
      * @return sorted list
      */
     private void sortListByScore(List<Pair<String, Integer>> x) {
@@ -116,25 +118,27 @@ public class ScoreScene extends BaseScene {
 
     /**
      * Adds users name and score to given list
+     * 
      * @param x List of scores to add to
      */
-    private void addScoreToScoreBox(List<Pair<String,Integer>> x){
+    private void addScoreToScoreBox(List<Pair<String, Integer>> x) {
         removeLowestItem(x);
         var newScore = new Pair<String, Integer>(name, score);
         x.add(newScore);
         sortListByScore(x);
     }
-    
+
     /**
-     * Adds new score to scoreboxes if user beat one of them and displays the scoreboxes
+     * Adds new score to scoreboxes if user beat one of them and displays the
+     * scoreboxes
      */
-    private void completed(){
+    private void completed() {
         System.out.println(localScoreList.toString());
-        if(score>lowestLocal &&!(game instanceof MultiplayerGame)){
+        if (score > lowestLocal && !(game instanceof MultiplayerGame)) {
             addScoreToScoreBox(localScoreList);
             Utility.writeScores(localScoreList);
         }
-        if(score>lowestRemote){
+        if (score > lowestRemote) {
             addScoreToScoreBox(remoteScoreList);
         }
         elements.getChildren().addAll(title, scoreBoxes);
@@ -143,6 +147,7 @@ public class ScoreScene extends BaseScene {
 
     /**
      * Handles receiving a message from the server
+     * 
      * @param message the message from the server
      */
     private void handleMessage(String message) {
@@ -151,13 +156,12 @@ public class ScoreScene extends BaseScene {
         String header = parts[0];
 
         System.out.println(header);
-        if(!(header.equals("HISCORES")||(header.equals("bypass")))){
+        if (!(header.equals("HISCORES") || (header.equals("bypass")))) {
             return;
         }
 
-
         remoteScores = Utility.getScoreList(message);
-        if(remoteScores!=null){
+        if (remoteScores != null) {
             remoteScores.sort((a, b) -> b.getValue().compareTo(a.getValue()));
             remoteScoreList.addAll(remoteScores);
             lowestRemote = remoteScores.get(this.remoteScores.size() - 1).getValue();
@@ -165,31 +169,28 @@ public class ScoreScene extends BaseScene {
 
         lowestLocal = localScoreList.get(this.localScoreList.size() - 1).getValue();
 
-        if(((score>lowestRemote)||(score>lowestLocal))&&!(game instanceof MultiplayerGame)){
+        if (((score > lowestRemote) || (score > lowestLocal)) && !(game instanceof MultiplayerGame)) {
             var name = new TextField();
             var enter = new Button("Add");
             var hint = new Text("Well done, you set a high score!, please enter your name.");
             hint.getStyleClass().add("scorelist");
             name.setMaxWidth(400);
             enter.setOnAction(event -> {
-    
+
                 this.name = name.getText();
-    
+
                 elements.getChildren().remove(name);
                 elements.getChildren().remove(enter);
                 elements.getChildren().remove(hint);
-    
+
                 completed();
 
-
             });
-    
-            elements.getChildren().addAll(hint,name, enter);
-        }
-        else{
+
+            elements.getChildren().addAll(hint, name, enter);
+        } else {
             completed();
         }
-        
 
         title.setOpacity(1);
     }
@@ -241,10 +242,9 @@ public class ScoreScene extends BaseScene {
 
         scoreBoxes.getChildren().addAll(localHiScoresBox, remoteHiScoresBox);
 
-        //elements.getChildren().addAll(title, scoreBoxes);
+        // elements.getChildren().addAll(title, scoreBoxes);
         mainPane.setCenter(elements);
 
     }
 
 }
-

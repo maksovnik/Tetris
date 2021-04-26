@@ -157,6 +157,7 @@ public class MultiplayerScene extends ChallengeScene {
 
     /**
      * Handles a message from the server
+     * 
      * @param s the message
      */
     private void handleMessage(String s) {
@@ -192,7 +193,6 @@ public class MultiplayerScene extends ChallengeScene {
             for (String i : playerData) {
                 var x = i.split(":");
                 var g = new Pair<String, Integer>(x[0], Integer.parseInt(x[1]));
-                
 
                 localScoreList.add(g);
 

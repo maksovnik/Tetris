@@ -28,14 +28,15 @@ public class Multimedia {
     /**
      * Stops the sound effects player
      */
-    public static void stopEffects(){
+    public static void stopEffects() {
         effectsPlayer.stop();
     }
 
     /**
      * Starts playing the music at the given path
+     * 
      * @param file The path to the file that should be played
-    */
+     */
     public static void startBackgroundMusic(String file) {
         if ((Multimedia.file == file) && fadeIn) {
             return;
@@ -63,25 +64,28 @@ public class Multimedia {
 
     /**
      * Gets the music volume property
+     * 
      * @return music volume property
-    */
-    public static DoubleProperty getMusicVolumeProperty(){
+     */
+    public static DoubleProperty getMusicVolumeProperty() {
         return backgroundVolume;
     }
 
     /**
      * Gets the sound effects volume property
+     * 
      * @return sound effects volume property
-    */
-    public static DoubleProperty getFXVolumeProperty(){
+     */
+    public static DoubleProperty getFXVolumeProperty() {
         return effectVolume;
     }
 
     /**
-     * Will temporarily disable music fading so that looping can occur
-     * and then play the given music file
+     * Will temporarily disable music fading so that looping can occur and then play
+     * the given music file
+     * 
      * @param file path to the file that will be played
-    */
+     */
     public static void loopBackground(String file) {
         fadeIn = false;
         startBackgroundMusic(file);
@@ -90,8 +94,9 @@ public class Multimedia {
 
     /**
      * Plays the sound effect at the given path
+     * 
      * @param file The path to the file that should be played
-    */
+     */
     public static void playSoundEffect(final String file) {
         String toPlay = Multimedia.class.getResource(file).toExternalForm();
         logger.info("Playing Sound: " + toPlay);
@@ -103,15 +108,15 @@ public class Multimedia {
 
     /**
      * Pauses the music
-    */
-    public static void pause(){
+     */
+    public static void pause() {
         musicPlayer.pause();
     }
 
     /**
      * Plays the music
-    */
-    public static void play(){
+     */
+    public static void play() {
         musicPlayer.play();
     }
 

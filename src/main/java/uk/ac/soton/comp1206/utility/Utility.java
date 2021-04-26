@@ -20,8 +20,8 @@ import javafx.util.Duration;
 import javafx.util.Pair;
 
 /**
- * The Utility class provides a collection of static methods
- * used for utility tasks
+ * The Utility class provides a collection of static methods used for utility
+ * tasks
  */
 public class Utility {
 
@@ -31,6 +31,7 @@ public class Utility {
 
     /**
      * Loads scores from a file
+     * 
      * @return List of scores
      */
     public static ObservableList<Pair<String, Integer>> loadScores() {
@@ -70,6 +71,7 @@ public class Utility {
 
     /**
      * Formats a string containing scores into an ObservableList of Pairs
+     * 
      * @return ObservableList of scores
      */
     public static ObservableList<Pair<String, Integer>> getScoreList(String scores) {
@@ -94,17 +96,18 @@ public class Utility {
         return x;
     }
 
-     /**
+    /**
      * Reveals a given node over a given period of time
-     * @param node a JavaFX Node
+     * 
+     * @param node   a JavaFX Node
      * @param millis duration in millis
      */
-    public static void reveal(Node node,double millis) {
-        
-        if(node==null || node.getOpacity()!=0){
+    public static void reveal(Node node, double millis) {
+
+        if (node == null || node.getOpacity() != 0) {
             return;
         }
- 
+
         fader = new FadeTransition(new Duration(millis), node);
         fader.setFromValue(0.0);
         fader.setToValue(1.0);
@@ -112,8 +115,9 @@ public class Utility {
         fader.play();
     }
 
-     /**
+    /**
      * Writes scores to a file
+     * 
      * @param x List of Scores
      */
     public static void writeScores(List<Pair<String, Integer>> x) {
@@ -149,6 +153,7 @@ public class Utility {
 
     /**
      * Gets the name of the highest scoring player
+     * 
      * @return the name of the highest scoring player
      */
     public static String getHighName() {
@@ -157,6 +162,7 @@ public class Utility {
 
     /**
      * Gets the highest score
+     * 
      * @return the high score
      */
     public static int getHighScore() {
@@ -165,11 +171,12 @@ public class Utility {
 
     /**
      * Bounce animation on a node for a given duration and amount
+     * 
      * @param duration duraton in millis
-     * @param node a JavaFX Node
-     * @param amount the amount by which to "bounce"
+     * @param node     a JavaFX Node
+     * @param amount   the amount by which to "bounce"
      */
-    public static void bounce(int duration, Node node, double amount){
+    public static void bounce(int duration, Node node, double amount) {
         var st = new ScaleTransition(Duration.millis(duration), node);
         st.setFromX(1);
         st.setFromY(1);
@@ -177,48 +184,50 @@ public class Utility {
         st.setToY(amount);
         st.setAutoReverse(true);
         st.setCycleCount(2);
-    
+
         st.play();
     }
 
     /**
      * Writes settings to a file
-     * @param ip the ip address
-     * @param port the port
-     * @param bgVol the background volume
-     * @param fxVol the sound effects volume
-     * @param width the game width
+     * 
+     * @param ip     the ip address
+     * @param port   the port
+     * @param bgVol  the background volume
+     * @param fxVol  the sound effects volume
+     * @param width  the game width
      * @param height the game height
      */
-    public static void writeSettings(String ip, String port, double bgVol, double fxVol, String width, String height){
+    public static void writeSettings(String ip, String port, double bgVol, double fxVol, String width, String height) {
         var file = new File("settings.txt");
 
         FileWriter fw;
         try {
             file.createNewFile();
             fw = new FileWriter(file);
-            
+
             var bw = new BufferedWriter(fw);
-            bw.write("ip "+ ip + "\n");
-            bw.write("serverPort "+ port + "\n");
-            bw.write("musicVol "+ String.valueOf(bgVol) + "\n");
-            bw.write("soundFXVol "+ String.valueOf(fxVol) + "\n");
-            bw.write("width "+ String.valueOf(width) + "\n");
-            bw.write("height "+ String.valueOf(height) + "\n");
+            bw.write("ip " + ip + "\n");
+            bw.write("serverPort " + port + "\n");
+            bw.write("musicVol " + String.valueOf(bgVol) + "\n");
+            bw.write("soundFXVol " + String.valueOf(fxVol) + "\n");
+            bw.write("width " + String.valueOf(width) + "\n");
+            bw.write("height " + String.valueOf(height) + "\n");
             bw.close();
             fw.close();
-        } 
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-     /**
+
+    /**
      * Loads settings from file into a HashMap
+     * 
      * @return hashmap containing loaded settings
      */
-    public static HashMap<String,String> loadSettings(){
+    public static HashMap<String, String> loadSettings() {
 
-        HashMap<String,String> hmap = new HashMap<String,String>();
+        HashMap<String, String> hmap = new HashMap<String, String>();
         File f = new File("settings.txt");
         var x = new ArrayList<String[]>();
         try {
@@ -229,7 +238,7 @@ public class Utility {
             while (s.hasNext()) {
                 String y = s.nextLine();
                 System.out.println(y);
-                String[] parts = y.split(" ",2);
+                String[] parts = y.split(" ", 2);
                 hmap.put(parts[0], parts[1]);
                 x.add(parts);
             }
@@ -244,16 +253,15 @@ public class Utility {
 
     /**
      * Checks if the value of a given String is an integer
+     * 
      * @param g string to be checked
      */
-    public static boolean isInteger(String g){
-        try{
+    public static boolean isInteger(String g) {
+        try {
             Integer.parseInt(g);
             return true;
-        }
-        catch(NumberFormatException d){
+        } catch (NumberFormatException d) {
             return false;
         }
     }
 }
-

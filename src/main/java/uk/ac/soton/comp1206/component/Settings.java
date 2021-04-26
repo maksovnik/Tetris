@@ -48,12 +48,12 @@ public class Settings extends BorderPane {
      * Create a new Settings window attached to the given stage with the specified
      * width and height
      * 
-     * @param i width of pane
-     * @param j height of pane
+     * @param i          width of pane
+     * @param j          height of pane
      * @param gameWindow gameWindow
      **/
     public Settings(GameWindow gameWindow, int i, int j) {
-        this.gameWindow=gameWindow;
+        this.gameWindow = gameWindow;
         hide();
         setMaxHeight(i);
         setMaxWidth(j);
@@ -80,7 +80,7 @@ public class Settings extends BorderPane {
 
         slider1 = new Slider(0, 1, 0.5);
         slider2 = new Slider(0, 1, 0.5);
-        
+
         hideEndGame();
 
         for (Text o : new Text[] { t1, t2, t3, t4, t5, t6, t5, t8, t0 }) {
@@ -121,7 +121,7 @@ public class Settings extends BorderPane {
         t3.setOnMouseClicked(e -> hide());
         t0.setOnMouseClicked(e -> {
             hide();
-            if(sl!=null){
+            if (sl != null) {
                 sl.onExit();
             }
         });
@@ -242,16 +242,15 @@ public class Settings extends BorderPane {
     /**
      * Shows the End Game label
      **/
-    public void showEndGame(){
+    public void showEndGame() {
         this.t0.setDisable(false);
         this.t0.setOpacity(1);
     }
 
-        
     /**
      * Hides the End Game label
      **/
-    public void hideEndGame(){
+    public void hideEndGame() {
         this.t0.setDisable(true);
         this.t0.setOpacity(0);
     }

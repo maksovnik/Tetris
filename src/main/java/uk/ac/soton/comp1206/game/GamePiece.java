@@ -151,10 +151,10 @@ public class GamePiece {
         return newPiece;
     }
 
-
     /**
-     * Transposes a given 2d array, used for switching
-     * from cartesian coordinates to matrix indexing
+     * Transposes a given 2d array, used for switching from cartesian coordinates to
+     * matrix indexing
+     * 
      * @param q 2d array
      * @return transposed 2d array
      */
@@ -213,6 +213,7 @@ public class GamePiece {
 
     /**
      * Rotates the piece
+     * 
      * @param direction anticlockwise is -1, clockwise is 1
      */
     public void rotate(int direction) { // direction=1 is clockwise, -1 is anticlockwise

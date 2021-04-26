@@ -25,8 +25,8 @@ import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 
 /**
- * The Lobby Scene displays a Lobby and serves as a place
- * for the player to wait until their game start
+ * The Lobby Scene displays a Lobby and serves as a place for the player to wait
+ * until their game start
  */
 public class LobbyScene extends BaseScene {
 
@@ -58,6 +58,7 @@ public class LobbyScene extends BaseScene {
 
     /**
      * Creates a new Lobby Scene
+     * 
      * @param gameWindow the game window
      */
     public LobbyScene(GameWindow gameWindow) {
@@ -68,8 +69,6 @@ public class LobbyScene extends BaseScene {
         x = new ArrayList<String>();
     }
 
-
-    
     /**
      * Requests the channel list from the server
      */
@@ -92,6 +91,7 @@ public class LobbyScene extends BaseScene {
 
     /**
      * Handles a new message from the server
+     * 
      * @param s the received message
      */
     private void handleMessage(String s) {

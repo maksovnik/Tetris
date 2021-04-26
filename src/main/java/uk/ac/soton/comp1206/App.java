@@ -12,7 +12,6 @@ import uk.ac.soton.comp1206.ui.GameWindow;
  */
 public class App extends Application {
 
-
     private static App instance;
     private static final Logger logger = LogManager.getLogger(App.class);
     private Stage stage;
@@ -65,6 +64,7 @@ public class App extends Application {
 
     /**
      * Get the singleton App instance
+     * 
      * @return the app
      */
     public static App getInstance() {

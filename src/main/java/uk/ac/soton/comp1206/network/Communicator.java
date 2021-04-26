@@ -39,18 +39,18 @@ public class Communicator {
      *
      * @param server server to connect to
      */
-    public WebSocketState getState(){
+    public WebSocketState getState() {
         return ws.getState();
     }
 
-    public void setOnError(WebSocketAdapter e){
+    public void setOnError(WebSocketAdapter e) {
         ws.addListener(e);
     }
 
-    public void connect(){
+    public void connect() {
         ws.connectAsynchronously();
     }
-    
+
     public Communicator(String server) {
 
         try {
@@ -60,7 +60,6 @@ public class Communicator {
             // Connect to the server
             ws = socketFactory.createSocket(server);
 
-            
             connect(); // remember to reenable :)
 
             // When a message is received, call the receive method
@@ -89,13 +88,13 @@ public class Communicator {
                 @Override
                 public void handleCallbackError(WebSocket webSocket, Throwable throwable) throws Exception {
                     logger.error("Callback Error:" + throwable.getMessage());
-                    //throwable.printStackTrace();
+                    // throwable.printStackTrace();
                 }
 
                 @Override
                 public void onError(WebSocket webSocket, WebSocketException e) throws Exception {
                     logger.error("Error:" + e.getMessage());
-                    //e.printStackTrace();
+                    // e.printStackTrace();
                 }
             });
 

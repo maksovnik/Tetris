@@ -56,7 +56,6 @@ public class GameBoard extends GridPane {
      */
     GameBlock[][] blocks;
 
-
     /**
      * Color used when not possible to place a piece
      */
@@ -65,7 +64,7 @@ public class GameBoard extends GridPane {
      * Color used when possible to place a piece
      */
     Color possibleToPlace = Color.color(1.0, 0, 0, 0.5);
-    
+
     /**
      * The listener to call when a specific block is clicked
      */
@@ -101,12 +100,11 @@ public class GameBoard extends GridPane {
     }
 
     /**
-     * Sets the current piece
-     * height.
+     * Sets the current piece height.
      * 
      * @param g the current piece
      */
-    public void setCurrentPiece(GamePiece g){
+    public void setCurrentPiece(GamePiece g) {
         this.currentPiece = g;
     }
 
@@ -118,7 +116,6 @@ public class GameBoard extends GridPane {
     public int[] getCurrentHoverCoords() {
         return currentHoverCords;
     }
-
 
     /**
      * Create a new GameBoard with it's own internal grid, specifying the number of
@@ -179,8 +176,8 @@ public class GameBoard extends GridPane {
             for (var y = 0; y < cols; y++) {
                 GameBlock b = createBlock(x, y);
 
-                final var  c=x;
-                final var  d=y;
+                final var c = x;
+                final var d = y;
                 b.setOnMouseEntered(e -> hover(c, d));
 
                 b.setOnMouseExited(e -> clearHover());
@@ -190,9 +187,10 @@ public class GameBoard extends GridPane {
 
     /**
      * Gets the Game Blocks inside the board
+     * 
      * @return game blocks inside board
      */
-    public GameBlock[][] getBlocks(){
+    public GameBlock[][] getBlocks() {
         return blocks;
     }
 
@@ -200,8 +198,8 @@ public class GameBoard extends GridPane {
      * Removes the hover effect from every piece
      */
     public void clearHover() {
-        for(GameBlock[] q : blocks){
-            for(GameBlock l : q){
+        for (GameBlock[] q : blocks) {
+            for (GameBlock l : q) {
                 l.setHoverX(false);
             }
         }
@@ -209,6 +207,7 @@ public class GameBoard extends GridPane {
 
     /**
      * Creates a new Game Block at the given coordinate
+     * 
      * @param x the x coordinate
      * @param y the y coordinate
      * @return the new game block
@@ -252,46 +251,46 @@ public class GameBoard extends GridPane {
     /**
      * Calls an update to hover() to reposition the hover indicator
      */
-    public void updateHover(){
+    public void updateHover() {
         var coords = getCurrentHoverCoords();
         hover(coords[0], coords[1]);
     }
 
     /**
      * Lights up the piece at the given coordinates
+     * 
      * @param x the x coordinate wanting to be hovered
      * @param y the y coordinate wanting to be hovered
-    */
+     */
     public void hover(int x, int y) {
 
-        if(currentPiece==null){
+        if (currentPiece == null) {
             return;
         }
-        
+
         var pieceBlocks = currentPiece.getBlocks();
         var canPlayPiece = grid.canPlayPiece(currentPiece, x, y);
-        
+
         clearHover();
-        
-        if(canPlayPiece){
+
+        if (canPlayPiece) {
             GameBlock.setHoverColor(notPossibleToPlace);
-        }
-        else{
+        } else {
             GameBlock.setHoverColor(possibleToPlace);
         }
 
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
                 if (pieceBlocks[i + 1][j + 1] > 0) {
-                    if((x+i>=0)&&(x+i<rows)&&(y+j>=0)&&(y+j < cols)){
-                        getBlock(x+i,y+j).setHoverX(true);
+                    if ((x + i >= 0) && (x + i < rows) && (y + j >= 0) && (y + j < cols)) {
+                        getBlock(x + i, y + j).setHoverX(true);
                     }
-                    
+
                 }
             }
         }
 
-        currentHoverCords[0]=x;
-        currentHoverCords[1]=y;
+        currentHoverCords[0] = x;
+        currentHoverCords[1] = y;
     }
 }

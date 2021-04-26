@@ -73,14 +73,7 @@ public class GameWindow {
         stage.setMinHeight(Double.parseDouble(height));
         stage.setMinWidth(Double.parseDouble(width));
 
-        communicator = new Communicator("ws://" + ip + ":" + port);
-        communicator.setOnError(new WebSocketAdapter() {
-            @Override
-            public void onConnectError(WebSocket arg0, WebSocketException arg1) throws Exception {
-                notConnected = true;
-                menu.showError();
-            }
-        });
+
 
         // Setup Settings
         setupSettings();
@@ -99,11 +92,21 @@ public class GameWindow {
 
     }
 
+    private void setupCommunicator(String ip, String port){
+        communicator = new Communicator("ws://" + ip + ":" + port);
+        communicator.setOnError(new WebSocketAdapter() {
+            @Override
+            public void onConnectError(WebSocket arg0, WebSocketException arg1) throws Exception {
+                notConnected = true;
+                menu.showError();
+            }
+        });
+    }
     /**
      * Loads settings or loads defaults
      */
     private void setupSettings() {
-        settings = new Settings(this,500, 400);
+        settings = new Settings(this, 500, 400);
 
         try {
             var b = Utility.loadSettings(); // Attempts to load settings
@@ -118,9 +121,12 @@ public class GameWindow {
             var width = b.get("width");
             var height = b.get("height");
             settings.setSettings(ip, port, bgVol, fxVol, width, height);
+            setupCommunicator(ip,port);
         } catch (Exception e) {
             Utility.writeSettings(ip, port, Double.parseDouble(bgVol), Double.parseDouble(fxVol), width, height);
             settings.setSettings(ip, port, bgVol, fxVol, width, height);
+
+            setupCommunicator(ip,port);
         }
 
         settings.initialise();

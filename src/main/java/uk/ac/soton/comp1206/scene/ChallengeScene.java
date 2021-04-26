@@ -35,7 +35,6 @@ import uk.ac.soton.comp1206.utility.Utility;
  */
 public class ChallengeScene extends BaseScene {
 
-
     private static final Logger logger = LogManager.getLogger(ChallengeScene.class);
 
     protected Game game;
@@ -101,8 +100,8 @@ public class ChallengeScene extends BaseScene {
         lives = new Text();
         multiplier = new Text();
 
-        nextPieceBoard = new PieceBoard(3, 3, 100, 100,true);
-        followingPieceBoard = new PieceBoard(3, 3, 75, 75,false);
+        nextPieceBoard = new PieceBoard(3, 3, 100, 100, true);
+        followingPieceBoard = new PieceBoard(3, 3, 75, 75, false);
 
         sidePane = new VBox(5);
         centerPane = new VBox(4);
@@ -185,7 +184,8 @@ public class ChallengeScene extends BaseScene {
 
     /**
      * Handles a key release event
-     * @param e key event 
+     * 
+     * @param e key event
      */
     private void handleKeyRelease(KeyEvent e) {
         KeyCode k = e.getCode();
@@ -215,10 +215,10 @@ public class ChallengeScene extends BaseScene {
         return highScore;
     }
 
-
     /**
      * Handles a key press event
-     * @param e key event 
+     * 
+     * @param e key event
      */
     protected void handleKeyPress(KeyEvent e) {
 
@@ -330,7 +330,7 @@ public class ChallengeScene extends BaseScene {
 
             @Override
             public void nextPiece(GamePiece a, GamePiece b) {
-                
+
                 logger.info("Next Piece");
                 nextPieceBoard.SetPieceToDisplay(a);
                 followingPieceBoard.SetPieceToDisplay(b);
@@ -386,10 +386,11 @@ public class ChallengeScene extends BaseScene {
     }
 
     /**
-    * On next piece
-    */
-    protected void onNextPiece(){
+     * On next piece
+     */
+    protected void onNextPiece() {
     }
+
     /**
      * Starts the game
      */

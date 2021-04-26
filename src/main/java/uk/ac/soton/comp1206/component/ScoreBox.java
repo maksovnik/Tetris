@@ -33,16 +33,15 @@ public class ScoreBox extends VBox {
         this.scores = new SimpleListProperty<Pair<String, Integer>>();
 
         scores.addListener((ListChangeListener<Pair<String, Integer>>) (c -> {
-            System.out.println("inside "+scores.toString());
+            System.out.println("inside " + scores.toString());
             updateScores();
-            System.out.println("inside "+scores.toString());
+            System.out.println("inside " + scores.toString());
         }));
     }
 
-
     /**
-    * Forces an update on the scorebox
-    */
+     * Forces an update on the scorebox
+     */
     public void updateScores() {
         this.getChildren().clear();
 
@@ -53,17 +52,19 @@ public class ScoreBox extends VBox {
     }
 
     /**
-    * Adds a player to the list of dead players
-    @param s name of the player
-    */
+     * Adds a player to the list of dead players
+     * 
+     * @param s name of the player
+     */
     public void addLostPlayer(String s) {
         lostPlayers.add(s);
     }
 
     /**
-    * Makes a single subscorebox
-    @param x pair containing a name and a score
-    */
+     * Makes a single subscorebox
+     * 
+     * @param x pair containing a name and a score
+     */
     public HBox makeSubScoreBox(Pair<String, Integer> x) {
         var h = new HBox(8);
 
@@ -85,12 +86,12 @@ public class ScoreBox extends VBox {
     }
 
     /**
-    * Gets the scores property
-    @return list of scores
-    */
+     * Gets the scores property
+     * 
+     * @return list of scores
+     */
     public ListProperty<Pair<String, Integer>> getScoresProperty() {
         return this.scores;
     }
-
 
 }

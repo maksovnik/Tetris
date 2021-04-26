@@ -123,6 +123,7 @@ public class Game {
 
     /**
      * Rotates the current piece
+     * 
      * @param direction anticlockwise is -1, clockwise is 1
      */
     public void rotateCurrentPiece(int direction) {
@@ -137,6 +138,7 @@ public class Game {
 
     /**
      * Gets the next timer delay
+     * 
      * @return next timer delay
      */
     public int getTimerDelay() {
@@ -182,9 +184,9 @@ public class Game {
         timer.play();
     }
 
-
     /**
      * Sets the piece event listener
+     * 
      * @param ppl piece event listener
      */
     public void setOnPieceEvent(pieceEventListener ppl) {
@@ -193,6 +195,7 @@ public class Game {
 
     /**
      * Gets the score value
+     * 
      * @return score
      */
     public int getScore() {
@@ -201,6 +204,7 @@ public class Game {
 
     /**
      * Gets the level value
+     * 
      * @return level
      */
     public int getLevel() {
@@ -209,72 +213,81 @@ public class Game {
 
     /**
      * Gets the lives value
+     * 
      * @return lives
-     */    
+     */
     public int getLives() {
         return lives.get();
     }
 
     /**
      * Gets the multiplier value
+     * 
      * @return multiplier
-     */  
+     */
     public int getMultiplier() {
         return multiplier.get();
     }
 
     /**
      * Sets the TimerChangeListener
+     * 
      * @param t Timer Change Listener
-     */  
+     */
     public void setOnSingleLoop(TimerChangeListener t) {
         this.tel = t;
     }
 
     /**
      * Gets the score property
+     * 
      * @return score property
-     */  
+     */
     public IntegerProperty getScoreProperty() {
         return score;
     }
 
     /**
      * Gets the high score property
+     * 
      * @return high score property
-     */  
+     */
     public IntegerProperty getHScoreProperty() {
         return highScore;
     }
 
-
     /**
      * Sets the score property
+     * 
      * @param high score
-     */  
+     */
     public void setHighScore(int h) {
         highScore.set(h);
     }
 
     /**
      * Gets the lives property
+     * 
      * @return lives property
-     */  
+     */
     public IntegerProperty getLivesProperty() {
         return lives;
     }
+
     /**
      * Gets the level property
+     * 
      * @return level property
-     */  
+     */
     public IntegerProperty getLevelProperty() {
         return level;
     }
 
     /**
      * Gets the multiplier property
+     * 
      * @return multiplier property
-     */  
+     */
     public IntegerProperty getMultiplierProperty() {
         return multiplier;
     }
@@ -293,7 +306,7 @@ public class Game {
 
     /**
      * Punish the player (timer has reached 0)
-     */  
+     */
     public void punish() {
         if (multiplier.get() > 1) {
             multiplier.set(1);
@@ -310,9 +323,8 @@ public class Game {
     }
 
     /**
-     * Cleans up everything once game
-     * has ended and pings listener
-     */  
+     * Cleans up everything once game has ended and pings listener
+     */
     public void end() {
         time.removeListener(changeListener);
         if (gel != null) {
@@ -321,20 +333,22 @@ public class Game {
 
     }
 
-    public void removeChangeListener(){
+    public void removeChangeListener() {
         time.removeListener(changeListener);
     }
+
     /**
      * Sets the Game end listener
+     * 
      * @param g game end listener
-     */  
+     */
     public void setOnGameEnd(GameEndListener g) {
         this.gel = g;
     }
 
     /**
      * Swaps the current piece and the following piece
-     */  
+     */
     public void swapCurrentPiece() {
 
         if (currentPiece == null) {
@@ -353,7 +367,7 @@ public class Game {
 
     /**
      * Gets the next piece
-     */  
+     */
     public void nextPiece() {
         currentPiece = followingPiece;
         followingPiece = spawnPiece();
@@ -362,7 +376,7 @@ public class Game {
 
     /**
      * Spawns a new piece
-     */  
+     */
     public GamePiece spawnPiece() {
         logger.info("Spawning a piece");
         Random rn = new Random();
@@ -411,8 +425,9 @@ public class Game {
     }
 
     /**
-    * Speeds up the game timer by a small factor (recommended to be bound to keyhold)
-    */  
+     * Speeds up the game timer by a small factor (recommended to be bound to
+     * keyhold)
+     */
     public int speedUp() {
         if (timer != null) {
             if (speed < 6) {
@@ -424,26 +439,27 @@ public class Game {
         }
         return 0;
     }
-    
+
     /**
      * Gets the current piece
+     * 
      * @return current piece
-     */  
+     */
     public GamePiece getCurrentPiece() {
         return currentPiece;
     }
-    
+
     /**
      * Resets the speed of the game timer
-     */  
+     */
     public void resetSpeed() {
         timer.setRate(1);
         speed = 1;
     }
-    
+
     /**
      * Runs after a piece has been played to check for lines
-     */  
+     */
     public void afterPiece() {
         logger.info("Checking for Rows");
 
@@ -501,42 +517,44 @@ public class Game {
 
     }
 
-        
     /**
      * Sets the score
+     * 
      * @param newScore the new score
-     */  
+     */
     public void setScore(int newScore) {
         if (newScore > highScore.get()) {
             highScore.set(newScore);
         }
         score.set(newScore);
     }
-        
+
     /**
      * Sets the line cleared listener
+     * 
      * @param l line cleared listener
-     */  
+     */
     public void setOnLineCleared(LineClearedListener l) {
         this.lcl = l;
     }
 
     /**
-     * Calculates the increase in score based
-     *  on lines cleared and blocks cleared
-     * @param lines number of lines cleared
+     * Calculates the increase in score based on lines cleared and blocks cleared
+     * 
+     * @param lines  number of lines cleared
      * @param blocks number of blocks cleared
      * @return amount to increment players score
-     */  
+     */
     public int score(int lines, int blocks) {
         return lines * blocks * 10 * getMultiplier();
     }
 
     /**
      * Clears a row of the grid
+     * 
      * @param row row index to clear
      * @return arraylist of coordinates cleared
-     */  
+     */
     public ArrayList<GameBlockCoordinate> setRowZero(int row) {
         var coords = new ArrayList<GameBlockCoordinate>();
         // Set's each item in a row to 0
@@ -549,9 +567,10 @@ public class Game {
 
     /**
      * Clears a column of the grid
+     * 
      * @param col column index to clear
      * @return arraylist of coordinates cleared
-     */  
+     */
     public ArrayList<GameBlockCoordinate> setColZero(int col) {
         var coords = new ArrayList<GameBlockCoordinate>();
         // Set's each item in a column to 0
@@ -564,9 +583,10 @@ public class Game {
 
     /**
      * Detects if a given column is full of blocks
+     * 
      * @param col column index to check
      * @return if column is full
-     */  
+     */
     public boolean fullColumn(int col) {
         // Checks if a specific column is full
         for (int i = 0; i < grid.getCols(); i++) {
@@ -579,9 +599,10 @@ public class Game {
 
     /**
      * Detects if a given row is full of blocks
+     * 
      * @param row row index to check
      * @return if row is full
-     */  
+     */
     public boolean fullRow(int row) {
         // Checks if a specific row is full
         for (int i = 0; i < grid.getRows(); i++) {

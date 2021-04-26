@@ -106,7 +106,6 @@ public class MenuScene extends BaseScene {
         settings.setParent(mainPane);
         menuPane.getChildren().add(settings);
 
-
     }
 
     /**
@@ -143,7 +142,6 @@ public class MenuScene extends BaseScene {
         Platform.runLater(() -> Utility.reveal(error, 2000));
     }
 
-    
     /**
      * Initialise the menu
      */
@@ -151,21 +149,6 @@ public class MenuScene extends BaseScene {
     public void initialise() {
 
         playStartAnimation();
-
-        settings.setListener(new SettingsListener() {
-            @Override
-            public void onExit() {
-                gameWindow.close();
-            }
-
-            @Override
-            public void onHide() {
-            };
-
-            @Override
-            public void onShow() {
-            }
-        });
 
         Platform.runLater(() -> scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ESCAPE) {
@@ -175,8 +158,7 @@ public class MenuScene extends BaseScene {
 
         if (gameWindow.isNotConnected()) {
             Platform.runLater(() -> Utility.reveal(error, 2000));
-        } 
-        else {
+        } else {
             gameWindow.addErrorListener(new WebSocketAdapter() {
                 @Override
                 public void onConnectError(WebSocket arg0, WebSocketException arg1) throws Exception {

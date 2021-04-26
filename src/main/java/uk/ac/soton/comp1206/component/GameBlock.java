@@ -120,8 +120,8 @@ public class GameBlock extends Canvas {
     }
 
     /**
-    * Paints the block with a colour of low opacity
-    **/
+     * Paints the block with a colour of low opacity
+     **/
     public void paintHover() {
         final GraphicsContext gc = this.getGraphicsContext2D();
         gc.setFill(hoverColor);
@@ -129,18 +129,20 @@ public class GameBlock extends Canvas {
     }
 
     /**
-    * Sets hover and repaints
-    * @param m hover variable
-    **/
+     * Sets hover and repaints
+     * 
+     * @param m hover variable
+     **/
     public void setHoverX(boolean m) {
         if (hover != m) {
             hover = m;
             paint();
         }
     }
+
     /**
-    * Fades out a block when a line is made
-    **/
+     * Fades out a block when a line is made
+     **/
     public void fadeOut() {
 
         paintEmpty();
@@ -246,7 +248,7 @@ public class GameBlock extends Canvas {
         gc.strokeRect(0, 0, width, height);
     }
 
-     /**
+    /**
      * Paint a circle on this canvas to show where the center block is
      */
     public void paintCircle() {
