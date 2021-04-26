@@ -19,12 +19,20 @@ import javafx.scene.Node;
 import javafx.util.Duration;
 import javafx.util.Pair;
 
+/**
+ * The Utility class provides a collection of static methods
+ * used for utility tasks
+ */
 public class Utility {
 
     static String highName;
     static int highScore;
     public static FadeTransition fader;
 
+    /**
+     * Loads scores from a file
+     * @return List of scores
+     */
     public static ObservableList<Pair<String, Integer>> loadScores() {
         ObservableList<Pair<String, Integer>> x = FXCollections.observableArrayList();
         // ObservableList<Pair<String, Integer>> x = new ArrayList<Pair<String,
@@ -60,6 +68,10 @@ public class Utility {
 
     }
 
+    /**
+     * Formats a string containing scores into an ObservableList of Pairs
+     * @return ObservableList of scores
+     */
     public static ObservableList<Pair<String, Integer>> getScoreList(String scores) {
         ObservableList<Pair<String, Integer>> x = FXCollections.observableArrayList();
 
@@ -82,7 +94,12 @@ public class Utility {
         return x;
     }
 
-    public static void reveal(double millis, Node node) {
+     /**
+     * Reveals a given node over a given period of time
+     * @param node a JavaFX Node
+     * @param millis duration in millis
+     */
+    public static void reveal(Node node,double millis) {
         
         if(node==null || node.getOpacity()!=0){
             return;
@@ -95,6 +112,10 @@ public class Utility {
         fader.play();
     }
 
+     /**
+     * Writes scores to a file
+     * @param x List of Scores
+     */
     public static void writeScores(List<Pair<String, Integer>> x) {
         var file = new File("scores.txt");
         try {
@@ -116,6 +137,9 @@ public class Utility {
 
     }
 
+    /**
+     * Fetches the high score from file
+     */
     public static void fetchHighScore() {
         var x = loadScores();
         x.sort((a, b) -> b.getValue().compareTo(a.getValue()));
@@ -123,26 +147,49 @@ public class Utility {
         highScore = x.get(0).getValue();
     }
 
+    /**
+     * Gets the name of the highest scoring player
+     * @return the name of the highest scoring player
+     */
     public static String getHighName() {
         return highName;
     }
 
+    /**
+     * Gets the highest score
+     * @return the high score
+     */
     public static int getHighScore() {
         return highScore;
     }
 
-    public static void bounce(int duration, Node node, double amountX,double amountY){
+    /**
+     * Bounce animation on a node for a given duration and amount
+     * @param duration duraton in millis
+     * @param node a JavaFX Node
+     * @param amount the amount by which to "bounce"
+     */
+    public static void bounce(int duration, Node node, double amount){
         var st = new ScaleTransition(Duration.millis(duration), node);
         st.setFromX(1);
         st.setFromY(1);
-        st.setToX(amountX);
-        st.setToY(amountY);
+        st.setToX(amount);
+        st.setToY(amount);
         st.setAutoReverse(true);
         st.setCycleCount(2);
     
         st.play();
     }
 
+    /**
+     * Writes settings to a file
+     * @param ip the ip address
+     * @param port the port
+     * @param bgVol the background volume
+     * @param fxVol the sound effects volume
+     * @param width the game width
+     * @param height the game height
+     */
     public static void writeSettings(String ip, String port, double bgVol, double fxVol, String width, String height){
         var file = new File("settings.txt");
 
@@ -165,6 +212,10 @@ public class Utility {
             e.printStackTrace();
         }
     }
+     /**
+     * Loads settings from file into a HashMap
+     * @return hashmap containing loaded settings
+     */
     public static HashMap<String,String> loadSettings(){
 
         HashMap<String,String> hmap = new HashMap<String,String>();
@@ -189,6 +240,20 @@ public class Utility {
 
         System.out.println(x);
         return hmap;
+    }
+
+    /**
+     * Checks if the value of a given String is an integer
+     * @param g string to be checked
+     */
+    public static boolean isInteger(String g){
+        try{
+            Integer.parseInt(g);
+            return true;
+        }
+        catch(NumberFormatException d){
+            return false;
+        }
     }
 }
 

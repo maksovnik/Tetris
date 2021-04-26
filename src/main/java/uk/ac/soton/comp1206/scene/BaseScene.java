@@ -50,11 +50,6 @@ public abstract class BaseScene {
         return scene;
     }
 
-    // private void handleKeyPress(KeyEvent e){
-    // if(e.getCode()==KeyCode.ESCAPE){
-    // gameWindow.startMenu();
-    // }
-    // }
     /**
      * Get the JavaFX scene contained inside
      * 

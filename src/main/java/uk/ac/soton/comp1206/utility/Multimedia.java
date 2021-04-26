@@ -8,12 +8,15 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
+/**
+ * The Multimedia class deals with all sounds in the app.
+ */
 public class Multimedia {
 
     private static final Logger logger = LogManager.getLogger(Multimedia.class);
     private static boolean audioEnabled;
-    private static MediaPlayer mediaPlayer;
-    private static MediaPlayer backgroundPlayer;
+    private static MediaPlayer effectsPlayer;
+    private static MediaPlayer musicPlayer;
 
     static String file;
 
@@ -22,15 +25,24 @@ public class Multimedia {
     private static DoubleProperty effectVolume = new SimpleDoubleProperty(0.5);
     private static DoubleProperty backgroundVolume = new SimpleDoubleProperty(0.5);
 
+    /**
+     * Stops the sound effects player
+     */
+    public static void stopEffects(){
+        effectsPlayer.stop();
+    }
 
+    /**
+     * Starts playing the music at the given path
+     * @param file The path to the file that should be played
+    */
     public static void startBackgroundMusic(String file) {
-
         if ((Multimedia.file == file) && fadeIn) {
             return;
         }
 
         if (audioEnabled) {
-            backgroundPlayer.stop();
+            musicPlayer.stop();
             audioEnabled = false;
         }
 
@@ -39,52 +51,68 @@ public class Multimedia {
         String toPlay = Multimedia.class.getResource(file).toExternalForm();
         logger.info("Playing Music: " + toPlay);
         Media play = new Media(toPlay);
-        backgroundPlayer = new MediaPlayer(play);
-        backgroundPlayer.setOnEndOfMedia(() -> loopBackground(file));
+        musicPlayer = new MediaPlayer(play);
+        musicPlayer.setOnEndOfMedia(() -> loopBackground(file));
 
-        backgroundPlayer.volumeProperty().bind(backgroundVolume);
+        musicPlayer.volumeProperty().bind(backgroundVolume);
 
-        // if (fadeIn) {
-        //     //backgroundPlayer.setVolume(0);
-        //     Timeline timeline = new Timeline(
-        //             new KeyFrame(Duration.seconds(4), new KeyValue(backgroundPlayer.volumeProperty(), 0.2)));
-        //     timeline.play();
-        // }
-
-        backgroundPlayer.play();
+        musicPlayer.play();
 
         audioEnabled = true;
     }
 
+    /**
+     * Gets the music volume property
+     * @return music volume property
+    */
     public static DoubleProperty getMusicVolumeProperty(){
         return backgroundVolume;
     }
 
+    /**
+     * Gets the sound effects volume property
+     * @return sound effects volume property
+    */
     public static DoubleProperty getFXVolumeProperty(){
         return effectVolume;
     }
+
+    /**
+     * Will temporarily disable music fading so that looping can occur
+     * and then play the given music file
+     * @param file path to the file that will be played
+    */
     public static void loopBackground(String file) {
         fadeIn = false;
         startBackgroundMusic(file);
         fadeIn = true;
     }
 
-    public static void playAudio(final String file) {
-
+    /**
+     * Plays the sound effect at the given path
+     * @param file The path to the file that should be played
+    */
+    public static void playSoundEffect(final String file) {
         String toPlay = Multimedia.class.getResource(file).toExternalForm();
         logger.info("Playing Sound: " + toPlay);
         Media play = new Media(toPlay);
-        mediaPlayer = new MediaPlayer(play);
-        mediaPlayer.volumeProperty().bind(effectVolume);
-        mediaPlayer.play();
+        effectsPlayer = new MediaPlayer(play);
+        effectsPlayer.volumeProperty().bind(effectVolume);
+        effectsPlayer.play();
     }
 
+    /**
+     * Pauses the music
+    */
     public static void pause(){
-        backgroundPlayer.pause();
+        musicPlayer.pause();
     }
 
+    /**
+     * Plays the music
+    */
     public static void play(){
-        backgroundPlayer.play();
+        musicPlayer.play();
     }
 
 }

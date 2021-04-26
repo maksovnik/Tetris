@@ -24,6 +24,10 @@ import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 
+/**
+ * The Lobby Scene displays a Lobby and serves as a place
+ * for the player to wait until their game start
+ */
 public class LobbyScene extends BaseScene {
 
     private static final Logger logger = LogManager.getLogger(LobbyScene.class);
@@ -40,14 +44,22 @@ public class LobbyScene extends BaseScene {
 
     private ChannelChat channelChat;
 
+    /**
+     * Handles a key press in the lobby scene
+     */
     public void handleKeyPress(KeyEvent e) {
         KeyCode k = e.getCode();
         if (k == KeyCode.ESCAPE) {
+            communicator.send("PART");
             executor.shutdownNow();
             gameWindow.startMenu();
         }
     }
 
+    /**
+     * Creates a new Lobby Scene
+     * @param gameWindow the game window
+     */
     public LobbyScene(GameWindow gameWindow) {
         super(gameWindow);
         this.communicator = gameWindow.getCommunicator();
@@ -56,6 +68,11 @@ public class LobbyScene extends BaseScene {
         x = new ArrayList<String>();
     }
 
+
+    
+    /**
+     * Requests the channel list from the server
+     */
     private void requestChannels() {
         if (inChannel) {
             this.communicator.send("USERS");
@@ -64,12 +81,19 @@ public class LobbyScene extends BaseScene {
         this.loop = executor.schedule(() -> requestChannels(), 2000, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Initialise the Lobby
+     */
     @Override
     public void initialise() {
         this.communicator.addListener(message -> Platform.runLater(() -> this.handleMessage(message)));
         requestChannels();
     }
 
+    /**
+     * Handles a new message from the server
+     * @param s the received message
+     */
     private void handleMessage(String s) {
         String[] parts = s.split(" ", 2);
         String header = parts[0];
@@ -98,9 +122,8 @@ public class LobbyScene extends BaseScene {
         }
         if (header.equals("JOIN")) {
             inChannel = true;
-            String channelName = parts[1];
 
-            channelChat = new ChannelChat(gameWindow, channelName);
+            channelChat = new ChannelChat(gameWindow);
 
             main.getChildren().add(channelChat);
         }
@@ -147,6 +170,9 @@ public class LobbyScene extends BaseScene {
 
     }
 
+    /**
+     * Builds the Lobby
+     */
     @Override
     public void build() {
 

@@ -7,22 +7,34 @@ import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Multimedia;
 import uk.ac.soton.comp1206.utility.Utility;
 
+/**
+ * The IntroScene displays the games logo and proceeds to open the Menu and intr
+ */
 public class IntroScene extends BaseScene {
 
+    /**
+     * Creates a new Intro Scene
+     */
     public IntroScene(GameWindow gameWindow) {
         super(gameWindow);
     }
 
+    /**
+     * Initialise this scene
+     */
     @Override
     public void initialise() {
         this.scene.setOnKeyPressed(e -> {
-            
+
             gameWindow.startMenu();
             Utility.fader.stop();
 
         });
     }
 
+    /**
+     * Build the layout of this scene
+     */
     @Override
     public void build() {
 
@@ -34,11 +46,11 @@ public class IntroScene extends BaseScene {
         root.setAlignment(Pos.CENTER);
         root.getChildren().addAll(image);
         image.setOpacity(0);
-        Utility.reveal(4000, image);
+        Utility.reveal(image, 4000);
         Utility.fader.setOnFinished(e -> {
             gameWindow.startMenu();
         });
-        Multimedia.playAudio("/sounds/intro.mp3");
+        Multimedia.playSoundEffect("/sounds/intro.mp3");
 
     }
 

@@ -34,15 +34,11 @@ import uk.ac.soton.comp1206.utility.Utility;
  * place. To move between screens in the game, we simply change the scene.
  *
  * The GameWindow has methods to launch each of the different parts of the game
- * by switching scenes. You can add more methods here to add more screens to the
- * game.
+ * by switching scenes.
  */
 public class GameWindow {
 
     private static final Logger logger = LogManager.getLogger(GameWindow.class);
-
-    // private Multimedia bgPlayer = new Multimedia(true);
-    // private Multimedia soundPlayer = new Multimedia(false);
 
     private final Stage stage;
 
@@ -68,52 +64,28 @@ public class GameWindow {
      * Create a new GameWindow attached to the given stage with the specified width
      * and height
      * 
-     * @param stage  stage
-     * @param width  width
-     * @param height height
-     */
-
+     * @param stage stage
+     **/
     public GameWindow(Stage stage) {
 
-
         this.stage = stage;
-
-
-        // Setup windo
-        //communicator = new Communicator("ws://discord.ecs.soton.ac.uk:9700");
-
-
-        var b = Utility.loadSettings();
-        settings = new Settings(500,400);
-        if(!b.isEmpty()){
-            var ip = b.get("ip");
-            var port = b.get("serverPort");
-            var bgVol = b.get("musicVol");
-            var fxVol = b.get("soundFXVol");
-            var width = b.get("width");
-            var height = b.get("height");
-            Utility.writeSettings(ip, port, Double.parseDouble(bgVol), Double.parseDouble(fxVol), width, height);
-            settings.setSettings(ip,port,bgVol,fxVol,width,height);
-        }
-        else{
-            Utility.writeSettings(ip, port, Double.parseDouble(bgVol), Double.parseDouble(fxVol), width, height);
-            settings.setSettings(ip,port,bgVol,fxVol,width,height);
-        }
-
-        settings.hideError();
 
         stage.setMinHeight(Double.parseDouble(height));
         stage.setMinWidth(Double.parseDouble(width));
 
-        communicator = new Communicator("ws://"+ip+":"+port);
-        communicator.setOnError(new WebSocketAdapter(){
+        communicator = new Communicator("ws://" + ip + ":" + port);
+        communicator.setOnError(new WebSocketAdapter() {
             @Override
             public void onConnectError(WebSocket arg0, WebSocketException arg1) throws Exception {
-                setNotConnected(true);
-                menu.checkConnected();
+                notConnected = true;
+                menu.showError();
             }
         });
 
+        // Setup Settings
+        setupSettings();
+
+        // Setup Stage
         setupStage();
 
         // Setup resources
@@ -122,28 +94,63 @@ public class GameWindow {
         // Setup default scene
         setupDefaultScene();
 
+        // Start Intro
         startIntro();
 
     }
-    
 
-    public Settings getSettings(){
+    /**
+     * Loads settings or loads defaults
+     */
+    private void setupSettings() {
+        settings = new Settings(this,500, 400);
+
+        try {
+            var b = Utility.loadSettings(); // Attempts to load settings
+            if (b.isEmpty()) { // If there was no file then throw exception
+                throw new Exception("No settings found");
+            }
+
+            var ip = b.get("ip");
+            var port = b.get("serverPort");
+            var bgVol = b.get("musicVol");
+            var fxVol = b.get("soundFXVol");
+            var width = b.get("width");
+            var height = b.get("height");
+            settings.setSettings(ip, port, bgVol, fxVol, width, height);
+        } catch (Exception e) {
+            Utility.writeSettings(ip, port, Double.parseDouble(bgVol), Double.parseDouble(fxVol), width, height);
+            settings.setSettings(ip, port, bgVol, fxVol, width, height);
+        }
+
+        settings.initialise();
+    }
+
+    /**
+     * 
+     * @return settings window object
+     */
+    public Settings getSettings() {
         return settings;
     }
 
-    public void addListener(WebSocketAdapter e){
+    /**
+     * Adds a listener for socket connection error
+     * 
+     * @param e WebSocketAdapter that sets behaviour on connection error
+     */
+    public void addErrorListener(WebSocketAdapter e) {
         communicator.setOnError(e);
     }
 
-
+    /**
+     * gives current status of connection to server
+     * 
+     * @return true if socket is not currently connected
+     */
     public boolean isNotConnected() {
         return notConnected;
     }
-    
-    public void setNotConnected(boolean c){
-        notConnected = c;
-    }
-
 
     /**
      * Setup the font and any other resources we need
@@ -158,48 +165,55 @@ public class GameWindow {
     /**
      * Display the main menu
      */
-
-    public MenuScene getMenu() {
-        return menu;
-    }
-
     public void startMenu() {
         scene.setOnKeyPressed(null);
-        this.menu = new MenuScene(this);
+        if (this.menu == null) {
+            this.menu = new MenuScene(this);
+        }
         loadScene(this.menu);
     }
 
+    /**
+     * Display the Instructions Scene
+     */
     public void startInstructions() {
         loadScene(new InstructionsScene(this));
     }
 
+    /**
+     * Display the score scene
+     * 
+     * @param game           The game object
+     * @param localScoreList List of scores to be shown in scorescene
+     */
     public void startScores(Game g, ObservableList<Pair<String, Integer>> localScoreList) {
         loadScene(new ScoreScene(this, g, localScoreList));
     }
 
+    /**
+     * Display the Lobby scene
+     */
     public void startLobby() {
         loadScene(new LobbyScene(this));
-        // if(communicator.getState()==WebSocketState.OPEN){
-            
-        // }
-        // else{
-        //     notifyFailedConnection();
-        // }
-        
     }
 
     /**
-     * Display the single player challenge
+     * Display the Intro Scene
      */
-
     public void startIntro() {
         loadScene(new IntroScene(this));
     }
 
+    /**
+     * Display the Challenge Scene
+     */
     public void startChallenge() {
         loadScene(new ChallengeScene(this));
     }
 
+    /**
+     * Display the Mulltiplayer Challenge Scene
+     */
     public void startMultiChallenge() {
         loadScene(new MultiplayerScene(this));
     }
@@ -216,14 +230,17 @@ public class GameWindow {
     }
 
     /**
+     * Shutdown the app
+     */
+    public void close() {
+        App.getInstance().shutdown();
+    }
+
+    /**
      * Load a given scene which extends BaseScene and switch over.
      * 
      * @param newScene new scene to load
      */
-
-    public void close(){
-        App.getInstance().shutdown();
-    }
     public void loadScene(BaseScene newScene) {
         // Cleanup remains of the previous scene
         cleanup();
@@ -241,7 +258,6 @@ public class GameWindow {
     /**
      * Setup the default scene (an empty black scene) when no scene is loaded
      */
-
     public void setupDefaultScene() {
         this.scene = new Scene(new Pane(), Double.parseDouble(width), Double.parseDouble(height), Color.BLACK);
         stage.setScene(this.scene);
@@ -263,10 +279,6 @@ public class GameWindow {
      */
     public Scene getScene() {
         return scene;
-    }
-
-    public BaseScene getBScene() {
-        return currentScene;
     }
 
     /**
@@ -295,6 +307,5 @@ public class GameWindow {
     public Communicator getCommunicator() {
         return communicator;
     }
-
 
 }

@@ -22,7 +22,7 @@ import uk.ac.soton.comp1206.component.GameBlock;
 import uk.ac.soton.comp1206.component.GameBlockCoordinate;
 import uk.ac.soton.comp1206.event.GameEndListener;
 import uk.ac.soton.comp1206.event.LineClearedListener;
-import uk.ac.soton.comp1206.event.TimerEventListener;
+import uk.ac.soton.comp1206.event.TimerChangeListener;
 import uk.ac.soton.comp1206.event.pieceEventListener;
 
 /**
@@ -49,12 +49,18 @@ public class Game {
 
     ChangeListener<Number> changeListener;
 
-    TimerEventListener tel;
-    private SimpleDoubleProperty time = new SimpleDoubleProperty(1);
-    Timeline timeline;
+    TimerChangeListener tel;
+    protected SimpleDoubleProperty time = new SimpleDoubleProperty(1);
+    Timeline timer;
 
     double speed = 1;
 
+    /**
+     * Creates a new Game object
+     * 
+     * @param cols Number of columns
+     * @param rows Number of rows
+     */
     public Game(int cols, int rows) {
         this.cols = cols;
         this.rows = rows;
@@ -62,57 +68,78 @@ public class Game {
         // Create a new grid model to represent the game state
         this.grid = new Grid(cols, rows);
 
-        newLoop(getTimerDelay());
+        startNewLoop(getTimerDelay());
 
-        changeListener = (a,b,c) -> onChange(c);
+        changeListener = (a, b, c) -> onChange(c);
         time.addListener(changeListener);
     }
 
-    private void onChange(Number newValue){
-        var delay = getTimerDelay();
-        
-        if(tel!=null){
-            tel.onTimer(newValue.doubleValue());
+    /**
+     * Handles the game timer reducing
+     * 
+     * @param newValue the latest timer value
+     */
+    private void onChange(Number newValue) {
+
+        if (tel != null) {
+            tel.onTimerChange(newValue.doubleValue());
         }
-        
-        if(newValue.doubleValue()==0){
+
+        if (newValue.doubleValue() == 0) {
+            var delay = getTimerDelay();
             punish();
-            newLoop(delay);
+            startNewLoop(delay);
             nextPiece();
-         }
+        }
     }
 
-    public void newLoop(int delay) {
+    /**
+     * Starts a new game loop
+     * 
+     * @param delay the time for the game loop
+     */
+    public void startNewLoop(int delay) {
 
-        if (timeline != null) {
-            timeline.stop();
+        if (timer != null) {
+            timer.stop();
         }
 
         time.set(1);
         KeyValue widthValue = new KeyValue(time, 0);
         KeyFrame frame = new KeyFrame(Duration.millis(delay), widthValue);
 
-        timeline = new Timeline(frame);
-        timeline.play();
+        timer = new Timeline(frame);
+        timer.play();
     }
-    
 
-    public DoubleProperty getTimeProperty(){
+    /**
+     * Gives the time property for use with binding
+     * 
+     * @return time property
+     */
+    public DoubleProperty getTimeProperty() {
         return time;
     }
+
+    /**
+     * Rotates the current piece
+     * @param direction anticlockwise is -1, clockwise is 1
+     */
     public void rotateCurrentPiece(int direction) {
         if (currentPiece == null) {
             return;
         }
-        
 
         currentPiece.rotate(direction);
         ppl.nextPiece(currentPiece, followingPiece);
         ppl.rotatePiece();
     }
 
+    /**
+     * Gets the next timer delay
+     * @return next timer delay
+     */
     public int getTimerDelay() {
-        // return 500;
         return Math.max(2500, 12000 - 500 * (level.get()));
     }
 
@@ -141,78 +168,116 @@ public class Game {
      * @param rows number of rows
      */
 
-    public void pause(){
-        timeline.pause();
+    /**
+     * Pauses the game timer
+     */
+    public void pause() {
+        timer.pause();
     }
 
-    public void play(){
-        timeline.play();
+    /**
+     * Plays the game timer
+     */
+    public void play() {
+        timer.play();
     }
 
+
+    /**
+     * Sets the piece event listener
+     * @param ppl piece event listener
+     */
     public void setOnPieceEvent(pieceEventListener ppl) {
         this.ppl = ppl;
     }
 
+    /**
+     * Gets the score value
+     * @return score
+     */
     public int getScore() {
         return score.get();
     }
 
+    /**
+     * Gets the level value
+     * @return level
+     */
     public int getLevel() {
         return level.get();
     }
 
+    /**
+     * Gets the lives value
+     * @return lives
+     */    
     public int getLives() {
         return lives.get();
     }
 
+    /**
+     * Gets the multiplier value
+     * @return multiplier
+     */  
     public int getMultiplier() {
         return multiplier.get();
     }
 
-    public int testCos(){
-        return 3;
-    }
-
-    public void setOnSingleLoop(TimerEventListener t){
+    /**
+     * Sets the TimerChangeListener
+     * @param t Timer Change Listener
+     */  
+    public void setOnSingleLoop(TimerChangeListener t) {
         this.tel = t;
     }
-    // Define a getter for the property itself
+
+    /**
+     * Gets the score property
+     * @return score property
+     */  
     public IntegerProperty getScoreProperty() {
         return score;
     }
 
+    /**
+     * Gets the high score property
+     * @return high score property
+     */  
     public IntegerProperty getHScoreProperty() {
         return highScore;
     }
 
 
+    /**
+     * Sets the score property
+     * @param high score
+     */  
     public void setHighScore(int h) {
         highScore.set(h);
     }
 
-    public int getQueueSize() {
-        return 0;
-    }
-
-    public void addToQueue(String c) {
-    };
-
-    public void requestPieces(int i) {
-    }
-
+    /**
+     * Gets the lives property
+     * @return lives property
+     */  
     public IntegerProperty getLivesProperty() {
         return lives;
     }
-
+    /**
+     * Gets the level property
+     * @return level property
+     */  
     public IntegerProperty getLevelProperty() {
         return level;
     }
 
+    /**
+     * Gets the multiplier property
+     * @return multiplier property
+     */  
     public IntegerProperty getMultiplierProperty() {
         return multiplier;
     }
-
-
 
     /**
      * Start the game
@@ -224,9 +289,11 @@ public class Game {
         this.followingPiece = spawnPiece();
         ppl.nextPiece(currentPiece, followingPiece);
 
-
     }
 
+    /**
+     * Punish the player (timer has reached 0)
+     */  
     public void punish() {
         if (multiplier.get() > 1) {
             multiplier.set(1);
@@ -242,18 +309,32 @@ public class Game {
 
     }
 
+    /**
+     * Cleans up everything once game
+     * has ended and pings listener
+     */  
     public void end() {
         time.removeListener(changeListener);
-        if(gel!=null){
+        if (gel != null) {
             gel.endGame();
         }
-        
+
     }
 
+    public void removeChangeListener(){
+        time.removeListener(changeListener);
+    }
+    /**
+     * Sets the Game end listener
+     * @param g game end listener
+     */  
     public void setOnGameEnd(GameEndListener g) {
         this.gel = g;
     }
 
+    /**
+     * Swaps the current piece and the following piece
+     */  
     public void swapCurrentPiece() {
 
         if (currentPiece == null) {
@@ -270,12 +351,18 @@ public class Game {
         ppl.swapPiece();
     }
 
+    /**
+     * Gets the next piece
+     */  
     public void nextPiece() {
         currentPiece = followingPiece;
         followingPiece = spawnPiece();
         ppl.nextPiece(currentPiece, followingPiece);
     }
 
+    /**
+     * Spawns a new piece
+     */  
     public GamePiece spawnPiece() {
         logger.info("Spawning a piece");
         Random rn = new Random();
@@ -316,34 +403,47 @@ public class Game {
             afterPiece();
             nextPiece();
             ppl.playPiece();
-            newLoop(getTimerDelay());
+            startNewLoop(getTimerDelay());
 
         }
         // grid.set(x,y,newValue);
 
     }
 
+    /**
+    * Speeds up the game timer by a small factor (recommended to be bound to keyhold)
+    */  
     public int speedUp() {
-        if (timeline != null) {
+        if (timer != null) {
             if (speed < 6) {
                 speed = speed + 0.5;
             }
-            timeline.setRate(speed);
+            timer.setRate(speed);
 
             logger.info("Speedmult is: '{}'", speed);
         }
         return 0;
     }
-
-
-    public GamePiece getCurrentPiece(){
+    
+    /**
+     * Gets the current piece
+     * @return current piece
+     */  
+    public GamePiece getCurrentPiece() {
         return currentPiece;
     }
-    public void resetSpeed(){
-        timeline.setRate(1);
-        speed=1;
+    
+    /**
+     * Resets the speed of the game timer
+     */  
+    public void resetSpeed() {
+        timer.setRate(1);
+        speed = 1;
     }
-
+    
+    /**
+     * Runs after a piece has been played to check for lines
+     */  
     public void afterPiece() {
         logger.info("Checking for Rows");
 
@@ -372,11 +472,11 @@ public class Game {
         }
 
         Set<GameBlockCoordinate> c = new HashSet<>();
-        //var c = new ArrayList<GameBlockCoordinate>();
+        // var c = new ArrayList<GameBlockCoordinate>();
 
         for (int i : rowsToClear) {
             c.addAll(setRowZero(i));
-            //c.addAll(setRowZero(i));
+            // c.addAll(setRowZero(i));
         }
 
         for (int i : colsToClear) {
@@ -401,21 +501,42 @@ public class Game {
 
     }
 
+        
+    /**
+     * Sets the score
+     * @param newScore the new score
+     */  
     public void setScore(int newScore) {
         if (newScore > highScore.get()) {
             highScore.set(newScore);
         }
         score.set(newScore);
     }
-
+        
+    /**
+     * Sets the line cleared listener
+     * @param l line cleared listener
+     */  
     public void setOnLineCleared(LineClearedListener l) {
         this.lcl = l;
     }
 
+    /**
+     * Calculates the increase in score based
+     *  on lines cleared and blocks cleared
+     * @param lines number of lines cleared
+     * @param blocks number of blocks cleared
+     * @return amount to increment players score
+     */  
     public int score(int lines, int blocks) {
         return lines * blocks * 10 * getMultiplier();
     }
 
+    /**
+     * Clears a row of the grid
+     * @param row row index to clear
+     * @return arraylist of coordinates cleared
+     */  
     public ArrayList<GameBlockCoordinate> setRowZero(int row) {
         var coords = new ArrayList<GameBlockCoordinate>();
         // Set's each item in a row to 0
@@ -426,6 +547,11 @@ public class Game {
         return coords;
     }
 
+    /**
+     * Clears a column of the grid
+     * @param col column index to clear
+     * @return arraylist of coordinates cleared
+     */  
     public ArrayList<GameBlockCoordinate> setColZero(int col) {
         var coords = new ArrayList<GameBlockCoordinate>();
         // Set's each item in a column to 0
@@ -436,6 +562,11 @@ public class Game {
         return coords;
     }
 
+    /**
+     * Detects if a given column is full of blocks
+     * @param col column index to check
+     * @return if column is full
+     */  
     public boolean fullColumn(int col) {
         // Checks if a specific column is full
         for (int i = 0; i < grid.getCols(); i++) {
@@ -446,6 +577,11 @@ public class Game {
         return true;
     }
 
+    /**
+     * Detects if a given row is full of blocks
+     * @param row row index to check
+     * @return if row is full
+     */  
     public boolean fullRow(int row) {
         // Checks if a specific row is full
         for (int i = 0; i < grid.getRows(); i++) {

@@ -30,7 +30,10 @@ import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Utility;
 
 
-
+/**
+ * The Score scene is shown when the game ends in order
+ * to show the player theirs and others players' scores'
+ */
 public class ScoreScene extends BaseScene {
 
     private static final Logger logger = LogManager.getLogger(ScoreScene.class);
@@ -60,6 +63,14 @@ public class ScoreScene extends BaseScene {
 
     private double lowestRemote = Double.POSITIVE_INFINITY;
 
+    private SimpleListProperty<Pair<String, Integer>> wrapper;
+
+    /**
+     * Makes a new Score Scene
+     * @param gameWindow the game Window
+     * @param game the game instance that was just played
+     * @param localitems the list of items to show on the left side of the score scene
+     */
     public ScoreScene(GameWindow gameWindow, Game game, ObservableList<Pair<String, Integer>> localItems) {
         super(gameWindow);
         logger.info("Creating Score Scene");
@@ -70,6 +81,9 @@ public class ScoreScene extends BaseScene {
         this.remoteScores = FXCollections.observableArrayList();
     }
 
+    /**
+     * Initialise the Score Scene
+     */
     @Override
     public void initialise() {
         
@@ -83,16 +97,27 @@ public class ScoreScene extends BaseScene {
 
     }
 
-
+    /**
+     * Removes the lowest item from a given sorted list
+     * @param x sorted list
+     */
     private void removeLowestItem(List<Pair<String, Integer>> x) {
         Pair<String, Integer> lowest = x.get(x.size() - 1);
         x.remove(lowest);
     }
 
+    /**
+     * Sorts a given list by player score
+     * @return sorted list
+     */
     private void sortListByScore(List<Pair<String, Integer>> x) {
         x.sort((a, b) -> b.getValue().compareTo(a.getValue()));
     }
 
+    /**
+     * Adds users name and score to given list
+     * @param x List of scores to add to
+     */
     private void addScoreToScoreBox(List<Pair<String,Integer>> x){
         removeLowestItem(x);
         var newScore = new Pair<String, Integer>(name, score);
@@ -100,7 +125,11 @@ public class ScoreScene extends BaseScene {
         sortListByScore(x);
     }
     
+    /**
+     * Adds new score to scoreboxes if user beat one of them and displays the scoreboxes
+     */
     private void completed(){
+        System.out.println(localScoreList.toString());
         if(score>lowestLocal &&!(game instanceof MultiplayerGame)){
             addScoreToScoreBox(localScoreList);
             Utility.writeScores(localScoreList);
@@ -109,9 +138,14 @@ public class ScoreScene extends BaseScene {
             addScoreToScoreBox(remoteScoreList);
         }
         elements.getChildren().addAll(title, scoreBoxes);
-        Utility.reveal(300, scoreBoxes);
+        Utility.reveal(scoreBoxes, 300);
     }
-    private void handleMessage(final String message) {
+
+    /**
+     * Handles receiving a message from the server
+     * @param message the message from the server
+     */
+    private void handleMessage(String message) {
 
         String[] parts = message.split(" ", 2);
         String header = parts[0];
@@ -120,7 +154,7 @@ public class ScoreScene extends BaseScene {
         if(!(header.equals("HISCORES")||(header.equals("bypass")))){
             return;
         }
-        System.out.println("Haha");
+
 
         remoteScores = Utility.getScoreList(message);
         if(remoteScores!=null){
@@ -131,7 +165,7 @@ public class ScoreScene extends BaseScene {
 
         lowestLocal = localScoreList.get(this.localScoreList.size() - 1).getValue();
 
-        if((score>lowestRemote)||(score>lowestLocal)){
+        if(((score>lowestRemote)||(score>lowestLocal))&&!(game instanceof MultiplayerGame)){
             var name = new TextField();
             var enter = new Button("Add");
             var hint = new Text("Well done, you set a high score!, please enter your name.");
@@ -160,7 +194,9 @@ public class ScoreScene extends BaseScene {
         title.setOpacity(1);
     }
 
-
+    /**
+     * Builds the Score Scene UI
+     */
     @Override
     public void build() {
 
@@ -195,14 +231,13 @@ public class ScoreScene extends BaseScene {
 
         localHiScoresBox = new ScoreBox();
         remoteHiScoresBox = new ScoreBox();
-
         this.localScoreList = FXCollections.observableArrayList(this.localItems);
-        var wrapper = new SimpleListProperty<Pair<String, Integer>>(this.localScoreList);
-        this.localHiScoresBox.getScoreProperty().bind(wrapper);
+        wrapper = new SimpleListProperty<Pair<String, Integer>>(this.localScoreList);
+        this.localHiScoresBox.getScoresProperty().bind(wrapper);
 
         this.remoteScoreList = FXCollections.observableArrayList(this.remoteScores);
         var wrapper2 = new SimpleListProperty<Pair<String, Integer>>(this.remoteScoreList);
-        this.remoteHiScoresBox.getScoreProperty().bind(wrapper2);
+        this.remoteHiScoresBox.getScoresProperty().bind(wrapper2);
 
         scoreBoxes.getChildren().addAll(localHiScoresBox, remoteHiScoresBox);
 

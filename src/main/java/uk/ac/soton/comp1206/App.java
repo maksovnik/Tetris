@@ -49,8 +49,6 @@ public class App extends Application {
     public void openGame() {
         logger.info("Opening game window");
 
-        // Change the width and height in this class to change the base rendering
-        // resolution for all game parts
         this.gameWindow = new GameWindow(stage);
 
         // Display the GameWindow
@@ -67,7 +65,6 @@ public class App extends Application {
 
     /**
      * Get the singleton App instance
-     * 
      * @return the app
      */
     public static App getInstance() {

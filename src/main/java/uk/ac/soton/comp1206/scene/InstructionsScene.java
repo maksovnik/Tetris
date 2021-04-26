@@ -32,14 +32,15 @@ public class InstructionsScene extends BaseScene {
     public void initialise() {
     }
 
+    /**
+     * Builds the Instructions scene
+     */
     @Override
     public void build() {
 
         logger.info("Building " + this.getClass().getName());
 
         root = new GamePane(gameWindow.getWidth(), gameWindow.getHeight());
-
-        // gameWindow.setBGMusic("music/menu.mp3");
 
         var instructionsPane = new StackPane();
         instructionsPane.setMaxWidth(gameWindow.getWidth());
@@ -58,7 +59,8 @@ public class InstructionsScene extends BaseScene {
         title.getStyleClass().add("instructions");
         title2.getStyleClass().add("instructions");
         elements.setAlignment(Pos.CENTER);
-        final ImageView image = new ImageView(MenuScene.class.getResource("/images/Instructions2.png").toExternalForm());
+        final ImageView image = new ImageView(
+                MenuScene.class.getResource("/images/Instructions2.png").toExternalForm());
         image.setFitWidth(this.gameWindow.getHeight());
         image.setPreserveRatio(true);
 
@@ -68,7 +70,7 @@ public class InstructionsScene extends BaseScene {
         gridpane.setAlignment(Pos.CENTER);
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 5; j++) {
-                PieceBoard p = new PieceBoard(3, 3, 50, 50);
+                PieceBoard p = new PieceBoard(3, 3, 50, 50, false);
                 var b = GamePiece.createPiece(count);
                 p.SetPieceToDisplay(b);
                 gridpane.add(p, j, i);
@@ -85,10 +87,13 @@ public class InstructionsScene extends BaseScene {
 
     }
 
+    /**
+     * Handles Key press in Instructions scene
+     */
     private void handleKeyPress(KeyEvent e) {
         KeyCode k = e.getCode();
         if (k == KeyCode.ESCAPE) {
-            gameWindow.loadScene(gameWindow.getMenu());
+            gameWindow.startMenu();
         }
     }
 }

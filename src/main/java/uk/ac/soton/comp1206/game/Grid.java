@@ -46,7 +46,30 @@ public class Grid {
      * @param cols number of columns
      * @param rows number of rows
      */
+    public Grid(int cols, int rows) {
+        this.cols = cols;
+        this.rows = rows;
 
+        // Create the grid itself
+        grid = new SimpleIntegerProperty[rows][cols];
+
+        // Add a SimpleIntegerProperty to every block in the grid
+        for (var x = 0; x < rows; x++) {
+            for (var y = 0; y < cols; y++) {
+
+                grid[x][y] = new SimpleIntegerProperty(0);
+            }
+        }
+
+    }
+
+    /**
+     * Checks if a given piece can be player at the given coordinates
+     * 
+     * @param z a gamepiece
+     * @param x given x coordinate
+     * @param y given y coordinate
+     */
     public boolean canPlayPiece(GamePiece z, int x, int y) {
         if (z == null) {
             return false;
@@ -66,6 +89,13 @@ public class Grid {
 
     }
 
+    /**
+     * Plays a given piece at given x and y coordinates
+     * 
+     * @param z a gamepiece
+     * @param x given x coordinate
+     * @param y given y coordinate
+     */
     public void playPiece(GamePiece z, int x, int y) {
 
         logger.info("Playing a piece");
@@ -78,23 +108,6 @@ public class Grid {
                 if (blocks[i + 1][j + 1] > 0) {
                     set(x + i, y + j, z.getValue());
                 }
-            }
-        }
-
-    }
-
-    public Grid(int cols, int rows) {
-        this.cols = cols;
-        this.rows = rows;
-
-        // Create the grid itself
-        grid = new SimpleIntegerProperty[rows][cols];
-
-        // Add a SimpleIntegerProperty to every block in the grid
-        for (var x = 0; x < rows; x++) {
-            for (var y = 0; y < cols; y++) {
-
-                grid[x][y] = new SimpleIntegerProperty(0);
             }
         }
 
@@ -158,6 +171,11 @@ public class Grid {
         return rows;
     }
 
+    /**
+     * Get the grid
+     * 
+     * @return grid
+     */
     public SimpleIntegerProperty[][] getGrid() {
         return grid;
     }

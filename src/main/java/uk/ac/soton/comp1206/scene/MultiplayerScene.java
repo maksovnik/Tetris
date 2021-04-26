@@ -1,5 +1,10 @@
 package uk.ac.soton.comp1206.scene;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,6 +23,10 @@ import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Utility;
 
+/**
+ * The Multi Player challenge scene holds the UI for the multi player challenge
+ * mode in the game.
+ */
 public class MultiplayerScene extends ChallengeScene {
 
     private static final Logger logger = LogManager.getLogger(MultiplayerScene.class);
@@ -26,13 +35,21 @@ public class MultiplayerScene extends ChallengeScene {
     private TextField sendBox;
     private Text message;
     private ScoreBox leaderboard;
+    ScheduledFuture<?> loop;
+    ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
+    /**
+     * Creates a new Multiplayer Scene
+     */
     public MultiplayerScene(GameWindow gameWindow) {
         super(gameWindow);
         this.communicator = gameWindow.getCommunicator();
         this.localScoreList = FXCollections.observableArrayList();
     }
 
+    /**
+     * Sets up the Multiplayer game
+     */
     @Override
     public void setupGame() {
         logger.info("Starting a new Multiplayer game");
@@ -41,6 +58,23 @@ public class MultiplayerScene extends ChallengeScene {
         game = new MultiplayerGame(5, 5, gameWindow);
     }
 
+    /**
+     * Request pieces from the server
+     * 
+     * @param num the number of pieces to request
+     */
+    public void requestPieces(int num) {
+        for (int i = 0; i < num; i++) {
+            logger.info("Requesting piece from Server");
+            communicator.send("PIECE");
+        }
+    }
+
+    /**
+     * Handle key press in Multiplayer Scene
+     * 
+     * @param e key event of keypress
+     */
     @Override
     public void handleKeyPress(KeyEvent e) {
 
@@ -51,25 +85,51 @@ public class MultiplayerScene extends ChallengeScene {
 
         if (keyName.equals("T")) {
             sendBox.setDisable(false);
-            sendBox.requestFocus();
             sendBox.setOpacity(1);
         }
 
     }
 
+    /**
+     * Runs when game starts
+     */
     @Override
     public void startGame() {
     }
 
+    /**
+     * Requests pieces in loop
+     */
+    private void requestLoop() {
+        this.communicator.send("SCORES");
+        this.loop = executor.schedule(() -> requestLoop(), 2000, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Initialise Multiplayer Scene
+     */
     @Override
     public void initialise() {
 
         super.initialise();
 
-        Utility.reveal(300, leaderboard);
-        game.requestPieces(5);
+        requestLoop();
 
-        this.communicator.addListener(message -> Platform.runLater(() -> receiveMessage(message.trim())));
+        game.setOnGameEnd(() -> Platform.runLater(() -> {
+            this.executor.shutdownNow();
+            this.communicator.send("DIE");
+            game.removeChangeListener();
+            gameWindow.getCommunicator().clearListeners();
+            gameWindow.startScores(game, localScoreList);
+        }));
+
+        game.getScoreProperty().addListener((c, a, b) -> communicator.send("SCORE " + b.intValue()));
+        game.getLivesProperty().addListener((c, a, b) -> communicator.send("LIVES " + b.intValue()));
+
+        Utility.reveal(leaderboard, 300);
+        requestPieces(5);
+
+        this.communicator.addListener(message -> Platform.runLater(() -> handleMessage(message.trim())));
 
         sendBox.setOnKeyPressed(e -> {
             if (e.getCode().equals(KeyCode.ENTER)) {
@@ -85,26 +145,30 @@ public class MultiplayerScene extends ChallengeScene {
             }
         });
 
-        
-        System.out.println("Multiscnee");
-        game.setOnGameEnd(() -> Platform.runLater(() -> {
-            System.out.println("helloo");
-            //rectangle.stopAnimation();
-            gameWindow.startScores(game, localScoreList);
-        }));
-
     }
 
-    private void receiveMessage(String s) {
+    /**
+     * Gets next piece and requests a new piece from the server
+     */
+    protected void onNextPiece() {
+        super.onNextPiece();
+        requestPieces(1);
+    }
+
+    /**
+     * Handles a message from the server
+     * @param s the message
+     */
+    private void handleMessage(String s) {
         String[] parts = s.split(" ", 2);
         String header = parts[0];
 
         if (header.equals("PIECE")) {
 
-            game.addToQueue(parts[1]);
+            ((MultiplayerGame) game).addToQueue(parts[1]);
 
-            if ((game.getQueueSize() == 5) && board.isDisabled()) {
-                logger.info("Recieved All Good pieces, game starting.");
+            if ((((MultiplayerGame) game).getQueueSize() == 5) && board.isDisabled()) {
+                logger.info("Received initial pieces successfully, game starting.");
                 game.start();
                 board.setDisable(false);
             }
@@ -122,16 +186,15 @@ public class MultiplayerScene extends ChallengeScene {
         if (header.equals("SCORES")) {
 
             var playerData = parts[1].split("\n");
-
             // var t = new ArrayList<Pair<String,Integer>>();
             localScoreList.clear();
 
             for (String i : playerData) {
                 var x = i.split(":");
                 var g = new Pair<String, Integer>(x[0], Integer.parseInt(x[1]));
+                
 
-                if (!localScoreList.contains(g))
-                    localScoreList.add(g);
+                localScoreList.add(g);
 
                 if (x[2].equals("DEAD")) {
                     leaderboard.addLostPlayer(x[0]);
@@ -144,20 +207,15 @@ public class MultiplayerScene extends ChallengeScene {
 
     }
 
-    public void removeUnneeded() {
-        sidePane.getChildren().remove(this.level);
-        sidePane.getChildren().remove(this.levelTitle);
-        sidePane.getChildren().remove(this.multiplier);
-        sidePane.getChildren().remove(this.multiplierTitle);
-        sidePane.getChildren().remove(this.highscore);
-        sidePane.getChildren().remove(this.hscoreTitle);
-    }
-
+    /**
+     * Builds the multiplayer scene
+     */
     @Override
     public void build() {
         super.build();
 
-        removeUnneeded();
+        var c = new Text[] { level, levelTitle, multiplier, multiplierTitle, highscore, hscoreTitle };
+        sidePane.getChildren().removeAll(c);
 
         board.setDisable(true);
 
@@ -166,10 +224,9 @@ public class MultiplayerScene extends ChallengeScene {
         message = new Text();
         sendBox = new TextField();
 
-        leaderboard.getScoreProperty().bind(wrapper);
+        leaderboard.getScoresProperty().bind(wrapper);
 
         sidePane.getChildren().add(leaderboard);
-
 
         message.setOpacity(0);
         sendBox.setOpacity(0);

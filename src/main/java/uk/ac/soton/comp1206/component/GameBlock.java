@@ -54,9 +54,15 @@ public class GameBlock extends Canvas {
      */
     private final IntegerProperty value = new SimpleIntegerProperty(0);
 
+    /**
+     * This is true if a center position will be shown
+     */
     private boolean showCenter;
 
-    private static Color hoverColor =  Color.color(1.0, 1.0, 1.0, 0.5);
+    /**
+     * The colour to show onHover
+     */
+    private static Color hoverColor = Color.color(1.0, 1.0, 1.0, 0.5);
 
     /**
      * Create a new single Game Block
@@ -84,14 +90,22 @@ public class GameBlock extends Canvas {
         value.addListener(this::updateValue);
     }
 
-    public static void setHoverColor(Color m){
-        hoverColor =  m;
+    /**
+     * Set the hover colour
+     * 
+     * @param m the new colour
+     **/
+    public static void setHoverColor(Color m) {
+        hoverColor = m;
     }
 
-    
+    /**
+     * Sets if the block should have a center indicator
+     * 
+     * @param m boolean value indicating if the block should have a center indicator
+     **/
     public void setShowCenter(boolean m) {
         showCenter = m;
-        paint();
     }
 
     /**
@@ -105,19 +119,28 @@ public class GameBlock extends Canvas {
         paint();
     }
 
+    /**
+    * Paints the block with a colour of low opacity
+    **/
     public void paintHover() {
         final GraphicsContext gc = this.getGraphicsContext2D();
         gc.setFill(hoverColor);
         gc.fillRect(0.0, 0.0, this.width, this.height);
     }
 
+    /**
+    * Sets hover and repaints
+    * @param m hover variable
+    **/
     public void setHoverX(boolean m) {
-        if(hover!=m){
+        if (hover != m) {
             hover = m;
             paint();
         }
     }
-
+    /**
+    * Fades out a block when a line is made
+    **/
     public void fadeOut() {
 
         paintEmpty();
@@ -223,6 +246,9 @@ public class GameBlock extends Canvas {
         gc.strokeRect(0, 0, width, height);
     }
 
+     /**
+     * Paint a circle on this canvas to show where the center block is
+     */
     public void paintCircle() {
         var gc = getGraphicsContext2D();
         var radius = 8;

@@ -52,7 +52,23 @@
     -fx-background-color: #1a1a1a;
     -fx-border-width: 3 3 3 3;
     -fx-border-color:black;
+    -fx-padding: 15;
 }
+
+.settingsItem{
+    -fx-fill: white;
+    -fx-font-family: 'Orbitron';
+    -fx-font-size: 30px;
+}
+
+.settingsItem.selected {
+    -fx-fill: yellow;
+}
+
+.settingsItem:hover {
+    -fx-fill: yellow;
+}
+
 .menuItem.selected {
     -fx-fill: yellow;
 }
@@ -80,6 +96,7 @@
 .scroll-pane > .viewport {
     -fx-background-color: transparent;
  }
+ 
 .heading {
     -fx-fill: white;
     -fx-font-family: 'Orbitron';

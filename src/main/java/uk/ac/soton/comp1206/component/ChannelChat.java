@@ -15,26 +15,42 @@ import javafx.scene.text.Text;
 import uk.ac.soton.comp1206.network.Communicator;
 import uk.ac.soton.comp1206.ui.GameWindow;
 
+/**
+ * The Channel Chat is a chat window that allows the user to communicate while
+ * waiting in a lobby for a game to start.
+ **/
 public class ChannelChat extends VBox {
 
-    String name;
-    GameWindow gameWindow;
-    Communicator communicator;
+    private GameWindow gameWindow;
+    private Communicator communicator;
     private VBox messages;
-    HBox users;
-    List<String> x;
-    ScrollPane sp;
+    private HBox users;
+    private List<String> userList;
+    private ScrollPane sp;
 
-    private Node start;
+    private Button start;
+    private Button leave;
+    private TextField entry;
 
-    public ChannelChat(GameWindow g, String name) {
+    /**
+     * Creates a new ChannelChat object
+     * 
+     * @param g the gameWindow
+     **/
+    public ChannelChat(GameWindow g) {
         this.gameWindow = g;
-        this.name = name;
         this.communicator = gameWindow.getCommunicator();
-        x = new ArrayList<String>();
+        userList = new ArrayList<String>();
         build();
+        initialise();
     }
 
+    /**
+     * Adds a message to the channel chat
+     * 
+     * @param sender  the person who sent the message
+     * @param message the contents of the message
+     **/
     public void addMessage(String sender, String message) {
         var messageObject = new Text(sender + " " + message);
         messageObject.getStyleClass().add("messages");
@@ -43,25 +59,35 @@ public class ChannelChat extends VBox {
         sp.setVvalue(1);
     }
 
+    /**
+     * Updates the list of users in a channel
+     * 
+     * @param list new user list
+     **/
     public void updateUsers(List<String> list) {
-
-        if (!list.equals(x)) {
+        if (!list.equals(userList)) {
             users.getChildren().clear();
             for (String i : list) {
                 var b = new Text(i);
                 b.getStyleClass().add("channelItem");
                 users.getChildren().add(b);
             }
-            x.clear();
-            x.addAll(list);
+            userList.clear();
+            userList.addAll(list);
         }
 
     }
 
+    /**
+     * Reveals the start button
+     **/
     public void revealStartButton() {
         start.setOpacity(1);
     }
 
+    /**
+     * Builds the elements of the channel chat
+     **/
     public void build() {
 
         sp = new ScrollPane();
@@ -70,9 +96,38 @@ public class ChannelChat extends VBox {
 
         sp.setStyle("-fx-background-color: rgba(0,0,0,0.5);");
 
-        var entry = new TextField();
+        entry = new TextField();
         messages = new VBox(2);
 
+        HBox.setHgrow(this, Priority.ALWAYS);
+        VBox.setVgrow(messages, Priority.ALWAYS);
+        VBox.setVgrow(sp, Priority.ALWAYS);
+
+        users = new HBox(4);
+
+        var buttons = new HBox(4);
+
+        leave = new Button("Leave");
+        start = new Button("Start");
+
+        start.setOpacity(0);
+
+        buttons.getChildren().addAll(leave, start);
+        sp.setContent(messages);
+
+        getChildren().addAll(users, sp, buttons, entry);
+    }
+
+    /**
+     * Initialises the elements of the channel chat
+     **/
+    public void initialise() {
+        leave.setOnMouseClicked(e -> {
+            this.communicator.send("PART");
+        });
+        start.setOnMouseClicked(e -> {
+            this.communicator.send("START");
+        });
         entry.setOnKeyPressed(e -> {
             if (e.getCode().equals(KeyCode.ENTER)) {
                 String text = entry.getText();
@@ -87,32 +142,6 @@ public class ChannelChat extends VBox {
                 this.communicator.send("MSG " + text);
             }
         });
-        HBox.setHgrow(this, Priority.ALWAYS);
-        VBox.setVgrow(messages, Priority.ALWAYS);
-        VBox.setVgrow(sp, Priority.ALWAYS);
-
-        users = new HBox(4);
-
-        var buttons = new HBox(4);
-
-        var leave = new Button("Leave");
-
-        leave.setOnMouseClicked(e -> {
-            this.communicator.send("PART");
-        });
-
-        start = new Button("Start");
-
-        start.setOnMouseClicked(e -> {
-            this.communicator.send("START");
-        });
-
-        start.setOpacity(0);
-
-        buttons.getChildren().addAll(leave, start);
-        sp.setContent(messages);
-
-        getChildren().addAll(users, sp, buttons, entry);
     }
 
 }

@@ -13,6 +13,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 
+/**
+ * A ScoreBox is a component that lists scores in a box
+ */
 public class ScoreBox extends VBox {
 
     ObservableList<Pair<String, Integer>> scoreList;
@@ -21,28 +24,47 @@ public class ScoreBox extends VBox {
     HBox scoreBox;
     ArrayList<String> lostPlayers;
 
+    /**
+     * Creates a new empty Score Box
+     */
     public ScoreBox() {
 
         lostPlayers = new ArrayList<String>();
         this.scores = new SimpleListProperty<Pair<String, Integer>>();
 
-        scores.addListener((ListChangeListener<Pair<String, Integer>>) (c -> updateScores()));
+        scores.addListener((ListChangeListener<Pair<String, Integer>>) (c -> {
+            System.out.println("inside "+scores.toString());
+            updateScores();
+            System.out.println("inside "+scores.toString());
+        }));
     }
 
+
+    /**
+    * Forces an update on the scorebox
+    */
     public void updateScores() {
         this.getChildren().clear();
 
         for (Pair<String, Integer> i : scores) {
-            this.scoreBox = makeScoreBox(i);
+            this.scoreBox = makeSubScoreBox(i);
             this.getChildren().add(scoreBox);
         }
     }
 
+    /**
+    * Adds a player to the list of dead players
+    @param s name of the player
+    */
     public void addLostPlayer(String s) {
         lostPlayers.add(s);
     }
 
-    public HBox makeScoreBox(Pair<String, Integer> x) {
+    /**
+    * Makes a single subscorebox
+    @param x pair containing a name and a score
+    */
+    public HBox makeSubScoreBox(Pair<String, Integer> x) {
         var h = new HBox(8);
 
         h.setAlignment(Pos.CENTER);
@@ -62,12 +84,13 @@ public class ScoreBox extends VBox {
         return h;
     }
 
-    public ListProperty<Pair<String, Integer>> getScoreProperty() {
+    /**
+    * Gets the scores property
+    @return list of scores
+    */
+    public ListProperty<Pair<String, Integer>> getScoresProperty() {
         return this.scores;
     }
 
-    public StringProperty getNameProperty() {
-        return this.name;
-    }
 
 }

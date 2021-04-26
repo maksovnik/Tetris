@@ -151,15 +151,13 @@ public class GamePiece {
         return newPiece;
     }
 
-    /**
-     * Create a new GamePiece with the given name, block makeup and value. Should
-     * not be called directly, only via the factory.
-     * 
-     * @param name   name of the piece
-     * @param blocks block makeup of the piece
-     * @param value  the value of this piece
-     */
 
+    /**
+     * Transposes a given 2d array, used for switching
+     * from cartesian coordinates to matrix indexing
+     * @param q 2d array
+     * @return transposed 2d array
+     */
     private int[][] transpose(int[][] q) {
         var b = new int[q.length][q[0].length];
         for (int x = 0; x < blocks.length; x++) {
@@ -170,6 +168,14 @@ public class GamePiece {
         return b;
     }
 
+    /**
+     * Create a new GamePiece with the given name, block makeup and value. Should
+     * not be called directly, only via the factory.
+     * 
+     * @param name   name of the piece
+     * @param blocks block makeup of the piece
+     * @param value  the value of this piece
+     */
     private GamePiece(String name, int[][] blocks, int value) {
         this.name = name;
         this.blocks = blocks;
@@ -205,6 +211,10 @@ public class GamePiece {
         return transpose(blocks);
     }
 
+    /**
+     * Rotates the piece
+     * @param direction anticlockwise is -1, clockwise is 1
+     */
     public void rotate(int direction) { // direction=1 is clockwise, -1 is anticlockwise
         int[][] rotated = new int[blocks.length][blocks[0].length];
         for (int i = 0; i < 3; i++) {

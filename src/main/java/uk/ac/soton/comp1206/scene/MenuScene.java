@@ -37,6 +37,11 @@ public class MenuScene extends BaseScene {
     private static final Logger logger = LogManager.getLogger(MenuScene.class);
     Settings settings;
     private Text error;
+    private Text single;
+    private Text multi;
+    private Text how;
+    private Text exit;
+    private ImageView image;
 
     /**
      * Create a new menu scene
@@ -59,6 +64,7 @@ public class MenuScene extends BaseScene {
 
         root = new GamePane(gameWindow.getWidth(), gameWindow.getHeight());
 
+        Multimedia.stopEffects();
         Multimedia.startBackgroundMusic("/music/menu.mp3");
 
         var menuPane = new StackPane();
@@ -73,52 +79,40 @@ public class MenuScene extends BaseScene {
 
         VBox b = new VBox(5);
         b.setAlignment(Pos.CENTER);
-        Text single = new Text("Single Player");
-        Text multi = new Text("Multi Player");
-        Text how = new Text("How to Play");
-        Text exit = new Text("Exit");
-        Text error = new Text("No connection to server");
+        single = new Text("Single Player");
+        multi = new Text("Multi Player");
+        how = new Text("How to Play");
+        exit = new Text("Exit");
+        error = new Text("No connection to server");
 
         error.setOpacity(0);
-        for (Text i : new Text[] { single, multi, how, exit}) {
+        for (Text i : new Text[] { single, multi, how, exit }) {
             i.getStyleClass().add("menuItem");
         }
         error.getStyleClass().add("error");
         b.setStyle("-fx-padding: 0 0 40 0;-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,1.5), 50, 0, 0, 0);");
         b.setOpacity(0);
-        b.getChildren().addAll(single, multi, how, exit,error);
-        Platform.runLater(() -> Utility.reveal(3000,b));
+        b.getChildren().addAll(single, multi, how, exit, error);
+        Platform.runLater(() -> Utility.reveal(b, 3000));
         mainPane.setBottom(b);
-        
-        single.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startChallenge());
+        error.setStrokeWidth(1);
 
-        error.setStrokeWidth(1);  
-
-        multi.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            if(error.getOpacity()==0){
-                gameWindow.startLobby();
-            }
-            else{
-                Utility.bounce(175, error,1.2,1.2);
-            }
-        });
-
-        single.setOnMouseEntered(e -> Utility.bounce(100, single,1.1,1.1));
-
-        multi.setOnMouseEntered(e -> Utility.bounce(100, multi,1.1,1.1));
-        how.setOnMouseEntered(e -> Utility.bounce(100, how,1.1,1.1));
-        exit.setOnMouseEntered(e -> Utility.bounce(100, exit,1.1,1.1));
-
-        how.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.startInstructions());
-        exit.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> gameWindow.close());
-
-
-        final ImageView image = new ImageView(MenuScene.class.getResource("/images/TetrECS.png").toExternalForm());
+        image = new ImageView(MenuScene.class.getResource("/images/TetrECS.png").toExternalForm());
         image.setFitWidth(this.gameWindow.getHeight());
         image.setPreserveRatio(true);
 
         image.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,1.5), 30, 0, 0, 0);");
+        mainPane.setCenter(image);
+        settings.setParent(mainPane);
+        menuPane.getChildren().add(settings);
 
+
+    }
+
+    /**
+     * Plays the Title image animation
+     */
+    public void playStartAnimation() {
         var rt = new RotateTransition(Duration.millis(1000), image);
         var st = new ScaleTransition(Duration.millis(1000), image);
         var pt = new ParallelTransition();
@@ -138,35 +132,25 @@ public class MenuScene extends BaseScene {
         rt2.setAutoReverse(true);
 
         pt.getChildren().addAll(rt, st);
-
-        mainPane.setCenter(image);
         sst.getChildren().addAll(pt, rt2);
         sst.play();
+    }
 
-        settings.setParent(mainPane);
+    /**
+     * Shows the connection failed message
+     */
+    public void showError() {
+        Platform.runLater(() -> Utility.reveal(error, 2000));
+    }
 
-        menuPane.getChildren().add(settings);
+    
+    /**
+     * Initialise the menu
+     */
+    @Override
+    public void initialise() {
 
-        Platform.runLater(() -> scene.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.ESCAPE) {
-                settings.toggle();
-            }
-        }));
-        
-        if(gameWindow.isNotConnected()){
-            Platform.runLater(() -> Utility.reveal(2000,error));
-        }
-        else{
-            gameWindow.addListener(new WebSocketAdapter(){
-                @Override
-                public void onConnectError(WebSocket arg0, WebSocketException arg1) throws Exception {
-                    Platform.runLater(() -> Utility.reveal(2000,error));
-                }
-            });
-            
-            error.setOpacity(0);
-        }
-        
+        playStartAnimation();
 
         settings.setListener(new SettingsListener() {
             @Override
@@ -183,19 +167,42 @@ public class MenuScene extends BaseScene {
             }
         });
 
-    }   
+        Platform.runLater(() -> scene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ESCAPE) {
+                settings.toggle();
+            }
+        }));
 
+        if (gameWindow.isNotConnected()) {
+            Platform.runLater(() -> Utility.reveal(error, 2000));
+        } 
+        else {
+            gameWindow.addErrorListener(new WebSocketAdapter() {
+                @Override
+                public void onConnectError(WebSocket arg0, WebSocketException arg1) throws Exception {
+                    Platform.runLater(() -> Utility.reveal(error, 2000));
+                }
+            });
 
-    public void checkConnected(){
-        Platform.runLater(() -> Utility.reveal(2000,error));
+            error.setOpacity(0);
+        }
+
+        single.setOnMouseClicked(e -> gameWindow.startChallenge());
+
+        multi.setOnMouseClicked(e -> {
+            if (error.getOpacity() == 0) {
+                gameWindow.startLobby();
+            } else {
+                Utility.bounce(175, error, 1.2);
+            }
+        });
+
+        how.setOnMouseClicked(e -> gameWindow.startInstructions());
+        exit.setOnMouseClicked(e -> gameWindow.close());
+        single.setOnMouseEntered(e -> Utility.bounce(100, single, 1.1));
+        multi.setOnMouseEntered(e -> Utility.bounce(100, multi, 1.1));
+        how.setOnMouseEntered(e -> Utility.bounce(100, how, 1.1));
+        exit.setOnMouseEntered(e -> Utility.bounce(100, exit, 1.1));
+
     }
-
-    /**
-     * Initialise the menu
-     */
-    @Override
-    public void initialise() {
-        //Platform.runLater(() -> checkConnected());
-    }
-
 }
