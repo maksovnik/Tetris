@@ -113,7 +113,7 @@ public class GameBoard extends GridPane {
      * 
      * @return current position being hovered over
      */
-    public int[] getCurrentHoverCoords() {
+    public int[] getCurrentCenterHoverCoords() {
         return currentHoverCords;
     }
 
@@ -178,8 +178,11 @@ public class GameBoard extends GridPane {
 
                 final var c = x;
                 final var d = y;
+
+                //Sets hover to occur when mouse enters it
                 b.setOnMouseEntered(e -> hover(c, d));
 
+                //Clears hovered blocks when mouse exits
                 b.setOnMouseExited(e -> clearHover());
             }
         }
@@ -195,7 +198,7 @@ public class GameBoard extends GridPane {
     }
 
     /**
-     * Removes the hover effect from every piece
+     * Removes the hover effect from every block
      */
     public void clearHover() {
         for (GameBlock[] q : blocks) {
@@ -252,7 +255,7 @@ public class GameBoard extends GridPane {
      * Calls an update to hover() to reposition the hover indicator
      */
     public void updateHover() {
-        var coords = getCurrentHoverCoords();
+        var coords = getCurrentCenterHoverCoords();
         hover(coords[0], coords[1]);
     }
 
@@ -265,23 +268,32 @@ public class GameBoard extends GridPane {
     public void hover(int x, int y) {
 
         if (currentPiece == null) {
+            //If there is no current piece then we can not hover
             return;
         }
 
+        //Get the current pieces blocks and find if it can be played at the current hover coordinates
         var pieceBlocks = currentPiece.getBlocks();
         var canPlayPiece = grid.canPlayPiece(currentPiece, x, y);
 
+        //Remove hover effect from all game blocks
         clearHover();
 
+
+        //Assign two different colours based on if the current piece can be played or not
         if (canPlayPiece) {
             GameBlock.setHoverColor(notPossibleToPlace);
         } else {
             GameBlock.setHoverColor(possibleToPlace);
         }
 
+        //Loop through the pieceBlocks array but starting at -1
+        // so that relative piece position can be calculated
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
+                //If the block of that piece exists at the current (i+1,j+1) coordinate 
                 if (pieceBlocks[i + 1][j + 1] > 0) {
+                    //If it is is in the bounds of the board
                     if ((x + i >= 0) && (x + i < rows) && (y + j >= 0) && (y + j < cols)) {
                         getBlock(x + i, y + j).setHoverX(true);
                     }
@@ -290,6 +302,7 @@ public class GameBoard extends GridPane {
             }
         }
 
+        // Keeps track of the current center hovered piece
         currentHoverCords[0] = x;
         currentHoverCords[1] = y;
     }

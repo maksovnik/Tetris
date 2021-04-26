@@ -3,6 +3,10 @@ package uk.ac.soton.comp1206.component;
 import javafx.scene.paint.Color;
 import uk.ac.soton.comp1206.game.GamePiece;
 
+/**
+ * PieceBoard is a visual component to represent a single piece. It
+ * extends a GameBoard.
+ */
 public class PieceBoard extends GameBoard {
     private boolean doCircle;
 
@@ -16,11 +20,12 @@ public class PieceBoard extends GameBoard {
      * 
      * @param g the piece to display
      */
-    public void SetPieceToDisplay(GamePiece g) {
+    public void displayPiece(GamePiece g) {
         if (g == null) {
             return;
         }
 
+        //Sets the grid to be equal to the blocks
         int[][] blocks = g.getBlocks();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -28,6 +33,7 @@ public class PieceBoard extends GameBoard {
             }
         }
 
+        //If a circle indicator should be drawn then draw it in the center block
         if (doCircle) {
             GameBlock x = getBlock(1, 1);
             x.setShowCenter(true);

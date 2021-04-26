@@ -84,6 +84,7 @@ public class MultiplayerScene extends ChallengeScene {
         super.handleKeyPress(e);
 
         if (keyName.equals("T")) {
+            // Enables Chat box and shows it
             sendBox.setDisable(false);
             sendBox.setOpacity(1);
         }
@@ -116,8 +117,10 @@ public class MultiplayerScene extends ChallengeScene {
         requestLoop();
 
         game.setOnGameEnd(() -> Platform.runLater(() -> {
+            // Shuts down request information from server loop
             this.executor.shutdownNow();
             this.communicator.send("DIE");
+            // Stops game loop
             game.removeChangeListener();
             gameWindow.getCommunicator().clearListeners();
             gameWindow.startScores(game, localScoreList);
@@ -126,11 +129,15 @@ public class MultiplayerScene extends ChallengeScene {
         game.getScoreProperty().addListener((c, a, b) -> communicator.send("SCORE " + b.intValue()));
         game.getLivesProperty().addListener((c, a, b) -> communicator.send("LIVES " + b.intValue()));
 
+        // Reveals the multiplayer leaderboard table
         Utility.reveal(leaderboard, 300);
+
+        // Requests 5 initial pieces, game won't start until these are received
         requestPieces(5);
 
         this.communicator.addListener(message -> Platform.runLater(() -> handleMessage(message.trim())));
 
+        // When message is sent
         sendBox.setOnKeyPressed(e -> {
             if (e.getCode().equals(KeyCode.ENTER)) {
                 String text = sendBox.getText();
@@ -138,10 +145,6 @@ public class MultiplayerScene extends ChallengeScene {
                 this.communicator.send("MSG " + text);
                 sendBox.setOpacity(0);
                 sendBox.setDisable(true);
-            }
-
-            if (e.getCode() == KeyCode.ENTER) {
-                e.consume();
             }
         });
 
@@ -152,7 +155,18 @@ public class MultiplayerScene extends ChallengeScene {
      */
     protected void onNextPiece() {
         super.onNextPiece();
+        sendBoardState();
         requestPieces(1);
+    }
+
+    private void sendBoardState(){
+        var str = new StringBuilder();
+        for(int i=0;i< game.getRows();i++){
+            for(int j=0;j< game.getCols();j++){
+                str.append(board.getBlock(j, i).getValue()+" ");
+            }
+        }
+        communicator.send("BOARD "+str.toString());
     }
 
     /**
@@ -165,7 +179,7 @@ public class MultiplayerScene extends ChallengeScene {
         String header = parts[0];
 
         if (header.equals("PIECE")) {
-
+            // Adds the new piece to the queue
             ((MultiplayerGame) game).addToQueue(parts[1]);
 
             if ((((MultiplayerGame) game).getQueueSize() == 5) && board.isDisabled()) {
@@ -176,6 +190,7 @@ public class MultiplayerScene extends ChallengeScene {
         }
 
         if (header.equals("MSG")) {
+            // Splits the text into sender and message
             var comps = parts[1].split(":");
             var sender = comps[0];
             var m = comps[1];
@@ -185,22 +200,23 @@ public class MultiplayerScene extends ChallengeScene {
         }
 
         if (header.equals("SCORES")) {
-
-            var playerData = parts[1].split("\n");
-            // var t = new ArrayList<Pair<String,Integer>>();
+            // formats scores into String array
+            String[] playerData = parts[1].split("\n");
+            // clears local score list
             localScoreList.clear();
 
             for (String i : playerData) {
                 var x = i.split(":");
                 var g = new Pair<String, Integer>(x[0], Integer.parseInt(x[1]));
-
+                // adds each new score item to the list
                 localScoreList.add(g);
 
                 if (x[2].equals("DEAD")) {
+                    // if dead then add them to lost players
                     leaderboard.addLostPlayer(x[0]);
                 }
             }
-
+            // sort the list by the value of the scores
             localScoreList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
 
         }

@@ -1,7 +1,7 @@
 package uk.ac.soton.comp1206.scene;
 
-import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import uk.ac.soton.comp1206.ui.GamePane;
 import uk.ac.soton.comp1206.ui.GameWindow;
 import uk.ac.soton.comp1206.utility.Multimedia;
@@ -24,9 +24,11 @@ public class IntroScene extends BaseScene {
      */
     @Override
     public void initialise() {
+        //If any key is pressed start the menu and stop animation
         this.scene.setOnKeyPressed(e -> {
 
             gameWindow.startMenu();
+            //Stop intro fade animation
             Utility.fader.stop();
 
         });
@@ -40,16 +42,19 @@ public class IntroScene extends BaseScene {
 
         root = new GamePane(gameWindow.getWidth(), gameWindow.getHeight());
 
+        var n = new BorderPane();
         final ImageView image = new ImageView(GameWindow.class.getResource("/images/ECSGames.png").toExternalForm());
         image.setFitWidth(gameWindow.getHeight());
         image.setPreserveRatio(true);
-        root.setAlignment(Pos.CENTER);
-        root.getChildren().addAll(image);
+        n.setCenter(image);
+        root.getChildren().addAll(n);
         image.setOpacity(0);
+
+        // Reveal the intro image over 4 seconds
         Utility.reveal(image, 4000);
-        Utility.fader.setOnFinished(e -> {
-            gameWindow.startMenu();
-        });
+        // When done, start the menu
+        Utility.fader.setOnFinished(e -> gameWindow.startMenu());
+        // Play intro sound effect
         Multimedia.playSoundEffect("/sounds/intro.mp3");
 
     }

@@ -5,7 +5,7 @@ import uk.ac.soton.comp1206.game.GamePiece;
 /**
  * The Piece event listener is used to handle piece events
  */
-public interface pieceEventListener {
+public interface PieceEventListener {
     /**
      * Handle a event that a piece is played
      */

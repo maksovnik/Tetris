@@ -2,9 +2,6 @@ package uk.ac.soton.comp1206.game;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import uk.ac.soton.comp1206.ui.GameWindow;
 
 /**
@@ -16,7 +13,6 @@ import uk.ac.soton.comp1206.ui.GameWindow;
 public class MultiplayerGame extends Game {
 
     LinkedBlockingQueue<Integer> pieceQueue = new LinkedBlockingQueue<Integer>();
-    private static final Logger logger = LogManager.getLogger(MultiplayerGame.class);
 
     /**
      * Creates a Multiplayer game
@@ -32,6 +28,7 @@ public class MultiplayerGame extends Game {
      */
     public void addToQueue(String c) {
         try {
+            // Puts a new piece into the piece queue
             pieceQueue.put(Integer.parseInt(c));
         } catch (NumberFormatException e) {
             e.printStackTrace();
@@ -56,9 +53,10 @@ public class MultiplayerGame extends Game {
      */
     @Override
     public GamePiece spawnPiece() {
-        int val;
         try {
-            val = pieceQueue.take();
+            // Take a piece from the queue
+            int val = pieceQueue.take();
+            // Create a game piece from it
             var piece = GamePiece.createPiece(val);
             return piece;
         } catch (InterruptedException e) {

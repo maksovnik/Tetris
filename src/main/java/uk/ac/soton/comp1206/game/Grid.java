@@ -1,7 +1,5 @@
 package uk.ac.soton.comp1206.game;
 
-import java.util.Arrays;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -74,12 +72,16 @@ public class Grid {
         if (z == null) {
             return false;
         }
-
-        logger.info("Checking if piece can be played");
+        
         int[][] blocks = z.getBlocks();
 
+        //Loops through piece coordinates, starting at -1
+        //allows us to easily translate coordinates to where the player
+        //wants to place the piece.
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
+                //If the current grid position is non zero and the new piece at that
+                // position is non zero, then the piece can not be played so return false
                 if (get(x + i, y + j) != 0 && blocks[i + 1][j + 1] > 0) {
                     return false;
                 }
@@ -101,8 +103,10 @@ public class Grid {
         logger.info("Playing a piece");
         int[][] blocks = z.getBlocks();
 
-        logger.info(Arrays.deepToString(blocks));
 
+        //Loops through piece coordinates, starting at -1
+        //allows us to easily translate coordinates to where the player
+        //wants to place the piece.
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
                 if (blocks[i + 1][j + 1] > 0) {

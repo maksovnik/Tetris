@@ -4,7 +4,7 @@ max:3440
 Maks:2560
 qwer:2410
 uu:2030
+Maks:1710
 Test:1700
 sad:1680
-Maks:1490
-qwer:1460
+Bob:100

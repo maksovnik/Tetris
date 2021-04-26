@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -35,28 +34,33 @@ public class Utility {
      * @return List of scores
      */
     public static ObservableList<Pair<String, Integer>> loadScores() {
+
+        // creates new empty list to hold loaded scores
         ObservableList<Pair<String, Integer>> x = FXCollections.observableArrayList();
-        // ObservableList<Pair<String, Integer>> x = new ArrayList<Pair<String,
-        // Integer>>();
+
+        //Creates file object
         File f = new File("scores.txt");
 
         try {
+            //Creates file if it does not exist
             var q = f.createNewFile();
 
-            if (q) {
+            if (q) { // if new file was created then load default scores and write them
                 for (int i = 0; i < 10; i++) {
                     x.add(new Pair<String, Integer>("Oli", 5000));
                 }
                 writeScores(x);
             } else {
-
+                // file was not created then read them
                 BufferedReader reader = new BufferedReader(new FileReader(f));
 
                 Scanner s = new Scanner(reader);
-                while (s.hasNext()) {
-                    String[] parts = s.next().split(":");
-                    var p = new Pair<String, Integer>(parts[0], Integer.parseInt(parts[1]));
-                    x.add(p);
+                while (s.hasNext()) { //read each line
+                    String[] parts = s.next().split(":"); //split line by colon
+
+                    //create new pair from name and score
+                    var p = new Pair<String, Integer>(parts[0], Integer.parseInt(parts[1])); 
+                    x.add(p); //add the new score to the list
                 }
                 s.close();
 
@@ -64,7 +68,8 @@ public class Utility {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        
+        //returns the list
         return x;
 
     }
@@ -74,25 +79,30 @@ public class Utility {
      * 
      * @return ObservableList of scores
      */
-    public static ObservableList<Pair<String, Integer>> getScoreList(String scores) {
+    public static ObservableList<Pair<String, Integer>> getScoreList(String message) {
+        //creates new list for storing scores
         ObservableList<Pair<String, Integer>> x = FXCollections.observableArrayList();
 
-        String[] w = scores.split(" ", 2);
-        String header = w[0];
+        //splits scores by space
+        String[] parts = message.split(" ", 2);
+        String header = parts[0];
 
         if (!header.equals("HISCORES")) {
+            // return null if not a highscores message
             return null;
         }
 
-        String[] parts = scores.split(" ", 2);
-
+        //split scores string by new line
         String[] newScores = parts[1].split("\n");
         for (String i : newScores) {
+            //split score string by colon 
             String[] newParts = i.split(":");
+            //create new pair from name and score
             var p = new Pair<String, Integer>(newParts[0], Integer.parseInt(newParts[1]));
+            // add pair to list
             x.add(p);
         }
-
+        //return list
         return x;
     }
 
@@ -104,6 +114,7 @@ public class Utility {
      */
     public static void reveal(Node node, double millis) {
 
+        // reveal not needed if opacity is non zero or node is null
         if (node == null || node.getOpacity() != 0) {
             return;
         }
@@ -123,15 +134,20 @@ public class Utility {
     public static void writeScores(List<Pair<String, Integer>> x) {
         var file = new File("scores.txt");
         try {
+            //create new file if does not exist
             file.createNewFile();
             FileWriter fw = new FileWriter(file);
 
             var bw = new BufferedWriter(fw);
 
+            //iterate through list of scores
             for (Pair<String, Integer> i : x) {
+                //write each score
                 String s = i.getKey() + ":" + i.getValue() + "\n";
                 bw.write(s);
             }
+
+            //close the writer and file
             bw.close();
             fw.close();
 
@@ -145,8 +161,11 @@ public class Utility {
      * Fetches the high score from file
      */
     public static void fetchHighScore() {
+        //load scores
         var x = loadScores();
+        //sort the scores by the score
         x.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+        //set the name and score of the highest scorer
         highName = x.get(0).getKey();
         highScore = x.get(0).getValue();
     }
@@ -201,18 +220,21 @@ public class Utility {
     public static void writeSettings(String ip, String port, double bgVol, double fxVol, String width, String height) {
         var file = new File("settings.txt");
 
-        FileWriter fw;
         try {
+            // make new file if it doesn't exist
             file.createNewFile();
-            fw = new FileWriter(file);
+            FileWriter fw = new FileWriter(file);
 
             var bw = new BufferedWriter(fw);
+
+            //write passed params to file
             bw.write("ip " + ip + "\n");
             bw.write("serverPort " + port + "\n");
             bw.write("musicVol " + String.valueOf(bgVol) + "\n");
             bw.write("soundFXVol " + String.valueOf(fxVol) + "\n");
             bw.write("width " + String.valueOf(width) + "\n");
             bw.write("height " + String.valueOf(height) + "\n");
+            //close writer and file
             bw.close();
             fw.close();
         } catch (IOException e) {
@@ -227,27 +249,28 @@ public class Utility {
      */
     public static HashMap<String, String> loadSettings() {
 
+        //creates a new hashmap to map a setting name to its value
         HashMap<String, String> hmap = new HashMap<String, String>();
+        
         File f = new File("settings.txt");
-        var x = new ArrayList<String[]>();
         try {
 
             BufferedReader reader = new BufferedReader(new FileReader(f));
 
             Scanner s = new Scanner(reader);
-            while (s.hasNext()) {
-                String y = s.nextLine();
-                System.out.println(y);
+            while (s.hasNext()) { 
+                String y = s.nextLine(); //iterates over each line
+
+                //split each line by spaces and set the first
+                // index to the key and second to the value
                 String[] parts = y.split(" ", 2);
                 hmap.put(parts[0], parts[1]);
-                x.add(parts);
             }
             s.close();
 
         } catch (IOException e) {
         }
 
-        System.out.println(x);
         return hmap;
     }
 
@@ -258,6 +281,7 @@ public class Utility {
      */
     public static boolean isInteger(String g) {
         try {
+            // attempts to parse a string as an integer
             Integer.parseInt(g);
             return true;
         } catch (NumberFormatException d) {

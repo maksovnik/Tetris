@@ -21,7 +21,7 @@ import uk.ac.soton.comp1206.component.GameBoard;
 import uk.ac.soton.comp1206.component.PieceBoard;
 import uk.ac.soton.comp1206.component.Settings;
 import uk.ac.soton.comp1206.event.SettingsListener;
-import uk.ac.soton.comp1206.event.pieceEventListener;
+import uk.ac.soton.comp1206.event.PieceEventListener;
 import uk.ac.soton.comp1206.game.Game;
 import uk.ac.soton.comp1206.game.GamePiece;
 import uk.ac.soton.comp1206.ui.GamePane;
@@ -85,6 +85,7 @@ public class ChallengeScene extends BaseScene {
 
         challengePane = new StackPane();
         challengePane.setMaxWidth(gameWindow.getWidth());
+        System.out.println(gameWindow.getHeight());
         challengePane.setMaxHeight(gameWindow.getHeight());
         challengePane.getStyleClass().add("challenge-background");
 
@@ -230,27 +231,32 @@ public class ChallengeScene extends BaseScene {
         }
         if (Arrays.asList("W", "A", "S", "D", "Up", "Down", "Left", "Right").contains(keyName)) {
 
-            System.out.println(keyName);
-            var coords = board.getCurrentHoverCoords();
+            var coords = board.getCurrentCenterHoverCoords();
             if (keyName.equals("Up") || keyName.equals("W")) {
+                // Move the displayed hover 1 row up
                 board.hover(coords[0] - 1, coords[1]);
             }
             if (keyName.equals("Down") || keyName.equals("S")) {
+                // Move the displayed hover 1 row down
                 board.hover(coords[0] + 1, coords[1]);
             }
             if (keyName.equals("Left") || keyName.equals("A")) {
+                // Move the displayed hover 1 column left
                 board.hover(coords[0], coords[1] - 1);
             }
             if (keyName.equals("Right") || keyName.equals("D")) {
+                // Move the displayed hover 1 column right
                 board.hover(coords[0], coords[1] + 1);
             }
 
         }
         if (code == KeyCode.ESCAPE) {
+            //toggle displaying the settings screen
             settings.toggle();
         }
         if (Arrays.asList("Enter", "X").contains(keyName)) {
-            var c = board.getCurrentHoverCoords();
+            //Gets the currently hovered on position and "clicks" the block at that position
+            var c = board.getCurrentCenterHoverCoords();
             game.blockClicked(board.getBlock(c[0], c[1]));
         }
         if (Arrays.asList("Q", "Z", "Open Bracket").contains(keyName)) {
@@ -270,49 +276,64 @@ public class ChallengeScene extends BaseScene {
     public void initialise() {
         logger.info("Initialising Challenge");
 
+        //Shows button allowing user to quit their current game
         settings.showEndGame();
+
         settings.setListener(new SettingsListener() {
             @Override
             public void onHide() {
+                //Music resumed
                 Multimedia.play();
+                //mainPane effects removed
                 mainPane.setEffect(null);
                 mainPane.setDisable(false);
+                //game unpaused
                 game.play();
-                // rectangle.playAnimation();
             }
 
             @Override
             public void onShow() {
+                // music paused
                 Multimedia.pause();
+                // main pane is disabled so user cant accidentally interact with game UI
                 mainPane.setDisable(true);
+                // game is paused
                 game.pause();
-                // rectangle.pauseAnimation();
             }
 
             @Override
             public void onExit() {
+                // end game button is hidden
                 settings.hideEndGame();
+                // game end instructed
                 game.end();
             }
         });
 
+        //Binds the UI properties to the values inside of Game
         level.textProperty().bind(game.getLevelProperty().asString());
         lives.textProperty().bind(game.getLivesProperty().asString());
         score.textProperty().bind(game.getScoreProperty().asString());
         highscore.textProperty().bind(game.getHScoreProperty().asString());
-
-        game.setOnSingleLoop(delay -> {
-            rectangle.setFill(Color.hsb(120 * delay, 1, 1));
-        });
-        rectangle.widthProperty().bind(game.getTimeProperty().multiply(gameWindow.getWidth()));
-
         multiplier.textProperty().bind(game.getMultiplierProperty().asString());
 
+        
+        // proud. Takes the current time of the game set set's the fill of the rectangle to be equal to the 120*
+        // the hue of the newTime (ranging from 1 to 0), this has the effect of the bar going from green
+        // to red as the game time reduces
+
+        game.setOnTimerChange(newTime -> rectangle.setFill(Color.hsb(120 * newTime, 1, 1)));
+        
+        //Binds the width property of the rectangle to the time property in game (ranging from 1 to 0)
+        // multiplied by the width of the window, this has the effect of the rectangle starting at full
+        // width and reducing in width to 0 when the timer is up.
+        rectangle.widthProperty().bind(game.getTimeProperty().multiply(root.getWidth()));
+
+        //Registers handleKeyPress methods with listeners
         Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
         Platform.runLater(() -> scene.setOnKeyReleased(e -> handleKeyRelease(e)));
 
-        game.setOnPieceEvent(new pieceEventListener() {
-
+        game.setOnPieceEvent(new PieceEventListener() {
             @Override
             public void playPiece() {
                 Multimedia.playSoundEffect("/sounds/place.wav");
@@ -330,12 +351,16 @@ public class ChallengeScene extends BaseScene {
 
             @Override
             public void nextPiece(GamePiece a, GamePiece b) {
-
                 logger.info("Next Piece");
-                nextPieceBoard.SetPieceToDisplay(a);
-                followingPieceBoard.SetPieceToDisplay(b);
+                //Display the next piece on the nextPieceboard
+                nextPieceBoard.displayPiece(a);
+                //Display the following piece on the followingPieceboard
+                followingPieceBoard.displayPiece(b);
+                //Set the current piece on the board for hovering purposes
                 board.setCurrentPiece(a);
+                //Allows action for subclasses
                 onNextPiece();
+                //A new piece has been generated so the hovered piece must be updated
                 board.updateHover();
             }
 
@@ -351,6 +376,7 @@ public class ChallengeScene extends BaseScene {
             gameWindow.startScores(game, Utility.loadScores());
         }));
 
+        //Sets the high score in the game to the loaded score from file
         game.setHighScore(getHighScore());
 
         board.setOnBlockClicked((e, g) -> {
@@ -358,8 +384,11 @@ public class ChallengeScene extends BaseScene {
                 game.blockClicked(g);
             }
             if (e.getButton() == MouseButton.SECONDARY) {
+                //rotate clockwise
                 game.rotateCurrentPiece(1);
-                var coords = board.getCurrentHoverCoords();
+                //When a rotate happens we need to update the blocks hovered because
+                // the piece has rotated
+                var coords = board.getCurrentCenterHoverCoords();
                 board.hover(coords[0], coords[1]);
             }
 
@@ -367,10 +396,12 @@ public class ChallengeScene extends BaseScene {
 
         nextPieceBoard.setOnBlockClicked((m, b) -> {
             if (m.getButton() == MouseButton.PRIMARY) {
+                //rotate anticlockwise
                 game.rotateCurrentPiece(-1);
             }
 
             if (m.getButton() == MouseButton.SECONDARY) {
+                //rotate clockwise
                 game.rotateCurrentPiece(1);
             }
         });

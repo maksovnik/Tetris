@@ -28,19 +28,19 @@ public class Settings extends BorderPane {
     SettingsListener sl;
     Pane parent;
 
-    private Slider slider1;
-    private Slider slider2;
+    private Slider musicSlider;
+    private Slider fxSlider;
 
     private static final Logger logger = LogManager.getLogger(Settings.class);
 
-    private TextField g1;
-    private TextField g2;
-    private TextField g3;
+    private TextField ip;
+    private TextField port;
+    private TextField resolution;
 
-    private Text t7;
-    private Text t6;
-    private Text t3;
-    private Text t0;
+    private Text afterRestart;
+    private Text resetLabel;
+    private Text save;
+    private Text endGame;
 
     GameWindow gameWindow;
 
@@ -54,72 +54,84 @@ public class Settings extends BorderPane {
      **/
     public Settings(GameWindow gameWindow, int i, int j) {
         this.gameWindow = gameWindow;
+
+        //Initially hide the settings window
         hide();
+
+        //Sets dimensions
         setMaxHeight(i);
         setMaxWidth(j);
 
         getStyleClass().add("settings");
 
-        var inner = new VBox();
-
-        var t1 = new Text("Music Volume");
-        var t2 = new Text("Sound Effect Volume");
-        t0 = new Text("End Game");
-        t3 = new Text("Save");
-        var t4 = new Text("Server IP");
-        var t5 = new Text("Server Port");
-        var t8 = new Text("Resolution");
-        t6 = new Text("Reset Settings");
-        t7 = new Text("Settings will be applied after restart");
-        g1 = new TextField();
-        g2 = new TextField();
-
-        g3 = new TextField();
-
-        // setAlignment(Pos.BOTTOM_CENTER);
-
-        slider1 = new Slider(0, 1, 0.5);
-        slider2 = new Slider(0, 1, 0.5);
-
-        hideEndGame();
-
-        for (Text o : new Text[] { t1, t2, t3, t4, t5, t6, t5, t8, t0 }) {
-            o.getStyleClass().add("settingsItem");
-        }
-
-        t7.getStyleClass().add("error");
-
-        t7.setOpacity(0);
-
-        inner.getChildren().addAll(t1, slider1, t2, slider2, t4, g1, t5, g2, t8, g3, t6);
-        inner.setAlignment(Pos.CENTER);
-        setAlignment(t3, Pos.CENTER);
-        setCenter(inner);
-
-        var g = new VBox(3);
-        g.setAlignment(Pos.CENTER);
-
-        g.getChildren().addAll(t7, t3, t0);
-        setBottom(g);
+        build();
 
     }
 
+    public void build(){
+
+        var inner = new VBox();
+        var musicVolLabel = new Text("Music Volume");
+        var soundFXVolLabel = new Text("Sound Effect Volume");
+        var ipLabel = new Text("Server IP");
+        var portLabel = new Text("Server Port");
+        var resLabel = new Text("Resolution");
+        var g = new VBox(3);
+
+        endGame = new Text("End Game");
+        save = new Text("Save");
+        resetLabel = new Text("Reset Settings");
+        afterRestart = new Text("Settings will be applied after restart");
+        ip = new TextField();
+        port = new TextField();
+        resolution = new TextField();
+        musicSlider = new Slider(0, 1, 0.5);
+        fxSlider = new Slider(0, 1, 0.5);
+        
+
+        hideEndGame();
+
+        for (Text o : new Text[] { musicVolLabel, soundFXVolLabel, save, ipLabel, portLabel, resetLabel, portLabel, resLabel, endGame }) {
+            o.getStyleClass().add("settingsItem");
+        }
+
+        afterRestart.getStyleClass().add("error");
+        afterRestart.setOpacity(0);
+
+        inner.getChildren().addAll(musicVolLabel, musicSlider, soundFXVolLabel, fxSlider, ipLabel, ip, portLabel, port, resLabel, resolution, resetLabel);
+        inner.setAlignment(Pos.CENTER);
+
+        setAlignment(save, Pos.CENTER);
+        setCenter(inner);
+
+
+        g.setAlignment(Pos.CENTER);
+        g.getChildren().addAll(afterRestart, save, endGame);
+        setBottom(g);
+    }
     /**
      * Initialises the Settings pane. Sets up bindings and listeners.
      **/
     public void initialise() {
 
-        Multimedia.getMusicVolumeProperty().bind(slider1.valueProperty());
-        Multimedia.getFXVolumeProperty().bind(slider2.valueProperty());
+        // Bind the static volume properties to the property of the sliders
+        Multimedia.getMusicVolumeProperty().bind(musicSlider.valueProperty());
+        Multimedia.getFXVolumeProperty().bind(fxSlider.valueProperty());
 
-        g1.textProperty().addListener((a, b, c) -> Utility.reveal(t7, 200));
-        g2.textProperty().addListener((a, b, c) -> Utility.reveal(t7, 200));
-        g3.textProperty().addListener((a, b, c) -> Utility.reveal(t7, 200));
+        //If any of the text changes reveal the message telling the player a restart is required
+        ip.textProperty().addListener((a, b, c) -> Utility.reveal(afterRestart, 200));
+        port.textProperty().addListener((a, b, c) -> Utility.reveal(afterRestart, 200));
+        resolution.textProperty().addListener((a, b, c) -> Utility.reveal(afterRestart, 200));
 
-        t6.setOnMouseClicked(e -> setSettings(GameWindow.ip, GameWindow.port, GameWindow.bgVol, GameWindow.fxVol,
-                GameWindow.width, GameWindow.height));
-        t3.setOnMouseClicked(e -> hide());
-        t0.setOnMouseClicked(e -> {
+        //Reset the settings
+        resetLabel.setOnMouseClicked(e -> setSettings(GameWindow.ipD, GameWindow.portD, GameWindow.bgVolD, GameWindow.fxVolD,
+                GameWindow.widthD, GameWindow.heightD));
+        
+        //Save and close settings window
+        save.setOnMouseClicked(e -> hide());
+        
+        //Save and close + call listener
+        endGame.setOnMouseClicked(e -> {
             hide();
             if (sl != null) {
                 sl.onExit();
@@ -131,21 +143,20 @@ public class Settings extends BorderPane {
     /**
      * Sets each TextField object to the respective passed parameter
      * 
-     * @param ip     ip address
-     * @param port   port
+     * @param ipD     ip address
+     * @param portD   port
      * @param bgVol  background volume
      * @param fxVol  special effects volume
      * @param width  width of game
      * @param height height of game
      **/
-    public void setSettings(String ip, String port, String bgVol, String fxVol, String width, String height) {
-        slider1.setValue(Double.parseDouble(bgVol));
-        slider2.setValue(Double.parseDouble(fxVol));
+    public void setSettings(String ipAddress, String portD, String bgVol, String fxVol, String width, String height) {
+        musicSlider.setValue(Double.parseDouble(bgVol));
+        fxSlider.setValue(Double.parseDouble(fxVol));
 
-        g1.setText(ip);
-        g2.setText(port);
-        g3.setText(width + "x" + height);
-
+        ip.setText(ipAddress);
+        port.setText(portD);
+        resolution.setText(width + "x" + height);
     }
 
     /**
@@ -153,6 +164,7 @@ public class Settings extends BorderPane {
      * 
      **/
     public void toggle() {
+        //If the settings window is disabled then show otherwise hide
         if (isDisabled()) {
             show();
         } else {
@@ -174,32 +186,34 @@ public class Settings extends BorderPane {
      * Hides window
      **/
     public void hide() {
-        if (sl != null) {
-            sl.onHide();
-        }
 
-        if ((slider1 != null) && (slider2 != null)) {
-            var first = slider1.getValue();
-            var second = slider2.getValue();
-            var th = g1.getText();
-            var th1 = g2.getText();
+        logger.info("Settings window hidden");
 
-            var c = g3.getText().split("x");
-            logger.info("First:{}  Second:{}");
+        if ((musicSlider != null) && (fxSlider != null)) {
+            //Gets the value of the fields and sliders
+            var first = musicSlider.getValue();
+            var second = fxSlider.getValue();
+            var th = ip.getText();
+            var th1 = port.getText();
+
+            var c = resolution.getText().split("x");
             if ((c.length == 2) && (Utility.isInteger(c[0])) && (Utility.isInteger(c[1]))) {
+                // Saves the new data to a file
                 Utility.writeSettings(th, th1, first, second, c[0], c[1]);
             }
 
         }
 
         if (parent != null) {
+            //Removes blur from behind settings
             parent.setEffect(null);
         }
 
         if (sl != null) {
             sl.onHide();
         }
-
+        
+        //Disable and hide pane
         setOpacity(0);
         setDisable(true);
     }
@@ -217,16 +231,17 @@ public class Settings extends BorderPane {
      * Shows settings window
      **/
     public void show() {
-
-        GaussianBlur blur = new GaussianBlur(55); // 55 is just to show edge effect more clearly.
+        logger.info("Settings window shown");
+        // Blurs the Parent pane when settings is show
+        GaussianBlur blur = new GaussianBlur(55);
         parent.setEffect(blur);
 
         if (sl != null) {
             sl.onShow();
         }
 
+        //Enable and show pane
         setOpacity(1);
-        // isVisible = true;
         setDisable(false);
     }
 
@@ -243,16 +258,16 @@ public class Settings extends BorderPane {
      * Shows the End Game label
      **/
     public void showEndGame() {
-        this.t0.setDisable(false);
-        this.t0.setOpacity(1);
+        this.endGame.setDisable(false);
+        this.endGame.setOpacity(1);
     }
 
     /**
      * Hides the End Game label
      **/
     public void hideEndGame() {
-        this.t0.setDisable(true);
-        this.t0.setOpacity(0);
+        this.endGame.setDisable(true);
+        this.endGame.setOpacity(0);
     }
 
 }

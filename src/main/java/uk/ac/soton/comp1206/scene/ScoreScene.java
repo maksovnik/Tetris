@@ -1,6 +1,7 @@
 package uk.ac.soton.comp1206.scene;
 
 import java.util.List;
+import java.util.jar.Attributes.Name;
 
 import com.neovisionaries.ws.client.WebSocketState;
 
@@ -87,7 +88,6 @@ public class ScoreScene extends BaseScene {
      */
     @Override
     public void initialise() {
-
         if (communicator.getState() == WebSocketState.OPEN) {
             this.communicator.addListener(message -> Platform.runLater(() -> this.handleMessage(message.trim())));
             this.communicator.send("HISCORES");
@@ -133,15 +133,22 @@ public class ScoreScene extends BaseScene {
      * scoreboxes
      */
     private void completed() {
-        System.out.println(localScoreList.toString());
+
+        //if user beat the local score and is not multiplayer game
         if (score > lowestLocal && !(game instanceof MultiplayerGame)) {
+            //then add them to the box and write to file
             addScoreToScoreBox(localScoreList);
             Utility.writeScores(localScoreList);
         }
+        //if user beat the remote score and is not multiplayer game
         if (score > lowestRemote) {
+            //add them to remote score box
             addScoreToScoreBox(remoteScoreList);
+            communicator.send("HISCORE " + name +":"+score);
         }
         elements.getChildren().addAll(title, scoreBoxes);
+        //reveal both scoreboxes
+        logger.info("Showing scoreboxes");
         Utility.reveal(scoreBoxes, 300);
     }
 
@@ -155,20 +162,27 @@ public class ScoreScene extends BaseScene {
         String[] parts = message.split(" ", 2);
         String header = parts[0];
 
-        System.out.println(header);
-        if (!(header.equals("HISCORES") || (header.equals("bypass")))) {
+        // if header is not 'hiscores' or 'bypass' then return
+        if ((!header.equals("HISCORES") && (!header.equals("bypass")))) {
             return;
         }
-
+        
+        //get remote scores from string
         remoteScores = Utility.getScoreList(message);
         if (remoteScores != null) {
+            //sort scores
             remoteScores.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+            //add them to scores list
             remoteScoreList.addAll(remoteScores);
+            //get lowest of them
             lowestRemote = remoteScores.get(this.remoteScores.size() - 1).getValue();
         }
-
+         
+        //get lowest local score
         lowestLocal = localScoreList.get(this.localScoreList.size() - 1).getValue();
 
+        //if the player beat a score and the instance of game is not multiplayer then
+        // allow the user to enter their name
         if (((score > lowestRemote) || (score > lowestLocal)) && !(game instanceof MultiplayerGame)) {
             var name = new TextField();
             var enter = new Button("Add");
@@ -179,6 +193,7 @@ public class ScoreScene extends BaseScene {
 
                 this.name = name.getText();
 
+                // remove name enter widgets
                 elements.getChildren().remove(name);
                 elements.getChildren().remove(enter);
                 elements.getChildren().remove(hint);
@@ -192,6 +207,7 @@ public class ScoreScene extends BaseScene {
             completed();
         }
 
+        //Displays title
         title.setOpacity(1);
     }
 

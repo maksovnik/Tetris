@@ -46,7 +46,6 @@ public abstract class BaseScene {
         scene.getStylesheets().add(getClass().getResource("/style/game.css").toExternalForm());
         this.scene = scene;
 
-        // scene.setOnKeyPressed(e -> handleKeyPress(e));
         return scene;
     }
 

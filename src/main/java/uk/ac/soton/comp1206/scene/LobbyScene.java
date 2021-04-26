@@ -31,13 +31,17 @@ import uk.ac.soton.comp1206.ui.GameWindow;
 public class LobbyScene extends BaseScene {
 
     private static final Logger logger = LogManager.getLogger(LobbyScene.class);
+
+    /**
+     * executor that schedules a task to loop and check for new channels and new users in a channel
+     */
     ScheduledExecutorService executor;
     Communicator communicator;
     VBox channelList;
 
     VBox topBox;
 
-    List<String> x;
+    List<String> channels;
     ScheduledFuture<?> loop;
     private HBox main;
     boolean inChannel;
@@ -51,7 +55,10 @@ public class LobbyScene extends BaseScene {
         KeyCode k = e.getCode();
         if (k == KeyCode.ESCAPE) {
             communicator.send("PART");
+
+            // Shuts down request loop
             executor.shutdownNow();
+
             gameWindow.startMenu();
         }
     }
@@ -66,7 +73,7 @@ public class LobbyScene extends BaseScene {
         this.communicator = gameWindow.getCommunicator();
         logger.info("Creating Lobby Scene");
         this.executor = Executors.newSingleThreadScheduledExecutor();
-        x = new ArrayList<String>();
+        channels = new ArrayList<String>();
     }
 
     /**
@@ -74,9 +81,9 @@ public class LobbyScene extends BaseScene {
      */
     private void requestChannels() {
         if (inChannel) {
-            this.communicator.send("USERS");
+            this.communicator.silentSend("USERS");
         }
-        this.communicator.send("LIST");
+        this.communicator.silentSend("LIST");
         this.loop = executor.schedule(() -> requestChannels(), 2000, TimeUnit.MILLISECONDS);
     }
 
@@ -85,6 +92,7 @@ public class LobbyScene extends BaseScene {
      */
     @Override
     public void initialise() {
+        // Adds listener to communicator to run the handleMessage method
         this.communicator.addListener(message -> Platform.runLater(() -> this.handleMessage(message)));
         requestChannels();
     }
@@ -106,9 +114,12 @@ public class LobbyScene extends BaseScene {
             String message = parts[1];
             List<String> list = Arrays.asList(message.split("\\s+"));
 
-            if (!list.equals(x)) {
+            // If the incoming list differs from the current channel list
+            if (!list.equals(channels)) {
+                // Removes all channel list Objects
                 channelList.getChildren().clear();
 
+                // Adds updated channel list objects
                 for (String i : list) {
                     var q = new Text(i);
                     q.getStyleClass().add("channelItem");
@@ -116,28 +127,37 @@ public class LobbyScene extends BaseScene {
                     channelList.getChildren().add(q);
 
                 }
-                x.clear();
-                x.addAll(list);
+
+                // Updates local channel list
+                channels.clear();
+                channels.addAll(list);
             }
         }
         if (header.equals("JOIN")) {
+            var name = parts[1];
+            logger.info("Joined channel {}",name);
             inChannel = true;
-
+            
             channelChat = new ChannelChat(gameWindow);
 
             main.getChildren().add(channelChat);
         }
         if (header.equals("ERROR")) {
+            // If error is received then show error in alert message
             String message = parts[1];
+            logger.info("Error {}",message);
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText(message);
             logger.error(message);
             alert.showAndWait();
         }
         if (header.equals("HOST")) {
+            //Reveals start button
             channelChat.revealStartButton();
         }
         if (header.equals("PARTED")) {
+            logger.info("Left Channel");
+            //Removes the channel chat (has left channel)
             main.getChildren().remove(channelChat);
             inChannel = false;
         }
@@ -150,6 +170,8 @@ public class LobbyScene extends BaseScene {
             String message = parts[1];
         }
         if (header.equals("START")) {
+            logger.info("Game start initiated");
+            // Shuts down lobby information request loop
             executor.shutdownNow();
             communicator.clearListeners();
             gameWindow.startMultiChallenge();

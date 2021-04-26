@@ -3,7 +3,6 @@ package uk.ac.soton.comp1206.component;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -54,7 +53,11 @@ public class ChannelChat extends VBox {
     public void addMessage(String sender, String message) {
         var messageObject = new Text(sender + " " + message);
         messageObject.getStyleClass().add("messages");
+
+        // Adds the new message to the list of messages
         messages.getChildren().add(messageObject);
+
+        // Scrolls to bottom of message box
         sp.layout();
         sp.setVvalue(1);
     }
@@ -65,7 +68,11 @@ public class ChannelChat extends VBox {
      * @param list new user list
      **/
     public void updateUsers(List<String> list) {
+        
+        //Checks if the given list differs from the current list
         if (!list.equals(userList)) {
+
+            // if they differ then update and recreate user Text objects
             users.getChildren().clear();
             for (String i : list) {
                 var b = new Text(i);
@@ -79,7 +86,7 @@ public class ChannelChat extends VBox {
     }
 
     /**
-     * Reveals the start button
+     * Reveals the start button if the user is the host
      **/
     public void revealStartButton() {
         start.setOpacity(1);
@@ -90,6 +97,7 @@ public class ChannelChat extends VBox {
      **/
     public void build() {
 
+        // Create a new scroll pane so we can scroll messages
         sp = new ScrollPane();
         sp.setFitToHeight(true);
         sp.setFitToWidth(true);
@@ -110,6 +118,8 @@ public class ChannelChat extends VBox {
         leave = new Button("Leave");
         start = new Button("Start");
 
+        // At first, hide the start button - it will be shown
+        // if server affirms that the user is the host
         start.setOpacity(0);
 
         buttons.getChildren().addAll(leave, start);
@@ -122,6 +132,7 @@ public class ChannelChat extends VBox {
      * Initialises the elements of the channel chat
      **/
     public void initialise() {
+        
         leave.setOnMouseClicked(e -> {
             this.communicator.send("PART");
         });
@@ -132,13 +143,19 @@ public class ChannelChat extends VBox {
             if (e.getCode().equals(KeyCode.ENTER)) {
                 String text = entry.getText();
                 entry.clear();
+
+                //Splits the message by space characters
                 String[] parts = text.split(" ", 2);
+
+                //If the first part was /nick then send a change username request
                 if (parts[0].equals("/nick")) {
                     if (parts.length > 1) {
                         this.communicator.send("NICK " + parts[1]);
                     }
                     return;
                 }
+
+                //Send the message
                 this.communicator.send("MSG " + text);
             }
         });

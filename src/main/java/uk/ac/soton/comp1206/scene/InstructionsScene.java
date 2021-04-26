@@ -21,6 +21,7 @@ import uk.ac.soton.comp1206.ui.GameWindow;
 public class InstructionsScene extends BaseScene {
 
     private static final Logger logger = LogManager.getLogger(InstructionsScene.class);
+    private GridPane gridpane;
 
     public InstructionsScene(GameWindow gameWindow) {
 
@@ -42,49 +43,56 @@ public class InstructionsScene extends BaseScene {
 
         root = new GamePane(gameWindow.getWidth(), gameWindow.getHeight());
 
+        var mainPane = new BorderPane();
         var instructionsPane = new StackPane();
+        Text title = new Text("Instructions");
+        Text title2 = new Text("Game Pieces");
+        gridpane = new GridPane();
+        var elements = new VBox();
+
+        final ImageView image = new ImageView(
+                MenuScene.class.getResource("/images/Instructions2.png").toExternalForm());
+
         instructionsPane.setMaxWidth(gameWindow.getWidth());
         instructionsPane.setMaxHeight(gameWindow.getHeight());
         instructionsPane.getStyleClass().add("menu-background");
-        root.getChildren().add(instructionsPane);
 
-        var mainPane = new BorderPane();
-        instructionsPane.getChildren().add(mainPane);
+        image.setFitWidth(this.gameWindow.getHeight());
+        image.setPreserveRatio(true);
 
-        Text title = new Text("Instructions");
-        Text title2 = new Text("Game Pieces");
-
-        var elements = new VBox();
+        generatePieces();
 
         title.getStyleClass().add("instructions");
         title2.getStyleClass().add("instructions");
         elements.setAlignment(Pos.CENTER);
-        final ImageView image = new ImageView(
-                MenuScene.class.getResource("/images/Instructions2.png").toExternalForm());
-        image.setFitWidth(this.gameWindow.getHeight());
-        image.setPreserveRatio(true);
-
-        GridPane gridpane = new GridPane();
-        int count = 0;
-
         gridpane.setAlignment(Pos.CENTER);
+
+        Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
+
+        gridpane.setHgap(6);
+        gridpane.setVgap(6);
+        root.getChildren().add(instructionsPane);
+        instructionsPane.getChildren().add(mainPane);
+        elements.getChildren().addAll(title, image, title2, gridpane);
+        mainPane.setCenter(elements);
+
+    }
+
+    /**
+     * Generates the pieces to display on instructions
+     */
+    private void generatePieces() {
+        int count = 0;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 5; j++) {
                 PieceBoard p = new PieceBoard(3, 3, 50, 50, false);
                 var b = GamePiece.createPiece(count);
-                p.SetPieceToDisplay(b);
+                p.displayPiece(b);
                 gridpane.add(p, j, i);
                 count++;
             }
 
         }
-
-        Platform.runLater(() -> scene.setOnKeyPressed(e -> handleKeyPress(e)));
-        gridpane.setHgap(6);
-        gridpane.setVgap(6);
-        elements.getChildren().addAll(title, image, title2, gridpane);
-        mainPane.setCenter(elements);
-
     }
 
     /**

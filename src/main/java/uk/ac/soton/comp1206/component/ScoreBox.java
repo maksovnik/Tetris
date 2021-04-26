@@ -28,25 +28,23 @@ public class ScoreBox extends VBox {
      * Creates a new empty Score Box
      */
     public ScoreBox() {
-
         lostPlayers = new ArrayList<String>();
         this.scores = new SimpleListProperty<Pair<String, Integer>>();
 
-        scores.addListener((ListChangeListener<Pair<String, Integer>>) (c -> {
-            System.out.println("inside " + scores.toString());
-            updateScores();
-            System.out.println("inside " + scores.toString());
-        }));
+        // Sets a change listener on scores that calls updateScores if it changes
+        scores.addListener((ListChangeListener<Pair<String, Integer>>) (c -> updateScores()));
     }
 
     /**
-     * Forces an update on the scorebox
+     * Forces an update on the score box
      */
     public void updateScores() {
+        // Clear all scores
         this.getChildren().clear();
 
+        // Add them back again
         for (Pair<String, Integer> i : scores) {
-            this.scoreBox = makeSubScoreBox(i);
+            this.scoreBox = makeScoreItem(i);
             this.getChildren().add(scoreBox);
         }
     }
@@ -61,28 +59,30 @@ public class ScoreBox extends VBox {
     }
 
     /**
-     * Makes a single subscorebox
+     * Makes a single score item
      * 
      * @param x pair containing a name and a score
+     * @return score item
      */
-    public HBox makeSubScoreBox(Pair<String, Integer> x) {
-        var h = new HBox(8);
+    public HBox makeScoreItem(Pair<String, Integer> x) {
+        var box = new HBox(8);
 
-        h.setAlignment(Pos.CENTER);
+        box.setAlignment(Pos.CENTER);
 
-        var n = new Text(x.getKey());
+        var name = new Text(x.getKey());
+        var score = new Text(Integer.toString(x.getValue()));
 
+        // If the current player is in the list of lost players then strike through them
         if (lostPlayers.contains(x.getKey())) {
-            n.setStyle("-fx-strikethrough: true;");
+            name.setStyle("-fx-strikethrough: true;");
         }
 
-        var s = new Text(Integer.toString(x.getValue()));
+        name.getStyleClass().add("scorelist");
+        score.getStyleClass().add("scorelist");
 
-        n.getStyleClass().add("scorelist");
-        s.getStyleClass().add("scorelist");
-        h.getChildren().addAll(n, s);
+        box.getChildren().addAll(name, score);
 
-        return h;
+        return box;
     }
 
     /**

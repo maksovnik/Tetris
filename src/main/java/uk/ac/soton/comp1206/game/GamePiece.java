@@ -1,7 +1,5 @@
 package uk.ac.soton.comp1206.game;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Instances of GamePiece Represents the model of a specific Game Piece with
@@ -16,8 +14,6 @@ public class GamePiece {
      * The total number of pieces in this game
      */
     public static final int PIECES = 15;
-
-    private static final Logger logger = LogManager.getLogger(GamePiece.class);
 
     /**
      * The 2D grid representation of the shape of this piece
@@ -137,19 +133,6 @@ public class GamePiece {
         throw new IndexOutOfBoundsException("No such piece: " + piece);
     }
 
-    /**
-     * Create a new GamePiece of the specified piece number and rotation
-     * 
-     * @param piece    piece number
-     * @param rotation number of times to rotate
-     * @return the created GamePiece
-     */
-    public static GamePiece createPiece(int piece, int rotation) {
-        var newPiece = createPiece(piece);
-
-        newPiece.rotate(rotation);
-        return newPiece;
-    }
 
     /**
      * Transposes a given 2d array, used for switching from cartesian coordinates to
@@ -208,22 +191,26 @@ public class GamePiece {
      * @return 2D grid of the blocks representing the piece shape
      */
     public int[][] getBlocks() {
+        //Transpose because using Matrix notation not Cartesian
         return transpose(blocks);
     }
 
     /**
-     * Rotates the piece
+     * Rotation algorithm that rotates a piece either clockwise or anticlockwise
      * 
      * @param direction anticlockwise is -1, clockwise is 1
      */
     public void rotate(int direction) { // direction=1 is clockwise, -1 is anticlockwise
+        //Creates a new empty array with the same size as blocks
         int[][] rotated = new int[blocks.length][blocks[0].length];
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (direction == -1) {
+                    //Translates single piece anticlockwise
                     rotated[i][j] = blocks[2 - j][i];
                 }
                 if (direction == 1) {
+                    //Translates single piece clockwise
                     rotated[i][j] = blocks[j][2 - i];
                 }
             }

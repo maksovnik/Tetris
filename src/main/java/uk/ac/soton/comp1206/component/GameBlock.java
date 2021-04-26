@@ -1,7 +1,5 @@
 package uk.ac.soton.comp1206.component;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.IntegerProperty;
@@ -25,7 +23,6 @@ import javafx.scene.paint.Paint;
  */
 public class GameBlock extends Canvas {
 
-    private static final Logger logger = LogManager.getLogger(GameBlock.class);
     private boolean hover = false;
 
     /**
@@ -123,17 +120,22 @@ public class GameBlock extends Canvas {
      * Paints the block with a colour of low opacity
      **/
     public void paintHover() {
+
         final GraphicsContext gc = this.getGraphicsContext2D();
         gc.setFill(hoverColor);
+
+        //Fill the whole block with the hover color
         gc.fillRect(0.0, 0.0, this.width, this.height);
     }
 
     /**
-     * Sets hover and repaints
+     * Sets the block to hover and repaints the block
      * 
      * @param m hover variable
      **/
     public void setHoverX(boolean m) {
+        
+        //If the given value is different to hover then change it and repaint
         if (hover != m) {
             hover = m;
             paint();
@@ -145,28 +147,34 @@ public class GameBlock extends Canvas {
      **/
     public void fadeOut() {
 
-        paintEmpty();
+        //Makes a new AnimationTimer
         new AnimationTimer() {
             double opacity = 1;
 
             @Override
             public void handle(long now) {
+                //Fade on every frame
                 fadeFrame();
             }
 
             public void fadeFrame() {
                 paintEmpty();
+                
+                //Decrement opacity slightly
                 this.opacity -= 0.025;
+                
                 if (this.opacity <= 0.0) {
+                    //Stop when opacity reaches zero
                     this.stop();
                     return;
                 }
+
+                //Paints the block with the variable opacity
                 var gc = getGraphicsContext2D();
                 gc.setFill(Color.color(0.0, 1.0, 0.0, this.opacity));
                 gc.fillRect(0.0, 0.0, GameBlock.this.width, GameBlock.this.height);
             }
-
-        }.start();
+        }.start(); //Starts the animation
         ;
     }
 
@@ -182,10 +190,12 @@ public class GameBlock extends Canvas {
             paintColor(COLOURS[value.get()]);
         }
 
+        // If the block should have a circle indicator then paint this
         if (showCenter) {
             paintCircle();
         }
 
+        //If the block should be hovered on then paint this
         if (hover) {
             paintHover();
         }

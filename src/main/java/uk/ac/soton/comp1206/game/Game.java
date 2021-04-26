@@ -23,7 +23,7 @@ import uk.ac.soton.comp1206.component.GameBlockCoordinate;
 import uk.ac.soton.comp1206.event.GameEndListener;
 import uk.ac.soton.comp1206.event.LineClearedListener;
 import uk.ac.soton.comp1206.event.TimerChangeListener;
-import uk.ac.soton.comp1206.event.pieceEventListener;
+import uk.ac.soton.comp1206.event.PieceEventListener;
 
 /**
  * The Game class handles the main logic, state and properties of the TetrECS
@@ -34,7 +34,7 @@ public class Game {
 
     GamePiece currentPiece;
 
-    pieceEventListener ppl;
+    PieceEventListener ppl;
     LineClearedListener lcl;
     GameEndListener gel;
     GamePiece followingPiece;
@@ -53,10 +53,25 @@ public class Game {
     protected SimpleDoubleProperty time = new SimpleDoubleProperty(1);
     Timeline timer;
 
+    /**
+     * Number of rows
+     */
+    protected final int rows;
+
+    /**
+     * Number of columns
+     */
+    protected final int cols;
+
+    /**
+     * The grid model linked to the game
+     */
+    protected final Grid grid;
+
     double speed = 1;
 
     /**
-     * Creates a new Game object
+     * Creates a new Game object with specified rows and columns
      * 
      * @param cols Number of columns
      * @param rows Number of rows
@@ -67,8 +82,6 @@ public class Game {
 
         // Create a new grid model to represent the game state
         this.grid = new Grid(cols, rows);
-
-        startNewLoop(getTimerDelay());
 
         changeListener = (a, b, c) -> onChange(c);
         time.addListener(changeListener);
@@ -82,13 +95,14 @@ public class Game {
     private void onChange(Number newValue) {
 
         if (tel != null) {
+            // Calls the timer change listener with the new value
             tel.onTimerChange(newValue.doubleValue());
         }
 
         if (newValue.doubleValue() == 0) {
-            var delay = getTimerDelay();
+            // If the timer is 0 then punish and loop again
             punish();
-            startNewLoop(delay);
+            resetGameLoop();
             nextPiece();
         }
     }
@@ -98,17 +112,26 @@ public class Game {
      * 
      * @param delay the time for the game loop
      */
-    public void startNewLoop(int delay) {
+    public void resetGameLoop() {
+        logger.info("Game Loop has been reset");
+        //Gets timer delay
+        var delay = getTimerDelay();
 
         if (timer != null) {
+            // Stop previous loop
             timer.stop();
         }
 
+        // Set starting value to 1
         time.set(1);
-        KeyValue widthValue = new KeyValue(time, 0);
-        KeyFrame frame = new KeyFrame(Duration.millis(delay), widthValue);
+
+        // Reduce value to 0 over a duration passed to the method
+        KeyValue timerValue = new KeyValue(time, 0);
+        KeyFrame frame = new KeyFrame(Duration.millis(delay), timerValue);
 
         timer = new Timeline(frame);
+
+        // Start the timer
         timer.play();
     }
 
@@ -127,12 +150,22 @@ public class Game {
      * @param direction anticlockwise is -1, clockwise is 1
      */
     public void rotateCurrentPiece(int direction) {
+        if(direction==-1){
+            logger.info("Piece rotated anticlockwise");
+        }
+        if(direction==1){
+            logger.info("Piece rotated clockwise");
+        }
+        
         if (currentPiece == null) {
+            // Can't rotate a piece if there isn't one
             return;
         }
 
         currentPiece.rotate(direction);
         ppl.nextPiece(currentPiece, followingPiece);
+
+        // Calls piece event listener in case the UI wants to do anything on rotate
         ppl.rotatePiece();
     }
 
@@ -144,44 +177,24 @@ public class Game {
     public int getTimerDelay() {
         return Math.max(2500, 12000 - 500 * (level.get()));
     }
-
-    /**
-     * Number of rows
-     */
-    protected final int rows;
-
-    /**
-     * Number of columns
-     */
-    protected final int cols;
-
-    /**
-     * The grid model linked to the game
-     */
-    protected final Grid grid;
-
-    int[][] blocks = new int[5][5];
-
-    /**
-     * Create a new game with the specified rows and columns. Creates a
-     * corresponding grid model.
-     * 
-     * @param cols number of columns
-     * @param rows number of rows
-     */
-
+    
     /**
      * Pauses the game timer
      */
     public void pause() {
-        timer.pause();
+        if(timer!=null){
+            timer.pause();
+        }
+
     }
 
     /**
      * Plays the game timer
      */
     public void play() {
-        timer.play();
+        if(timer!=null){
+            timer.play();
+        }
     }
 
     /**
@@ -189,7 +202,7 @@ public class Game {
      * 
      * @param ppl piece event listener
      */
-    public void setOnPieceEvent(pieceEventListener ppl) {
+    public void setOnPieceEvent(PieceEventListener ppl) {
         this.ppl = ppl;
     }
 
@@ -234,7 +247,7 @@ public class Game {
      * 
      * @param t Timer Change Listener
      */
-    public void setOnSingleLoop(TimerChangeListener t) {
+    public void setOnTimerChange(TimerChangeListener t) {
         this.tel = t;
     }
 
@@ -298,6 +311,7 @@ public class Game {
     public void start() {
         logger.info("Starting game");
         initialiseGame();
+        resetGameLoop();
         currentPiece = spawnPiece();
         this.followingPiece = spawnPiece();
         ppl.nextPiece(currentPiece, followingPiece);
@@ -308,16 +322,16 @@ public class Game {
      * Punish the player (timer has reached 0)
      */
     public void punish() {
-        if (multiplier.get() > 1) {
-            multiplier.set(1);
-        }
 
+        // Reset multiplier
+        multiplier.set(1);
+
+        // Reduce lives if player not dead
         if (lives.get() > 0) {
             lives.set(lives.get() - 1);
         } else {
-            logger.info("LIVES IS {}", lives.get());
+            // else end game
             end();
-            return;
         }
 
     }
@@ -326,6 +340,7 @@ public class Game {
      * Cleans up everything once game has ended and pings listener
      */
     public void end() {
+        logger.info("Game Ended");
         time.removeListener(changeListener);
         if (gel != null) {
             gel.endGame();
@@ -350,7 +365,7 @@ public class Game {
      * Swaps the current piece and the following piece
      */
     public void swapCurrentPiece() {
-
+        logger.info("Pieces swapped");
         if (currentPiece == null) {
             return;
         }
@@ -358,9 +373,13 @@ public class Game {
             return;
         }
 
+        // Store the following piece temporarily
         GamePiece temp = followingPiece;
+        // Set following piece to current piece
         followingPiece = currentPiece;
+        // Set current piece to old following piece
         currentPiece = temp;
+        // Triggers next piece and swap events
         ppl.nextPiece(currentPiece, followingPiece);
         ppl.swapPiece();
     }
@@ -380,9 +399,10 @@ public class Game {
     public GamePiece spawnPiece() {
         logger.info("Spawning a piece");
         Random rn = new Random();
-        int number = rn.nextInt(15); // 3 For testing
+
+        //Generates a random number used to create a random piece
+        int number = rn.nextInt(15);
         GamePiece piece = GamePiece.createPiece(number);
-        logger.info(Arrays.deepToString(piece.getBlocks()));
         return piece;
     }
 
@@ -403,24 +423,21 @@ public class Game {
         int x = gameBlock.getX();
         int y = gameBlock.getY();
 
-        // Get the new value for this block
-        int previousValue = grid.get(x, y);
-        int newValue = previousValue + 1;
-        if (newValue > GamePiece.PIECES) {
-            newValue = 0;
-        }
-
-        // Update the grid with the new value
+        // If a piece can be played then play it
         if (grid.canPlayPiece(currentPiece, x, y)) {
             grid.playPiece(currentPiece, x, y);
-            logger.info("THIS PIECE IS ID:{}", currentPiece.getValue());
+
             afterPiece();
+            //Gets next piece
             nextPiece();
+
+            //Notifys of play piece event
             ppl.playPiece();
-            startNewLoop(getTimerDelay());
+
+            //Resets game loop
+            resetGameLoop();
 
         }
-        // grid.set(x,y,newValue);
 
     }
 
@@ -428,16 +445,16 @@ public class Game {
      * Speeds up the game timer by a small factor (recommended to be bound to
      * keyhold)
      */
-    public int speedUp() {
+    public void speedUp() {
         if (timer != null) {
+            //Checks that speed is below speed limit
             if (speed < 6) {
+                //Increments speed
                 speed = speed + 0.5;
             }
+            //Sets new speed as the rate of the game timer
             timer.setRate(speed);
-
-            logger.info("Speedmult is: '{}'", speed);
         }
-        return 0;
     }
 
     /**
@@ -461,17 +478,13 @@ public class Game {
      * Runs after a piece has been played to check for lines
      */
     public void afterPiece() {
-        logger.info("Checking for Rows");
+        logger.info("Checking for lines");
 
+        //Creates two empty array lists of lines and columns to clear
         ArrayList<Integer> rowsToClear = new ArrayList<Integer>();
         ArrayList<Integer> colsToClear = new ArrayList<Integer>();
 
-        for (int i = 0; i < blocks.length; i++) {
-            for (int j = 0; j < blocks[i].length; j++) {
-                blocks[i][j] = grid.get(i, j);
-            }
-        }
-
+        // Checks for full rows, adds them to array list
         for (int i = 0; i < grid.getRows(); i++) { // Loops through each row
             if (fullRow(i)) { // Checks if specific row is clear
                 logger.info("Row found - clearing");
@@ -479,7 +492,7 @@ public class Game {
             }
         }
 
-        logger.info("Checking for Lines");
+        // Checks for full columns, adds them to array list
         for (int i = 0; i < grid.getCols(); i++) {
             if (fullColumn(i)) {
                 logger.info("Line found - clearing");
@@ -487,32 +500,39 @@ public class Game {
             }
         }
 
+        //Makes a new Set of GameBlockCoordinates such that each coordinate
+        //can only be added a single time and will be cleared only once
         Set<GameBlockCoordinate> c = new HashSet<>();
-        // var c = new ArrayList<GameBlockCoordinate>();
 
+        //Adds all the row coordinates to the set
         for (int i : rowsToClear) {
             c.addAll(setRowZero(i));
-            // c.addAll(setRowZero(i));
         }
-
+        //Adds all the column coordinates to the set
         for (int i : colsToClear) {
             c.addAll(setColZero(i));
         }
 
+        //Works out the total number of lines cleared
         int numLines = rowsToClear.size() + colsToClear.size();
-        int blocksCleared = (5 * rowsToClear.size()) + (5 * colsToClear.size())
-                - (rowsToClear.size() * colsToClear.size()); // Calculates number of blocks cleared
 
+        // Calculates number of blocks cleared by finding the total sum and subtracting the overlap
+        int blocksCleared = 5*(rowsToClear.size() + colsToClear.size())
+                - (rowsToClear.size() * colsToClear.size());
+
+        //If no lines were made the multiplier is reset
         if (numLines == 0) {
             multiplier.set(1);
             return;
         }
 
+        // Sets the score to the new score
         setScore(score.get() + score(numLines, blocksCleared));
 
         level.set((int) this.score.get() / 1000); // Sets level
         multiplier.set(multiplier.get() + 1); // Increases multiplier
 
+        //Pings line cleared listener with the set of coordinates cleared
         lcl.linesCleared(c);
 
     }
@@ -523,6 +543,8 @@ public class Game {
      * @param newScore the new score
      */
     public void setScore(int newScore) {
+
+        //Replaces current high score if beaten
         if (newScore > highScore.get()) {
             highScore.set(newScore);
         }
@@ -591,6 +613,7 @@ public class Game {
         // Checks if a specific column is full
         for (int i = 0; i < grid.getCols(); i++) {
             if (grid.get(i, col) == 0) {
+                // Return false if any of the blocks are 0
                 return false;
             }
         }
@@ -607,6 +630,7 @@ public class Game {
         // Checks if a specific row is full
         for (int i = 0; i < grid.getRows(); i++) {
             if (grid.get(row, i) == 0) {
+                // Return false if any of the blocks are 0
                 return false;
             }
         }

@@ -38,27 +38,37 @@ public class Multimedia {
      * @param file The path to the file that should be played
      */
     public static void startBackgroundMusic(String file) {
+
+        //If the same file is already playing then return
         if ((Multimedia.file == file) && fadeIn) {
             return;
         }
 
+        //if audio is already playing
         if (audioEnabled) {
+            //stop it
             musicPlayer.stop();
             audioEnabled = false;
         }
 
+        //sets static file to the current file
         Multimedia.file = file;
 
         String toPlay = Multimedia.class.getResource(file).toExternalForm();
         logger.info("Playing Music: " + toPlay);
         Media play = new Media(toPlay);
         musicPlayer = new MediaPlayer(play);
+
+        //sets to loop on end
         musicPlayer.setOnEndOfMedia(() -> loopBackground(file));
 
+        //binds the volumeproperty to backgroundvolume
         musicPlayer.volumeProperty().bind(backgroundVolume);
 
+        //plays the music
         musicPlayer.play();
 
+        //sets audio to enabled
         audioEnabled = true;
     }
 
@@ -87,6 +97,7 @@ public class Multimedia {
      * @param file path to the file that will be played
      */
     public static void loopBackground(String file) {
+        //disables fadein so music can loop seamlessly
         fadeIn = false;
         startBackgroundMusic(file);
         fadeIn = true;
@@ -102,7 +113,9 @@ public class Multimedia {
         logger.info("Playing Sound: " + toPlay);
         Media play = new Media(toPlay);
         effectsPlayer = new MediaPlayer(play);
+        //binds effectsPlayer volume to the effectVolume field which always exists
         effectsPlayer.volumeProperty().bind(effectVolume);
+        //plays effects sound
         effectsPlayer.play();
     }
 

@@ -52,13 +52,21 @@ public class GameWindow {
 
     public boolean notConnected;
 
-    public static final String ip = "discord.ecs.soton.ac.uk";
-    public static final String port = "9700";
-    public static final String width = "800";
+    public static final String ipD = "discord.ecs.soton.ac.uk";
+    public static final String portD = "9700";
+    public static final String widthD = "800";
 
-    public static final String height = "800";
-    public static final String bgVol = "0.5";
-    public static final String fxVol = "0.5";
+    public static final String heightD = "800";
+    public static final String bgVolD = "0.5";
+    public static final String fxVolD = "0.5";
+
+    public String ip = "discord.ecs.soton.ac.uk";
+    public String port = "9700";
+    public String width = "800";
+    public String height = "800";
+    public String bgVol = "0.5";
+    public String fxVol = "0.5";
+
 
     /**
      * Create a new GameWindow attached to the given stage with the specified width
@@ -69,11 +77,6 @@ public class GameWindow {
     public GameWindow(Stage stage) {
 
         this.stage = stage;
-
-        stage.setMinHeight(Double.parseDouble(height));
-        stage.setMinWidth(Double.parseDouble(width));
-
-
 
         // Setup Settings
         setupSettings();
@@ -92,7 +95,7 @@ public class GameWindow {
 
     }
 
-    private void setupCommunicator(String ip, String port){
+    private void setupCommunicator(String ip, String port) {
         communicator = new Communicator("ws://" + ip + ":" + port);
         communicator.setOnError(new WebSocketAdapter() {
             @Override
@@ -102,6 +105,7 @@ public class GameWindow {
             }
         });
     }
+
     /**
      * Loads settings or loads defaults
      */
@@ -114,19 +118,24 @@ public class GameWindow {
                 throw new Exception("No settings found");
             }
 
-            var ip = b.get("ip");
-            var port = b.get("serverPort");
-            var bgVol = b.get("musicVol");
-            var fxVol = b.get("soundFXVol");
-            var width = b.get("width");
-            var height = b.get("height");
-            settings.setSettings(ip, port, bgVol, fxVol, width, height);
-            setupCommunicator(ip,port);
-        } catch (Exception e) {
-            Utility.writeSettings(ip, port, Double.parseDouble(bgVol), Double.parseDouble(fxVol), width, height);
-            settings.setSettings(ip, port, bgVol, fxVol, width, height);
+            this.ip = b.get("ip");
+            this.port = b.get("serverPort");
+            this.bgVol = b.get("musicVol");
+            this.fxVol = b.get("soundFXVol");
+            this.width = b.get("width");
+            this.height = b.get("height");
 
-            setupCommunicator(ip,port);
+            settings.setSettings(ip, port, bgVol, fxVol, width, height);
+            setupCommunicator(ip, port);
+            stage.setMinHeight(Double.parseDouble(height));
+            stage.setMinWidth(Double.parseDouble(width));
+        } catch (Exception e) {
+            // If exception then write default settings to file
+            Utility.writeSettings(ipD, portD, Double.parseDouble(bgVolD), Double.parseDouble(fxVolD), widthD, heightD);
+            settings.setSettings(ipD, portD, bgVolD, fxVolD, widthD, heightD);
+            stage.setMinHeight(Double.parseDouble(heightD));
+            stage.setMinWidth(Double.parseDouble(widthD));
+            setupCommunicator(ipD, portD);
         }
 
         settings.initialise();
@@ -230,8 +239,6 @@ public class GameWindow {
      */
     public void setupStage() {
         stage.setTitle("TetrECS");
-        stage.setMinWidth(Double.parseDouble(width));
-        stage.setMinHeight(Double.parseDouble(height));
         stage.setOnCloseRequest(ev -> App.getInstance().shutdown());
     }
 
@@ -265,7 +272,7 @@ public class GameWindow {
      * Setup the default scene (an empty black scene) when no scene is loaded
      */
     public void setupDefaultScene() {
-        this.scene = new Scene(new Pane(), Double.parseDouble(width), Double.parseDouble(height), Color.BLACK);
+        this.scene = new Scene(new Pane(), Double.parseDouble(widthD), Double.parseDouble(heightD), Color.BLACK);
         stage.setScene(this.scene);
     }
 
