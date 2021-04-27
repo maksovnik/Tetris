@@ -321,10 +321,9 @@ public class ChallengeScene extends BaseScene {
         // proud. Takes the current time of the game set set's the fill of the rectangle to be equal to the 120*
         // the hue of the newTime (ranging from 1 to 0), this has the effect of the bar going from green
         // to red as the game time reduces
-
         game.setOnTimerChange(newTime -> rectangle.setFill(Color.hsb(120 * newTime, 1, 1)));
         
-        //Binds the width property of the rectangle to the time property in game (ranging from 1 to 0)
+        // Binds the width property of the rectangle to the time property in game (ranging from 1 to 0)
         // multiplied by the width of the window, this has the effect of the rectangle starting at full
         // width and reducing in width to 0 when the timer is up.
         rectangle.widthProperty().bind(game.getTimeProperty().multiply(root.getWidth()));
